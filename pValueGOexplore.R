@@ -1,4 +1,4 @@
-setwd("~/Google Drive/Study/Graduation/Paper3/Data")
+setwd("~/Google Drive/Study/Graduation/Correlation/Data")
 
 p.mat <- readRDS("p.NBP.21labs.rds")
 arab.rm.mean <- readRDS("arab.rm.mean.by.group.rds")
