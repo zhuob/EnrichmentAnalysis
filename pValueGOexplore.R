@@ -220,7 +220,7 @@ library(MASS)
 subset <- dim(cor.mat.nonDE)[1]
 
 N <- 200
-mu <- c(rep(-1.2, N), rep(0, subset-N))
+mu <- c(rep(-.2, N), rep(0, subset-N))
 cor.struct <- cor.mat.nonDE
 # cor.struct <- matrix(0.7, subset, subset);diag(cor.struct) <- 1
 
@@ -258,6 +258,15 @@ idx <- which(row.names(arab1) %in% p.mat$Gene)
 arab1 <- as.matrix(arab1[idx, ])
 arab.log <- rlog(arab1, blind=F)
 
+
+candidate <- sample(1:dim(arab.log)[1], 500)
+arab.log2 <- arab.log[candidate, ]
+arab.log2[1:3, ] <- arab.log2[1:3, ] - apply(arab.log2[1:3,], 1, mean)
+arab.log2[-(1:3), ] <- arab.log2[-(1:3), ] - apply(arab.log2[-(1:3),], 1, mean)
+
+cor.mat2 <- cor(t(arab.log2))
+
+
 dists <- dist(t(arab.log))
 plot(hclust(dists))
 
@@ -276,12 +285,12 @@ hist(p.mat[, 2])
 
 
 
-model4 <- regress(p.two.sample[candidate] ~ 1, ~cor.mat.nonDE)
+model4 <- regress(p.two.sample[candidate] ~ 1, ~cor.mat2)
 model4
 
 z.t.test <- qnorm(p.two.sample[candidate])
 
-model5 <- regress(z.t.test ~ 1, ~cor.mat.nonDE)
+model5 <- regress(z.t.test ~ 1, ~cor.mat2)
 model5
 
 cor(z.val, z.t.test)
