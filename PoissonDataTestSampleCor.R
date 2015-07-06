@@ -1,6 +1,8 @@
 #  poisson regression statistic correlation VS sample correlation
 #
 
+## HOW IS WALD STATISTIC CALCULATED? ####
+#########################################
 N <- 100
 mu <- rep(c(5,10), each=N/2)
 x <- rep(c(1,0), each=N/2)
@@ -20,6 +22,7 @@ hessian <- matrix(c(var.beta0, cov.beta0beta1, cov.beta0beta1, var.beta1), 2, 2)
 ## calculate the standard deviation for each parameter. 
 ## It's the same as the output of glm function.
 sqrt(diag(solve(hessian)))
+summary(pois.mod)
   
 cor.pois <- function(n, lambda1, r)  ## generate correlated poisson random variables
 {
@@ -48,6 +51,7 @@ cor <- lambda1/(sqrt((lambda1+lambda3)*(lambda1+lambda2)))
 num <- 20  # how many samples in each group
 # in this case, gene 1 is not DE, but gene 2 is DE
 # for treatment 1
+
 
 source("SimulateLabData.R")
 
@@ -165,5 +169,103 @@ points(sample.correlation, test.correlation,, col="red", pch=3)
 
 
 
+#######################################################
+##### Poisson Regression: Score test statistic #####
+#######################################################
+
+correlated.poisson <- function(lambda, r, n)
+ {
+ lambda1 <- lambda3 <-  (1-r)*lambda 
+ lambda2 <- r*lambda
+ 
+ x1 <- rpois(n, lambda1)
+ x2 <- rpois(n, lambda2)
+ x3 <- rpois(n, lambda3)
+ 
+ y1 <- x1 + x2
+ y2 <- x2 + x3
+ 
+ return(rbind(y1, y2))
+}
 
 
+
+## calculate score test stat
+
+
+score.stat <- function(y)
+{
+  # score stat
+  sum1 <- apply(y[, 1:(n/2)], 1, sum)
+  sum2 <- apply(y[, -(1:(n/2))], 1, sum)
+  
+  sum3 <- apply(y, 1, sum)
+
+  u <- (sum1-sum2)/sqrt(sum3)
+  return(u)
+}
+
+
+## sample correlation, statistics correlation and true correlation
+
+# if DE, the expression level difference between two groups is delta
+sample.stat.correlation <- function(lambda, r, n, nreps, delta)
+{
+  
+  #  store the score test statistics
+  u.stat <- matrix(NA, nrow=nreps, ncol=2)
+  
+  rho.sample <- c()
+  # create a vector of score stat for each gene
+  for ( k in 1: nreps)
+    {
+  ## treatment 
+  y.t1 <- correlated.poisson(lambda, r, n/2)
+  # control
+  y.t2 <- correlated.poisson(lambda + delta, r, n/2)
+  
+  ## expression data of two genes
+  y <- cbind(y.t1, y.t2)
+  rho1 <- cor(t(y.t1))[1, 2]; rho2 <- cor(t(y.t2))[1, 2]
+ # print(rho1)
+  rho.sample[k] <- mean(c(rho1, rho2))
+ # print(rho.sample[k])
+  #
+  u.stat[k, ] <- score.stat(y)
+  }
+  
+  rho.ave <- mean(rho.sample)
+  rho.score <- cor(u.stat)[1, 2]
+  rho.list <- list(sample.cor= rho.ave, stat.cor = rho.score)
+  
+  return(rho.list)
+}
+  
+
+# correlations
+
+
+lambda <- 1000 # mean 
+n <- 100  # sample size
+
+# score stat for each rho
+nreps <- 100
+## differential expression
+delta= -5
+
+ # correlation
+rho <- seq(0, 0.99, by = 0.01)
+s1 <- s2 <- c()
+for ( i in 1:length(rho))
+{
+  a <- sample.stat.correlation(lambda, rho[i], n, nreps, delta)
+  
+  s1[i] <- a$sample.cor
+  s2[i] <- a$stat.cor
+  
+}
+
+plot(rho, s1, pch=3, col="blue", xlab="true correlation", ylab="observed correlation")
+points(rho, s2, pch=20, col="red")
+legend("topleft", legend=c("sample cor", "score stat cor"), col=c("blue", "red"),
+       pch=c(3, 20))
