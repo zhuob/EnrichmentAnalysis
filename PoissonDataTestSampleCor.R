@@ -117,56 +117,6 @@ saveRDS(pois.wald.stat.sample.cor, "pois.regression.wald.stat.sample.cor.rds")
 
 
 
-############ DOES regression have the power to remove DE effect?
-###    NO!  It's the same as two sample t-test
-## gene1 not DE, gene2 DE
-mu1 <- c(5, 3)  ## gene1 gene2 groupA
-mu2 <- c(20, 18) ## gene1 gene2 groupB
-
-## normally correlated random variables
-
-nsim <- 1000
-num <- 20
-test.correlation <- sample.correlation <- c()
-r <- seq(0.1, 0.95, length=50)
-trt <- rep(c(0, 1), each=num)
-
-for ( k in 1:length(r))
-{
-  t1 <- t2 <- pois.cor <-  c()
-  
-  sigma <- matrix(c(1.5^2, r[k]*1.5*2, r[k]*1.5*2, 2^2), 2, 2)
-  for ( i in 1:nsim)
-  {
-    
-    
-    exp1 <- mvrnorm(num, mu1, sigma) 
-    # for treatment 2
-    exp2 <- mvrnorm(num, mu2, sigma) #pi1 = 4, p2= 20 rho = 0.2236
-    
-    poisdata <- rbind(exp1, exp2)
-    pois.cor[i] <- calculate.cor(t(poisdata))[1, 2]
-    
-    trt <- rep(c(0, 1), each=num)
-    #pois1 <- glm(poisdata[, 1]~trt, family = poisson(link = "log"))
-    pois1 <- lm(poisdata[, 1]~trt)
-    t1[i] <- summary(pois1)$coe[2, 3] # wald statistic
-    
-    pois2 <- lm(poisdata[, 2]~trt)
-    #pois2 <- glm(poisdata[, 2]~trt, family = poisson(link = "log"))
-    t2[i] <- summary(pois2)$coe[2, 3] # wald statistic
-    
-  }
-  
-  sample.correlation[k] <- mean(pois.cor)
-  test.correlation[k] <- cor(t1, t2)
-  
-}
-
-plot(sample.correlation,r,  pch=20, main="sample.size=100")
-points(sample.correlation, test.correlation,, col="red", pch=3)
-
-
 
 
 #######################################################
@@ -205,6 +155,16 @@ score.stat <- function(y)
   return(u)
 }
 
+## or we can use this expression
+score.stat <- function(y)
+{
+  mean1 <- apply(y[, 1:(n/2)], 1, mean)
+  mean2 <- apply(y[, -(1:(n/2))], 1, mean)
+  
+  u <- sqrt(n/2)*(mean1-mean2)/(sqrt(mean1+ mean2))
+  return(u)
+  
+}
 
 ## sample correlation, statistics correlation and true correlation
 
@@ -245,20 +205,23 @@ sample.stat.correlation <- function(lambda, r, n, nreps, delta)
 # correlations
 
 
-lambda <- 1000 # mean 
-n <- 100  # sample size
+lambda <- 10 # mean 
+n <- 8  # sample size
 
 # score stat for each rho
 nreps <- 100
 ## differential expression
-delta= -5
 
  # correlation
 rho <- seq(0, 0.99, by = 0.01)
+set.seed(123)
+delta <- rnorm(length(rho), 0, 0.2*lambda)
+delta <- rep(0, length(rho))
+
 s1 <- s2 <- c()
 for ( i in 1:length(rho))
 {
-  a <- sample.stat.correlation(lambda, rho[i], n, nreps, delta)
+  a <- sample.stat.correlation(lambda, rho[i], n, nreps, delta[i])
   
   s1[i] <- a$sample.cor
   s2[i] <- a$stat.cor
@@ -269,3 +232,39 @@ plot(rho, s1, pch=3, col="blue", xlab="true correlation", ylab="observed correla
 points(rho, s2, pch=20, col="red")
 legend("topleft", legend=c("sample cor", "score stat cor"), col=c("blue", "red"),
        pch=c(3, 20))
+
+
+
+
+## pooled correlation coefficient or separate correlation?
+
+## they look the same
+n <- 100
+lambda <- 100
+r <- 0.5
+delta <- 0
+r1 <- r2 <- c()
+for ( i in 1:100)
+  {
+  # case
+  y.t1 <- correlated.poisson(lambda, r, n/2)
+  # control
+  y.t2 <- correlated.poisson(lambda + delta, r, n/2)
+  
+  rm1 <- y.t1[1, ] - mean(y.t1[1, ])
+  rm2 <- y.t1[2, ] - mean(y.t1[2, ])
+  
+  rm3 <- y.t2[1, ] - mean(y.t2[1, ])
+  rm4 <- y.t2[2, ] - mean(y.t2[2, ])
+
+  ## correlation by pooled data  
+  r1[i] <- cor(c(rm1, rm3), c(rm2, rm4))
+  
+  # correlation calculated by separate groups
+  rho1 <- cor(t(y.t1))[1,2]
+  rho2 <- cor(t(y.t2))[1,2]
+  r2[i] <- mean(c(rho1, rho2))
+}
+
+plot(r1, r2)
+
