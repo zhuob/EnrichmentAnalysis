@@ -56,3 +56,104 @@ plot(e1, e2, log="xy", pch=20)
 range(diag(theoretical.cov))
 diag.cov.t <- diag(cov.tstat)
 hist(diag.cov.t)
+
+
+
+## # use a group of real data to estimate 
+
+GSE38400 <- read.table("/Users/Bin/Google Drive/Study/Thesis/NCBI/Data/GSE38400.Rsubread.txt", header=T)
+row.mean <- apply(GSE38400, 1, mean)
+select.gene <- which(row.mean > 5)
+GSE38400 <- GSE38400[select.gene, ]
+
+
+##  select genes
+n.gene <- dim(GSE38400)[1]
+set.seed(500)
+sample.gene <- sample(1:n.gene, 500)
+sample.data <- GSE38400[sample.gene, ]
+
+# calculate sample correlation
+source("SimulateLabData.R")
+
+# calculate group mean
+d1 <- group.mean(sample.data[, 1:6], group=c(1,1, 1, 2, 2, 2))
+d2 <- group.mean(sample.data[, -(1:6)], group=c(1,1, 1, 2, 2, 2))
+d.mean <- cbind(d1, d2)
+
+# sample correlation
+data.rm.mean <- sample.data-d.mean
+sample.correlation <- cor(t(data.rm.mean))
+
+
+## sample GO term
+set.seed(100)
+GO.id <- sample(1:500, 100)
+GO <- rep(0, 500)
+GO[GO.id] <- 1
+
+## calculate test statistics
+t.stat <- apply(sample.data, 1, t.result)
+## make the negative t.stat postive
+ids <- which(t.stat<0)
+t.stat[ids] <- t.stat[ids]*(-1)
+
+
+## fit by regress function
+v1 <- v2 <- matrix(0, 500, 500)
+diag(v1) <- GO
+diag(v2) <- -1*(GO-1)
+
+library(regress)
+model1 <- regress(t.stat~ GO, ~ v1 + v2 + sample.correlation, identity = F)
+model2 <- regress(t.stat~ GO, ~sample.correlation, identity = T)
+
+
+##  instead of randomly selecting the GO term, I choose genes that have large t.stat 
+
+DE.genes <- which(t.stat > 3)     
+set.seed(123)
+GO.id <- sample(DE.genes, 100)
+GO <- rep(0, 500)
+GO[GO.id] <- 1
+
+v1 <- v2 <- matrix(0, 500, 500)
+diag(v1) <- GO
+diag(v2) <- -1*(GO-1)
+
+model3 <- regress(t.stat~ GO, ~ v1 + v2 + sample.correlation, identity = F)
+model4 <- regress(t.stat~ GO, ~sample.correlation, identity = T)
+
+
+
+##   A simulation study ##
+a1 <- model3$sigma
+ sigma <- a1[1]*v1 + a1[2]*v2 + a1[3]*sample.correlation
+
+ m <- 500
+ p <- 0.2
+ z <- rbinom(m, size=1, prob=p)
+ intens <- 2
+ delta <- rexp(m, rate=intens)
+ Delta <- z*delta
+ 
+ n <- 30
+
+ x <- mvrnorm(n, mu=rep(0, m), sigma)
+ y <- mvrnorm(n, mu=Delta, sigma)
+ simu.data <-  t(rbind(x,y))
+simu.tstat <- apply(simu.data, 1, t.result)
+
+set.seed(100)
+GO.id <- sample(1:500, 100)
+GO <- rep(0, 500)
+GO[GO.id] <- 1
+
+v1 <- v2 <- matrix(0, 500, 500)
+diag(v1) <- GO
+diag(v2) <- -1*(GO-1)
+
+model5 <- regress(simu.tstat~ GO, ~ v1 + v2 + sample.correlation, identity = F)
+model6 <- regress(simu.tstat~ GO, ~sample.correlation, identity = T)
+
+
