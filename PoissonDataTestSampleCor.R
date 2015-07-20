@@ -125,15 +125,15 @@ saveRDS(pois.wald.stat.sample.cor, "pois.regression.wald.stat.sample.cor.rds")
 
 correlated.poisson <- function(lambda, r, n)
  {
- lambda1 <- lambda3 <-  (1-r)*lambda 
- lambda2 <- r*lambda
+ lambda1 <- lambda2 <-  (1-r)*lambda 
+ lambda0 <- r*lambda
  
+ x0 <- rpois(n, lambda0)
  x1 <- rpois(n, lambda1)
  x2 <- rpois(n, lambda2)
- x3 <- rpois(n, lambda3)
  
- y1 <- x1 + x2
- y2 <- x2 + x3
+ y1 <- x1 + x0
+ y2 <- x2 + x0
  
  return(rbind(y1, y2))
 }
@@ -143,7 +143,8 @@ correlated.poisson <- function(lambda, r, n)
 ## calculate score test stat
 
 
-score.stat <- function(y)
+score.stat1 <- function(y) 
+## y is the read count matrix, containing both case and control
 {
   # score stat
   sum1 <- apply(y[, 1:(n/2)], 1, sum)
@@ -161,6 +162,10 @@ score.stat <- function(y)
   mean1 <- apply(y[, 1:(n/2)], 1, mean)
   mean2 <- apply(y[, -(1:(n/2))], 1, mean)
   
+  ## if I use this expression, the positiveness of u is messed up????
+ # u <- sqrt( n/2*(mean1-mean2)^2/(mean1+ mean2) )
+  
+  ## only this work if want perfect correlation
   u <- sqrt(n/2)*(mean1-mean2)/(sqrt(mean1+ mean2))
   return(u)
   
@@ -196,7 +201,7 @@ sample.stat.correlation <- function(lambda, r, n, nreps, delta)
   
   rho.ave <- mean(rho.sample)
   rho.score <- cor(u.stat)[1, 2]
-  rho.list <- list(sample.cor= rho.ave, stat.cor = rho.score)
+  rho.list <- list(sample.cor= rho.ave, score.stat.cor = rho.score)
   
   return(rho.list)
 }
@@ -205,8 +210,8 @@ sample.stat.correlation <- function(lambda, r, n, nreps, delta)
 # correlations
 
 
-lambda <- 10 # mean 
-n <- 8  # sample size
+lambda <- 100 # mean 
+n <- 100  # total sample size (two groups)
 
 # score stat for each rho
 nreps <- 100
@@ -218,20 +223,27 @@ set.seed(123)
 delta <- rnorm(length(rho), 0, 0.2*lambda)
 delta <- rep(0, length(rho))
 
-s1 <- s2 <- c()
+# store the correlations in a data frame
+store.corr <- data.frame(matrix(NA, length(rho), 3))
+colnames(store.corr) <- c("sample", "score.stat", "true")
+
 for ( i in 1:length(rho))
 {
   a <- sample.stat.correlation(lambda, rho[i], n, nreps, delta[i])
   
-  s1[i] <- a$sample.cor
-  s2[i] <- a$stat.cor
+  store.corr[i, 1] <- a$sample.cor
+  store.corr[i, 2] <- a$score.stat.cor
+  store.corr[i, 3] <- rho[i]
   
 }
 
-plot(rho, s1, pch=3, col="blue", xlab="true correlation", ylab="observed correlation")
-points(rho, s2, pch=20, col="red")
-legend("topleft", legend=c("sample cor", "score stat cor"), col=c("blue", "red"),
-       pch=c(3, 20))
+
+library(reshape2)
+store.corr1 <- melt(store.corr, id="true")
+library(ggplot2)
+ggplot(data = store.corr1, aes(x=true, y=value) ) +
+  geom_point(aes(colour=variable)) + 
+  labs(x="true", y="correlation")
 
 
 
