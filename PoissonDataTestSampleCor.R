@@ -117,6 +117,43 @@ saveRDS(pois.wald.stat.sample.cor, "pois.regression.wald.stat.sample.cor.rds")
 
 
 
+## pooled correlation coefficient or separate correlation?
+
+## they look the same
+n <- 100
+lambda <- 100
+r <- 0.5
+delta <- 0
+r1 <- r2 <- c()
+for ( i in 1:100)
+{
+  # case
+  y.t1 <- correlated.poisson(lambda, r, n/2)
+  # control
+  y.t2 <- correlated.poisson(lambda + delta, r, n/2)
+  
+  rm1 <- y.t1[1, ] - mean(y.t1[1, ])
+  rm2 <- y.t1[2, ] - mean(y.t1[2, ])
+  
+  rm3 <- y.t2[1, ] - mean(y.t2[1, ])
+  rm4 <- y.t2[2, ] - mean(y.t2[2, ])
+  
+  ## correlation by pooled data  
+  r1[i] <- cor(c(rm1, rm3), c(rm2, rm4))
+  
+  # correlation calculated by separate groups
+  rho1 <- cor(t(y.t1))[1,2]
+  rho2 <- cor(t(y.t2))[1,2]
+  r2[i] <- mean(c(rho1, rho2))
+}
+
+plot(r1, r2)
+
+
+
+
+
+
 
 
 #######################################################
@@ -159,6 +196,7 @@ score.stat1 <- function(y)
 ## or we can use this expression
 score.stat <- function(y)
 {
+  n <- dim(y)[2]
   mean1 <- apply(y[, 1:(n/2)], 1, mean)
   mean2 <- apply(y[, -(1:(n/2))], 1, mean)
   
@@ -171,10 +209,35 @@ score.stat <- function(y)
   
 }
 
+
+## wald statistic
+wald.stat <- function(y)
+{
+  n <- dim(y)[2]
+  mean1 <- apply(y[, 1:(n/2)], 1, mean)
+  mean2 <- apply(y[, -(1:(n/2))], 1, mean)
+  
+  sqrt(n/2 * mean1)*(log(mean1)- log(mean2))
+  
+}
+
+## likelihood ratio stat
+lr.stat <- function(y)
+{
+  n <- dim(y)[2]
+  mean1 <- apply(y[, 1:(n/2)], 1, mean)
+  mean2 <- apply(y[, -(1:(n/2))], 1, mean)
+  
+  a1 <- mean1*log( (mean1 + mean2)/(2*mean1) )
+  a2 <- mean2*log( (mean1 + mean2)/(2*mean2) )
+  
+  n*(a1 + a2)
+}
+
 ## sample correlation, statistics correlation and true correlation
 
 # if DE, the expression level difference between two groups is delta
-sample.stat.correlation <- function(lambda, r, n, nreps, delta)
+sample.stat.correlation <- function(lambda, r, n, nreps, delta, method = "Score")
 {
   
   #  store the score test statistics
@@ -196,7 +259,16 @@ sample.stat.correlation <- function(lambda, r, n, nreps, delta)
   rho.sample[k] <- mean(c(rho1, rho2))
  # print(rho.sample[k])
   #
+  if (method=="Wald")
+    {  u.stat[k, ] <- wald.stat(y)
+     }
+    else if (method== "LR")
+    {
+      u.stat[k, ] <- lr.stat(y)
+      
+    }
   u.stat[k, ] <- score.stat(y)
+  
   }
   
   rho.ave <- mean(rho.sample)
@@ -223,13 +295,15 @@ set.seed(123)
 delta <- rnorm(length(rho), 0, 0.2*lambda)
 delta <- rep(0, length(rho))
 
+test.method <- "LR"
+
 # store the correlations in a data frame
 store.corr <- data.frame(matrix(NA, length(rho), 3))
-colnames(store.corr) <- c("sample", "score.stat", "true")
+colnames(store.corr) <- c("sample", "test.stat", "true")
 
 for ( i in 1:length(rho))
 {
-  a <- sample.stat.correlation(lambda, rho[i], n, nreps, delta[i])
+  a <- sample.stat.correlation(lambda, rho[i], n, nreps, delta[i], method=test.method)
   
   store.corr[i, 1] <- a$sample.cor
   store.corr[i, 2] <- a$score.stat.cor
@@ -243,40 +317,6 @@ store.corr1 <- melt(store.corr, id="true")
 library(ggplot2)
 ggplot(data = store.corr1, aes(x=true, y=value) ) +
   geom_point(aes(colour=variable)) + 
-  labs(x="true", y="correlation")
-
-
-
-
-## pooled correlation coefficient or separate correlation?
-
-## they look the same
-n <- 100
-lambda <- 100
-r <- 0.5
-delta <- 0
-r1 <- r2 <- c()
-for ( i in 1:100)
-  {
-  # case
-  y.t1 <- correlated.poisson(lambda, r, n/2)
-  # control
-  y.t2 <- correlated.poisson(lambda + delta, r, n/2)
-  
-  rm1 <- y.t1[1, ] - mean(y.t1[1, ])
-  rm2 <- y.t1[2, ] - mean(y.t1[2, ])
-  
-  rm3 <- y.t2[1, ] - mean(y.t2[1, ])
-  rm4 <- y.t2[2, ] - mean(y.t2[2, ])
-
-  ## correlation by pooled data  
-  r1[i] <- cor(c(rm1, rm3), c(rm2, rm4))
-  
-  # correlation calculated by separate groups
-  rho1 <- cor(t(y.t1))[1,2]
-  rho2 <- cor(t(y.t2))[1,2]
-  r2[i] <- mean(c(rho1, rho2))
-}
-
-plot(r1, r2)
+  labs(x="true", y="correlation", title=test.method)
+ 
 
