@@ -179,19 +179,20 @@ correlated.poisson <- function(lambda, r, n)
 
 ## calculate score test stat
 
-
-score.stat1 <- function(y) 
-## y is the read count matrix, containing both case and control
+## square root of score test statistic does not preserve the correlation !!
+score.stat1 <- function(y)
 {
-  # score stat
-  sum1 <- apply(y[, 1:(n/2)], 1, sum)
-  sum2 <- apply(y[, -(1:(n/2))], 1, sum)
+  n <- dim(y)[2]
+  mean1 <- apply(y[, 1:(n/2)], 1, mean)
+  mean2 <- apply(y[, -(1:(n/2))], 1, mean)
   
-  sum3 <- apply(y, 1, sum)
-
-  u <- (sum1-sum2)/sqrt(sum3)
+  ## if I use this expression, the positiveness of u is messed up????
+   u <- sqrt( n/2*(mean1-mean2)^2/(mean1+ mean2) )
+  
   return(u)
+  
 }
+
 
 ## or we can use this expression
 score.stat <- function(y)
@@ -210,7 +211,7 @@ score.stat <- function(y)
 }
 
 
-## wald statistic
+## wald test statistic 
 wald.stat <- function(y)
 {
   n <- dim(y)[2]
@@ -221,7 +222,7 @@ wald.stat <- function(y)
   
 }
 
-## likelihood ratio stat
+## likelihood ratio test stat
 lr.stat <- function(y)
 {
   n <- dim(y)[2]
@@ -295,7 +296,7 @@ set.seed(123)
 delta <- rnorm(length(rho), 0, 0.2*lambda)
 delta <- rep(0, length(rho))
 
-test.method <- "Wald"
+test.method <- "Score"
 
 # store the correlations in a data frame
 store.corr <- data.frame(matrix(NA, length(rho), 3))
