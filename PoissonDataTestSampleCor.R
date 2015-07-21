@@ -267,7 +267,7 @@ sample.stat.correlation <- function(lambda, r, n, nreps, delta, method = "Score"
       u.stat[k, ] <- lr.stat(y)
       
     }
-  u.stat[k, ] <- score.stat(y)
+      else {u.stat[k, ] <- score.stat(y)}
   
   }
   
@@ -295,7 +295,7 @@ set.seed(123)
 delta <- rnorm(length(rho), 0, 0.2*lambda)
 delta <- rep(0, length(rho))
 
-test.method <- "LR"
+test.method <- "Wald"
 
 # store the correlations in a data frame
 store.corr <- data.frame(matrix(NA, length(rho), 3))
