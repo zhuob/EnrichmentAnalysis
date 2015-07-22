@@ -15,19 +15,11 @@
 
 samp.rho <- sample.correlation
 t.val <- t.stat
-xi <- 0.5
 
-### maybe I don't need this one
-sigma.matrix <- function(samp.rho, xi)
-{
-  ## obtain the dimension of sample
-  n <- dim(samp.rho)[1]
-  return( (1-xi)* diag(1, n) + xi*samp.rho )
-}
 
 
 ## update inv.sigma for each new xi
-update.inv.sigma <- function(inv.samp, xi)
+update.inv.gamma <- function(xi)
 {
   # the original eigen values
   eig.value <- inv.samp$values  
@@ -114,25 +106,27 @@ solve.equations <- function(t.val, samp.rho)
   ## initial value for beta0 
   beta0 <- mean(t.val)
   # starting value for xi
-  ini.xi <- 0.5
+  # ini.xi <- 0.5
   
   ## eigen decomposition of sample correlation matrix
   ###------- Calculated ONLY ONCE, used for all the steps that follows ---------
   inv.samp <- eigen(samp.rho)
 
-#   ### update beta0 first
-#   beta0.update <- update.beta0(xi = ini.xi)
-#   ### followed by sigma^2.t
-#   sigma2.t <- update.sigma2.t(beta0 = beta0.update, ini.xi)
-#   
-#   ## use optim() to get xi.values
-#   xi.update <- optim(ini.xi, obj.xi, method="Brent", lower=0, upper=1)
-#   $par
+  # the original eigen values
+  eig.value <- inv.samp$values  
+  # the original eigen vectors, this is fixed at each iteration
+  u <- inv.samp$vectors
+  
+  ## calculating the 4 matrix defined in manuscript
+  AA <- t(ones) %*% u 
+  BB <- t(t.val) %*% u
+  DD <- diag(eig.value - ones)
+  
   
   # xi.update <- optim(ini.xi, obj.xi, method="Brent", lower=0, upper=1)
   
   ## use optimize()
-  system.time(xi.update <- optimize(obj.xi, c(0, 1)))
+  xi.update <- optimize(obj.xi, c(0, 1))
   
   xi.new <- xi.update$minimum
   beta0.new <- update.beta0(xi.new)
