@@ -18,104 +18,20 @@ t.val <- t.stat
 
 
 
-## update inv.sigma for each new xi
-update.inv.gamma <- function(xi)
-{
-  # the original eigen values
-  eig.value <- inv.samp$values  
-  # the original eigen vectors, this is fixed at each iteration
-  u <- inv.samp$vectors
-  
-  ## the updated eigen values
-  new.eig.value <- 1 / ( xi*eig.value +  1- xi) 
-  ## the updated inverse sigma
-  new.inv.sigma <- u %*% diag(new.eig.value) %*% t(u)
-  
-  return(new.inv.sigma)
-}
-
-
-## solve for beta0
-
-update.beta0 <- function(xi)
-{
-  ### the inv.samp is the inverse of sample correlation
-  inv.sigma <- update.inv.sigma(inv.samp, xi)
-  
-
-  # calculate (1^T sig^{-1} 1)
-  denom <-  drop(ones %*% inv.sigma %*% ones)
-  # calculate t^T sig^{-1} 1
-  numerat <- drop(t.val %*% inv.sigma %*% ones)
-  ## update new beta0 
-  beta0 <- 1/denom * numerat 
-  
-  return(beta0)
-}
-
-
-
-
-###  if I know beta0 and xi, I can calculate sigma^2.t
-update.sigma2.t <- function(beta0, xi)
-{
-  ## get the inverse of SIGMA ------------------
-  inv.sigma <- update.inv.sigma(inv.samp, xi)
-  
-  ### vectorize beta0
-  beta0 <- beta0*ones
-  ## calculate sigma.t square
-  sigma2.t <- t((t.val-beta0)) %*%inv.sigma %*% (t.val-beta0)/n
-  
-  return(sigma2.t)
-}
-
-
-
-## objective function for xi, to be optimized for xi
-obj.xi <- function(xi)
-{
-  ##  count the number of calling this function.
-  count <<- count+1
-  
-  ## get the inverse of SIGMA ------------------
-  inv.sigma <- update.inv.sigma(inv.samp, xi)
-  
-  ## vectorize beta0
-  beta.temp <- update.beta0(xi)
-  beta0 <- beta.temp*ones
-  
-  sigma2.t <- update.sigma2.t(beta.temp, xi)
-  
-  a1 <- (t.val- beta0)
-  a2 <- samp.rho - diag(1, n)
-  a3 <- inv.sigma %*% a2
-  
-  ## calculate the trace of a3
-  tr.a3 <- sum(diag(a3))
-  
-  ## the objective function 
-  (1/sigma2.t * a1 %*% inv.sigma %*% a2 %*% inv.sigma %*% (a1) - tr.a3)^2
-}
-
-
 solve.equations <- function(t.val, samp.rho)
 {
-  n <- length(t.val)  # number of observations
-  ones <- rep(1, n)  #  create a column of 1s
-  ## initial value for beta0 
-  beta0 <- mean(t.val)
-  # starting value for xi
-  # ini.xi <- 0.5
+  n <- length(t.val)                            # number of observations
+  ones <- rep(1, n)                             #  create a column of 1s
+#  beta0 <- mean(t.val)                          # initial value for beta0 
+
   
   ## eigen decomposition of sample correlation matrix
   ###------- Calculated ONLY ONCE, used for all the steps that follows ---------
   inv.samp <- eigen(samp.rho)
 
-  # the original eigen values
-  eig.value <- inv.samp$values  
-  # the original eigen vectors, this is fixed at each iteration
-  u <- inv.samp$vectors
+  
+  eig.value <- inv.samp$values                  # the original eigen values
+  u <- inv.samp$vectors                         # the original eigen vectors
   
   ## calculating the 4 matrix defined in manuscript
   AA <- t(ones) %*% u 
@@ -123,20 +39,84 @@ solve.equations <- function(t.val, samp.rho)
   DD <- diag(eig.value - ones)
   
   
-  # xi.update <- optim(ini.xi, obj.xi, method="Brent", lower=0, upper=1)
+  ## objective function for xi, to be optimized for xi ------------------------
+  obj.xi <- function(xi)
+  {
+    ##  count how many times this function has been called
+    # count <<- count+1
+    
+    ## update the kernel inverse gamma
+    new.eig.value <- 1 / ( xi*eig.value +  1- xi) # the updated eigen values
+#print(xi)
+    inv.gamma <- diag(new.eig.value)              # the updated inverse gamma
+    
+    ## update beta0
+    denom <-  drop(AA %*% inv.gamma %*% t(AA))    # calculate denominator
+    numerat <- drop(BB %*% inv.gamma %*% t(AA))   # calculate numerator
+    beta.temp <- numerat / denom                  # update new beta0 
+#print(paste("beta=", beta.temp))
+    
+    ## caculate matrix C, defined in manuscript
+    CC <- BB - beta.temp*AA
+    a0 <- CC %*% inv.gamma                        # update sigma2^2_T
+    sigma2.t <- drop(a0 %*% t(CC)/n)
+#print(sigma2.t)
+    ## optimize objective function of xi
+    a1 <- a0 %*% DD %*% inv.gamma %*% t(a0)       # term on the left part of equation
+    a2 <- sum( diag(inv.gamma %*% DD ) )          # the trace, right part of the equation
+    (1/sigma2.t*a1 - a2)^2                        # the objective function 
+  }
   
-  ## use optimize()
-  xi.update <- optimize(obj.xi, c(0, 1))
   
+  xi.update <- optimize(obj.xi, c(0, 1))        # use optimize()
   xi.new <- xi.update$minimum
-  beta0.new <- update.beta0(xi.new)
-  sigma2.t.new <- update.sigma2.t(beta0.new, xi.new)
-
-    return(list(beta0 = beta0.new, sigma2.t = sigma2.t.new, xi = xi.new))
-
   
- # return(list(beta0 = beta0.update, sigma2.t = sigma2.t, xi = xi.update))
+  
+#####   calculating  beta0 and sigma^2  ----------------------------------
+  
+  ## update the kernel inverse gamma with xi estimate 
+  new.eig.value <- 1 / ( xi.new*eig.value +  1- xi.new ) 
+                                                # the updated eigen values
+  inv.gamma <- diag(new.eig.value)              # the updated inverse gamma
+  
+  ### update beta0
+  denom <-  drop(AA %*% inv.gamma %*% t(AA))    # calculate denominator
+  numerat <- drop(BB %*% inv.gamma %*% t(AA))   # calculate numerator
+  beta0.new <-  numerat / denom                 # update new beta0 
+  
+  
+  ## update new sigma^2
+  CC <- BB - beta0.new*AA
+  sigma2.t.new <- CC %*% inv.gamma %*% t(CC)/n
+  
+##  return all estimates 
+  return(list(beta0 = beta0.new, sigma2.t = sigma2.t.new, xi = xi.new))
 }
 
-system.time(solve.equations(t.val, samp.rho))
+#system.time(solve.equations(t.val, samp.rho))
+solve.equations(t.val, samp.rho)
+
+
+rho <- 0.5
+n <- 500 
+r1 <- matrix(0.5, n, n)
+diag(r1) <- 1
+
+xi <- 0.5                                       # true xi
+sigma.t <- 3                                    # true sigma2.t
+beta0 <- rep(2, n)                              # true beta0
+
+SIGMA <- sigma.t * ( (1- xi)*diag(1, n)  + xi* r1)
+set.seed(100)
+tval <- mvrnorm(n=1, mu=beta0, SIGMA)
+
+
+solve.equations(tval, r1)
+
+
+
+
+
+
+
 
