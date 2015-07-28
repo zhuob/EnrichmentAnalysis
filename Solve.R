@@ -13,8 +13,6 @@
 #' \item{mu2} group mean from which the treatment 2 is simulated
 #'
 
-samp.rho <- sample.correlation
-t.val <- t.stat
 
 
 
@@ -22,7 +20,6 @@ solve.equations <- function(t.val, samp.rho)
 {
   n <- length(t.val)                            # number of observations
   ones <- rep(1, n)                             #  create a column of 1s
-#  beta0 <- mean(t.val)                          # initial value for beta0 
 
   
   ## eigen decomposition of sample correlation matrix
@@ -33,13 +30,14 @@ solve.equations <- function(t.val, samp.rho)
   eig.value <- inv.samp$values                  # the original eigen values
   u <- inv.samp$vectors                         # the original eigen vectors
   
-  ## calculating the 4 matrix defined in manuscript
+  ## calculating the 4 matrices defined in manuscript
   AA <- t(ones) %*% u 
   BB <- t(t.val) %*% u
   DD <- diag(eig.value - ones)
+  HH <- 1/n* matrix(1, nrow=n, ncol=n) 
+  EE <- diag(1, n)- t(u) %*% HH %*% u
   
-  
-  ## objective function for xi, to be optimized for xi ------------------------
+  ## objective function, to be optimized for xi ------------------------------
   obj.xi <- function(xi)
   {
     ##  count how many times this function has been called
@@ -47,30 +45,37 @@ solve.equations <- function(t.val, samp.rho)
     
     ## update the kernel inverse gamma
     new.eig.value <- 1 / ( xi*eig.value +  1- xi) # the updated eigen values
-#print(xi)
+   # print(xi)
     inv.gamma <- diag(new.eig.value)              # the updated inverse gamma
     
     ## update beta0
     denom <-  drop(AA %*% inv.gamma %*% t(AA))    # calculate denominator
     numerat <- drop(BB %*% inv.gamma %*% t(AA))   # calculate numerator
     beta.temp <- numerat / denom                  # update new beta0 
-#print(paste("beta=", beta.temp))
+    beta.temp <- 1
+    #print(paste("beta=", beta.temp))
     
     ## caculate matrix C, defined in manuscript
-    CC <- BB - beta.temp*AA
-    a0 <- CC %*% inv.gamma                        # update sigma2^2_T
-    sigma2.t <- drop(a0 %*% t(CC)/n)
-#print(sigma2.t)
+    CC.temp <- BB - beta.temp*AA
+    sigma2.t <- drop(CC.temp %*% inv.gamma %*% t(CC.temp)/n)      # update sigma2^2_T
+    #print(sigma2.t)
+    
     ## optimize objective function of xi
-    a1 <- a0 %*% DD %*% inv.gamma %*% t(a0)       # term on the left part of equation
-    a2 <- sum( diag(inv.gamma %*% DD ) )          # the trace, right part of the equation
-    (1/sigma2.t*a1 - a2)^2                        # the objective function 
+    # term on the left hand side of equation
+    a1 <- CC.temp %*% inv.gamma %*% DD %*% inv.gamma %*% t(CC.temp) 
+    # right hand side of equation 
+    a2.1 <- diag( xi*eig.value +  1- xi)          # original GAMMA
+    a2.2 <- EE %*% inv.gamma %*% DD %*% inv.gamma %*% EE %*% a2.1
+    a2 <- sum( diag( a2.2) )                      # the trace, right hand side of the equation
+    (a1 - a2)^2                          # return the objective function 
   }
   
   
-  xi.update <- optimize(obj.xi, c(0, 1))        # use optimize()
+  ## the initial value of 0.381966 is the golden ratio  (sqrt(5)-1)/2
+  xi.update <- optimize(obj.xi, c(0, 1))         # use optimize()
   xi.new <- xi.update$minimum
-  
+  # previous optim
+  # xi.update <- optim(ini.xi, obj.xi, method="Brent", lower=0, upper=1)
   
 #####   calculating  beta0 and sigma^2  ----------------------------------
   
@@ -94,29 +99,29 @@ solve.equations <- function(t.val, samp.rho)
 }
 
 #system.time(solve.equations(t.val, samp.rho))
-solve.equations(t.val, samp.rho)
+# solve.equations(t.val, samp.rho)
 
-
+#####################  a simulation study  -----------------------------
 rho <- 0.5
 n <- 500 
-r1 <- matrix(0.5, n, n)
+r1 <- matrix(0.5, n, n)                         # true correlation structure
 diag(r1) <- 1
 
-xi <- 0.5                                       # true xi
-sigma.t <- 3                                    # true sigma2.t
-beta0 <- rep(2, n)                              # true beta0
+xi <- 0.8                                       # true xi
+sigma.t <- 1                                    # true sigma2.t
+beta0 <- rep(1, n)                              # true beta0
 
-SIGMA <- sigma.t * ( (1- xi)*diag(1, n)  + xi* r1)
-set.seed(100)
-tval <- mvrnorm(n=1, mu=beta0, SIGMA)
+SIGMA <- sigma.t * ( (1- xi)*diag(1, n)  + xi* r1) # the covariance
+#set.seed(100)
+library(MASS)
+tval <- mvrnorm(n=1, mu=beta0, SIGMA)           # generate the t values
 
 
 solve.equations(tval, r1)
 
-
-
-
-
-
+## convergence == 0 does not mean it's converged. 
+fy <- function(y){ (y^2- 3*y + 2)^2}
+optim(0.6, fy,  method="Brent", lower=0, upper=0.8)
+optimize(fy, c(0, 1))
 
 
