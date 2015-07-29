@@ -206,6 +206,11 @@ score.stat <- function(y)
   
   ## only this work if want perfect correlation
   u <- sqrt(n/2)*(mean1-mean2)/(sqrt(mean1+ mean2))
+  ###########################################################################
+#  It looks it doesn't matter if I change the denominator 
+  ###########################################################################
+#  u <- sqrt(n/2)*(mean1-mean2)/((mean1 ^2+ mean2)^2 - mean1*mean2 + 12)^(1/3)
+  
   return(u)
   
 }
@@ -292,7 +297,7 @@ nreps <- 100
 
  # correlation
 rho <- seq(0, 0.99, by = 0.01)
-set.seed(123)
+#set.seed(123)
 delta <- rnorm(length(rho), 0, 0.2*lambda)
 delta <- rep(0, length(rho))
 

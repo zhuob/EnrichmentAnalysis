@@ -102,14 +102,17 @@ solve.equations <- function(t.val, samp.rho)
 # solve.equations(t.val, samp.rho)
 
 #####################  a simulation study  -----------------------------
-rho <- 0.5
+
+  
+
+rho <- 0.8
 n <- 500 
 r1 <- matrix(0.5, n, n)                         # true correlation structure
 diag(r1) <- 1
 
 xi <- 0.8                                       # true xi
 sigma.t <- 1                                    # true sigma2.t
-beta0 <- rep(1, n)                              # true beta0
+beta0 <- rep(2, n)                              # true beta0
 
 SIGMA <- sigma.t * ( (1- xi)*diag(1, n)  + xi* r1) # the covariance
 #set.seed(100)
@@ -117,11 +120,35 @@ library(MASS)
 tval <- mvrnorm(n=1, mu=beta0, SIGMA)           # generate the t values
 
 
-solve.equations(tval, r1)
+system.time(answer <- solve.equations(tval, r1))
+unlist(answer) 
 
-## convergence == 0 does not mean it's converged. 
-fy <- function(y){ (y^2- 3*y + 2)^2}
-optim(0.6, fy,  method="Brent", lower=0, upper=0.8)
-optimize(fy, c(0, 1))
+# ## convergence == 0 does not mean it's converged. 
+# fy <- function(y){ (y^2- 3*y + 2)^2}
+# optim(0.6, fy,  method="Brent", lower=0, upper=0.8)
+# optimize(fy, c(0, 1))
+
+BetaSigmaXi <- read.table("BetaSigmaXi2.txt", header=T)
+#View(BetaSigmaXi)
+
+library(ggplot2)
+library(reshape2)
+library(dplyr)
+
+BetaSigmaXi2 <- melt(BetaSigmaXi)
+ggplot(BetaSigmaXi2, aes(x = value)) +
+  geom_histogram() +
+  facet_wrap(~variable, scale= "free")
+
+BetaSigmaXi2 %>%
+  group_by(variable)  %>%
+  summarize(mean(value), sd(value))
+
+
+
+
+
+
+
 
 
