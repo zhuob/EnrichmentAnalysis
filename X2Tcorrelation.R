@@ -1,8 +1,7 @@
 #  General conclusion:  
 #  1. This simulation shows that, generally, correlation of T statistics
 #     are not the same as sample correlation after accounting for treatment effects.
-#  2. If the test results are non DE, rho(t) \approx rho(Y)
-#  3. 
+
 
 library(MASS)
 
@@ -196,6 +195,9 @@ tt2 <- c(rand1[, 2], rand2[, 2])
 cor(tt1, tt2)
 
 
+#####################################################################################
+# READ FROM HERE
+#####################################################################################
 
 
 
@@ -450,7 +452,7 @@ plot.cor.t.test <- function(mu1, mu2, sig1, sig2, sig3, sig4, sigqua){
       
     }
     
-    t.cor[j] <- cor(z.stat)[1, 2]
+    t.cor[j] <- cor(t.stat)[1, 2]
     samp.cor[j] <- mean(s.cor)
     
     
