@@ -12,7 +12,7 @@
 
 correlated.norm <- function(mu, rho, sigma, n)
 {
-  
+  library(MASS)
   sig.element <- c(sigma[1], rho*sqrt(sigma[1]*sigma[2]),     ## the elements in Sigma
                    rho*sqrt(sigma[1]*sigma[2]), sigma[2])
   sig <- matrix(sig.element, 2, 2)                            # the covariance matrix
@@ -30,7 +30,11 @@ ttest.stat <- function(y)
   s1 <- apply(y[, 1:(n/2)], 1, var)           # the variance for the first half
   s2 <- apply(y[, -(1:(n/2))], 1, var)        # the variance for the second half
   
-  t.stat <- (mean1 - mean2)/sqrt(s1/(n/2) + s2/(n/2)) # the test statistics
+#   t1 <- t.test(y[1, 1:(n/2)], y[1, -(1:(n/2))])$stat
+#   t2 <- t.test(y[2, 1:(n/2)], y[2, -(1:(n/2))])$stat
+#   t.stat <- c(t1, t2)
+#   
+  t.stat <- (mean1 - mean2)/sqrt(s1/(n/2) + s2/(n/2))  # the test statistics
   return(t.stat)
 }
 
@@ -73,9 +77,9 @@ sample.stat.correlation <- function(mu1, sigma1, mu2, sigma2, rho, n, nreps)
 }
 
 
-mu1 <- c(0, 0); mu2 <- c(0, 0)
-sigma1 <- c(23, 3); sigma2 <- c(23, 3)
-rho <- 0.5; n <- 100; nreps <- 100;
+mu1 <- c(10, 10); mu2 <- c(12, 10)
+sigma1 <- c(.1, .3); sigma2 <- c(.2, .6)
+rho <- 0.5; n <- 1000; nreps <- 100;
 
 rho <- seq(0, 0.99, by = 0.01)
 store.corr <- data.frame(matrix(NA, length(rho), 3))
@@ -100,4 +104,44 @@ ggplot(data = store.corr1, aes(x=true, y=value) ) +
   geom_point(aes(colour=variable)) + 
   labs(x="true", y="correlation")
 
+
+
+
+##########################
+# If we look at the $z$-test statistic and $t$-test statistic, 
+# \item if $m$ and $n$ are small, then $S_{X_1}^2$ and $S_{Y_1}^2$ cannot be accurately estimated
+# \item if $m$ and $n$ are large, then the denominator will be very small, in which case a slight difference between the sample variance  $S_{X_1}^2$ and true variance  $\sigma^2_1$ will augment the difference of test statistics. 
+
+
+nsim <- 100
+t.stat  <- s.mat<- m.mat <- matrix(NA, nsim, 4)
+
+for ( i in 1:nsim){
+  
+mu1 <- c(10, 10); mu2 <- c(11, 10)
+sigma1 <- c(1, .3); sigma2 <- c(1, .6)
+rho <- 0.5; n <- 10;
+
+y.t1 <- correlated.norm(mu1, rho, sigma1, n/2)           # treatment 
+y.t2 <- correlated.norm(mu2, rho, sigma2, n/2)           # control
+
+y <- cbind(y.t1, y.t2)   
+
+mean1 <- apply(y[, 1:(n/2)], 1, mean)       # the first half is from treatment
+mean2 <- apply(y[, -(1:(n/2))], 1, mean)    # the second half is from control
+
+s1 <- apply(y[, 1:(n/2)], 1, var)           # the variance for the first half
+s2 <- apply(y[, -(1:(n/2))], 1, var)        # the variance for the second half
+
+m.mat[i, ] <- c(mean1, mean2)
+s.mat[i, ] <- c(s1, s2)
+
+t.stat[i,1:2 ] <- (mean1 - mean2)/sqrt(s1/(n/2) + s2/(n/2))  # the test statistics
+t.stat[i,3:4 ] <- (mean1-mean2)/sqrt(sigma1/(n/2) + sigma2/(n/2))
+}
+
+par(mfrow=c(1, 2))
+plot(t.stat[, 1], t.stat[, 3], pch=20, xlab="t-test stat", ylab="z-test stat", main="DE")
+plot(t.stat[, 2], t.stat[, 4], pch=20, xlab="t-test stat", ylab="z-test stat", main="Non-DE")
+cor(t.stat)
 
