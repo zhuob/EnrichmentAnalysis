@@ -1,5 +1,5 @@
 ## simulate Duo's model
-
+#
 p <- 1 # proportion of DE
 m <- 500 # number of genes
 n <- 20 # biological sample in each group
