@@ -118,9 +118,9 @@ t.stat  <- s.mat<- m.mat <- matrix(NA, nsim, 4)
 
 for ( i in 1:nsim){
   
-mu1 <- c(10, 10); mu2 <- c(11, 10)
+mu1 <- c(10, 10); mu2 <- c(10, 10)
 sigma1 <- c(1, .3); sigma2 <- c(1, .6)
-rho <- 0.5; n <- 10;
+rho <- 0.5; n <- 1000;
 
 y.t1 <- correlated.norm(mu1, rho, sigma1, n/2)           # treatment 
 y.t2 <- correlated.norm(mu2, rho, sigma2, n/2)           # control
