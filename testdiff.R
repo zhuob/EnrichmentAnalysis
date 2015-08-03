@@ -41,6 +41,7 @@ solve.equations <- function(t.val, samp.rho)
   return(list(beta0 = beta0.new, sigma2.t = sigma2.t.new, xi = xi.new))
 }
 
+
 rho <- 0.5
 n <- 500 
 r1 <- matrix(0.5, n, n)                         # true correlation structure
