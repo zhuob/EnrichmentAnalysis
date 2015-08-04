@@ -221,7 +221,7 @@ ggplot(data = store.corr1, aes(x=true, y=value) ) +
 # poisson, then Y1 = x0 + x1 and Y2 = x0 + x2 are correlated.
 ##-------------------------------------------------------------------------
 
-lambda0 <- 100                                    
+                          
 param.setup <- function(lambda0, lambda2=seq(1, 10000, by =1), rate=1/10)
 {
          
@@ -236,7 +236,7 @@ param.setup <- function(lambda0, lambda2=seq(1, 10000, by =1), rate=1/10)
   ids <- c()                                                       
    for( i in 1:length(desired.rho))
    {
-     ids[i] <- which.min(abs(rhoc - desired.rho[i]))                 # find the which true correlation is closest to the desired one
+     ids[i] <- which.min(abs(true.rho - desired.rho[i]))                 # find the which true correlation is closest to the desired one
    }
    true.rho.new <- true.rho[ids]                                         # the true correlations
    lambda0.new <- lambda0*rep(1, length(desired.rho))                # vector of lambda0
@@ -297,7 +297,7 @@ sample.stat.correlation2 <- function(lambda0, lambda1, lambda2, n, nreps)
 }
 
 
-## ----------------------------------------  SIMULATION Study
+## ----------------------------------------  SIMULATION Study -------------------------------
 
 
 param <- param.setup(lambda0 = 10)                                  # the true correlation is in the 4th column
@@ -320,7 +320,7 @@ store.corr1 <- melt(store.corr, id="true")
 library(ggplot2)
 ggplot(data = store.corr1, aes(x=true, y=value) ) +
   geom_point(aes(colour=variable)) + 
-  labs(x="true", y="correlation", title=test.method)
+  labs(x="true", y="correlation")
 
 #-------------  CONCLUSION --------------------------------
 # The correlation remains 1-1 for all null cases
