@@ -179,45 +179,6 @@ solve.equations <- function(t.val, samp.rho, start, end, n.or.nminus1)
 #####################  a simulation study  -----------------------------
 
 
-N <- m <- 500 # number of genes
-n <- 20 # biological sample in each group
-library(MASS)
-
-## generate correlation matrix
-rho <- 0.4
-cor.struct <- matrix(rho, N, N);diag(cor.struct) <- 1
-sigma <- 1.5*cor.struct
-dat <- mvrnorm(1000, mu=rep(0, m), sigma)
-
-sigma1 <- cor(dat)
-sigma2 <- 1.5*sigma1
-dat <- mvrnorm(1000, mu=rep(0, m), sigma2)
-
-sim.sigma <- cor(dat)
-
-rho <- 0.5
-n <- 500 
-
-# r1 <- matrix(0.5, n, n)                         # true correlation structure
- r1 <- sim.sigma
-diag(r1) <- 1
-
-xi <- 0.8                                       # true xi
-sigma.t <- 0.4                                    # true sigma2.t
-beta0 <- rep(-2, n)                              # true beta0
-
-SIGMA <- sigma.t * ( (1- xi)*diag(1, n)  + xi* r1) # the covariance
-# set.seed(100)
-library(MASS)
-t.val <- mvrnorm(n=1, mu=beta0, SIGMA)           # generate the t values
-
-
-
-system.time(answer <- solve.equations(t.val, r1, 0, 1, n))
-unlist(answer) 
-
-
-
 library(doParallel)                             # parallel computing packages
 library(foreach)
 
@@ -264,62 +225,6 @@ system.time(
     return(unlist(answer))
   }
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-xi <- answer$xi
-beta0 <- answer$beta0
-sigmat <- answer$sigma2.t
-
-
-inv.samp <- eigen(r1)
-eig.value <- inv.samp$values                  # the original eigen values
-u <- inv.samp$vectors                         # the original eigen vectors
-
-sigma_inv=u%*%(diag(1/(xi*eig.value +  1- xi)))%*%t(u)
-
-
-# xi <- 0.8; beta0 <- 0; sigmat <- 0.5;
-# tval <- rnorm(n, beta0, sqrt(sigmat))
-# sigma_inv <- diag(1, n)
-# sigma_inv <- (diag(1/(xi*eig.value +  1- xi)))
-
-
-pval <- c()
-for ( k in 1:500) {
-G <- rep(0, n)                                # GO term indicator
-ids <- sample(1:n, 100)                       # make a random of 100 genes to be in GO
-G[ids] <- 1
-ones <- rep(1, n)
-
-b1<- sigmat*(t(G)%*% sigma_inv %*% (tval - beta0))^2
-b2 <- t(G)%*%sigma_inv %*% G - (t(G)%*%sigma_inv%*% ones)^2/(t(ones)%*%sigma_inv %*% ones)
-
-stat <- b1/b2
-pval[k] <- pchisq(stat, 1)
-}
-
-hist(pval)
-
-
-
-
 
 
 
