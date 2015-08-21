@@ -132,7 +132,7 @@ sample.stat.correlation <- function(k, rho,  mu1, mu2, n, nreps)
 # 2.  If there is DE, allow p (or mu) to be different between Case/Control.
 # 3.  we set within case (or control), mu and k are the same
 
-k <- rep(0.001, 2)  ## dispersion 
+k <- rep(0.001, 0.002)  ## dispersion 
 mu1 <- 120  # group mean for case
 mu2 <- 100  # group mean for control
 n <- 100  ## total sample size (two groups)
@@ -266,6 +266,13 @@ dim.param <- dim(param)[1]                                           # the numbe
 
 store.corr <- data.frame(matrix(NA,dim.param, 3))                    # store the three correlations
 colnames(store.corr) <- c("sample", "test.stat", "true")             # give them the names
+
+rho <- seq(0.01, 0.99, by=0.01)
+param <- matrix(NA, nrow=length(rho), ncol=4)
+param[, 1] <- rho*100
+param[, 2] <- param[, 3] <- (1-rho)*100
+param[, 4] <- rho
+dim.param <- dim(param)[1]   
 
 
 for ( i in 1:dim.param)
