@@ -96,7 +96,14 @@
 
 
 
-solve.equations <- function(t.val, samp.rho, start, end, n.or.nminus1)
+#  t.val:  t value to be used in estimation
+#  samp.rho: sample correlation matrix
+#  start: starting value of optimize()
+#  end:   end value of optimize()
+#  n.or.nminus1: using biased or unbiased estimater of sigma
+
+
+solve.equations <- function(t.val, samp.rho, start=0, end=1, n.or.nminus1=n)
 {
   n <- length(t.val)                            # number of observations
   ones <- rep(1, n)                             #  create a column of 1s
@@ -174,86 +181,36 @@ solve.equations <- function(t.val, samp.rho, start, end, n.or.nminus1)
 }
 
 
+##################### Enrichment Score test ----------------------------
 
+EnrichTest <- function(t.val, samp.rho, go.term)
+{
+  answer <- solve.equations(t.val, samp.rho)                 # estimate xi, sigma and beta0
+  xi <- answer$xi
+  sigma.t <- answer$sigma2.t
+  beta0 <- answer$beta0
+  ones <- rep(1, length(t.val))
+  
+  inv.samp <- eigen(samp.rho)
+  eig.value <- inv.samp$values                              # the original eigen values
+  u <- inv.samp$vectors                                     # the original eigen vectors
+  
+  gamma <- diag(xi*eig.value +  1- xi)
+  sigma <- u%*%gamma%*%t(u)
+  sigma_inv=u%*%(diag(1/(xi*eig.value +  1- xi)))%*%t(u)    # the inverse of sigma
+  
+  p1 <- sigma.t* (t(go.term) %*% sigma_inv %*% (t.val - beta0*ones))^2  # numerator
+  p2 <- t(go.term) %*% sigma_inv %*% go.term
+  p3 <- (t(go.term) %*% sigma_inv %*% ones)^2 / (t(ones) %*% sigma_inv %*% ones) 
+  
+  test.stat <- p1/(p2- p3)                                  # the test statistic
+  
+  pval <-  1 - pchisq(test.stat, 1)
+  c(test.stat, pval)
+  return(list(beta=beta0, sigma.t= sigma.t, xi=xi
+              , statistic = test.stat, p = pval))
+}
 
-#####################  a simulation study  -----------------------------
-
-
-library(doParallel)                             # parallel computing packages
-library(foreach)
-
-cl <- makeCluster(3)                            # request 3 cores to do the simulation
-registerDoParallel(cl)                          # Register cluster
-getDoParWorkers()                               # Find out how many cores are being used
-
-system.time(
-  fti <- foreach(i = 1:2, .combine = rbind) %dopar% {
-    
-    N <- m <- 500 # number of genes
-   # n <- 20 # biological sample in each group
-    library(MASS)
-    
-    ## generate correlation matrix
-    rho <- 0.4
-    cor.struct <- matrix(rho, N, N);diag(cor.struct) <- 1
-    sigma <- 1.5*cor.struct
-    dat <- mvrnorm(1000, mu=rep(0, m), sigma)
-    
-    sigma1 <- cor(dat)
-    sigma2 <- 1.5*sigma1
-    dat <- mvrnorm(1000, mu=rep(0, m), sigma2)
-    
-    sim.sigma <- cor(dat)
-    
-    rho <- 0.5
-    n <- 500 
-    
-    # r1 <- matrix(0.5, n, n)                         # true correlation structure
-    r1 <- sim.sigma
-    diag(r1) <- 1
-    
-    xi <- 0.8                                       # true xi
-    sigma.t <- 4                                    # true sigma2.t
-    beta0 <- rep(-2, n)                              # true beta0
-    
-    SIGMA <- sigma.t * ( (1- xi)*diag(1, n)  + xi* r1) # the covariance
-    # set.seed(100)
-    library(MASS)
-    t.val <- mvrnorm(n=1, mu=beta0, SIGMA)           # generate the t values
-    
-    answer <- solve.equations(t.val, r1, 0, 1, n)
-    return(unlist(answer))
-  }
-)
-
-
-
-
-
-# ## convergence == 0 does not mean it's converged. 
-# fy <- function(y){ (y^2- 3*y + 2)^2}
-# optim(0.6, fy,  method="Brent", lower=0, upper=0.8)
-# optimize(fy, c(0, 1))
-
-BetaSigmaXi <- read.table("BetaSigmaXi3.txt", header=T)
-#View(BetaSigmaXi)
-
-library(ggplot2)
-library(reshape2)
-library(dplyr)
-
-BetaSigmaXi2 <- melt(BetaSigmaXi)
-ggplot(BetaSigmaXi2, aes(x = value)) +
-  geom_histogram() +
-  facet_wrap(~variable, scale= "free")
-
-BetaSigmaXi2 %>%
-  group_by(variable)  %>%
-  summarize(mean(value), sd(value))
-
-sigma <- seq(0.1, 10, by = 0.1)
-plot(sigma, BetaSigmaXi$sigma2.t, pch=20, cex=0.5)
-abline(0 ,1)
 
 
 
