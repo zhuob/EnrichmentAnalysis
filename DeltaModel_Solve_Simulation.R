@@ -357,5 +357,11 @@ hist(p_mat_uncorrelated_estimate[, 1], main="our test")
 hist(p_mat_uncorrelated_estimate[, 2], main="linear regression")
 plot(p_mat_uncorrelated_estimate[, 2],p_mat_uncorrelated_estimate[, 1], cex=0.5, pch=20, xlab="lm", ylab="enrich_test")
 ## if t_vals are independent, and we estiamte the sample correlation, the p values look OK
+  
+# if there is DE, our test is more conservative  
+p_mat_de <- read.table("/Users/Bin/Google Drive/Study/Thesis/Correlation/Data/Enrichment_testStatistic_DE_0830.txt")
+hist(p_mat_de[, 1], main="our test")
+hist(p_mat_de[, 2], main="linear regression")
+
 
 
