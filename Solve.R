@@ -19,7 +19,7 @@
 
 
 
-################  Original estimating equations ---------------------------------
+################  Original estimating equations (USE THIS ONE)---------------------------------
 solve.equations <- function(t.val, samp.rho)
 {
   n <- length(t.val)                            # number of observations
@@ -106,7 +106,7 @@ solve.equations <- function(t.val, samp.rho)
 
 
 
-solve.equations <- function(t.val, samp.rho, start=0, end=1, n.or.nminus1=n)
+solve2.equations <- function(t.val, samp.rho, start=0, end=1, n.or.nminus1=n)
 {
   n <- length(t.val)                            # number of observations
   ones <- rep(1, n)                             #  create a column of 1s
@@ -202,7 +202,8 @@ EnrichTest <- function(t.val, samp.rho, go.term)
   sigma <- u%*%gamma%*%t(u)
   sigma_inv=u%*%(diag(1/(xi*eig.value +  1- xi)))%*%t(u)    # the inverse of sigma
   
-  p1 <- sigma.t* (t(go.term) %*% sigma_inv %*% (t.val - beta0*ones))^2  # numerator
+  p1 <- 1/sigma.t* (t(go.term) %*% sigma_inv %*% (t.val - beta0*ones))^2  # numerator
+  ##  the derivation shows that we should put sigma.t in the denominator!
   p2 <- t(go.term) %*% sigma_inv %*% go.term
   p3 <- (t(go.term) %*% sigma_inv %*% ones)^2 / (t(ones) %*% sigma_inv %*% ones) 
   
