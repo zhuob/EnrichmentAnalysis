@@ -1,7 +1,6 @@
 #################  This version is modified by Bin Dec 18, 2015 #####
 #########  Modified are noted by #@@
 
- setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/GSEASoftware/")
 
 GSEA.SingleSet <- function(
 data, 
@@ -218,6 +217,10 @@ use.fast.enrichment.routine = T          # Use faster routine to compute enrichm
     }
   }
   
+  
+
+  
+  
   # Compute 3 types of p-values
   
   # Find nominal p-values       
@@ -273,15 +276,9 @@ use.fast.enrichment.routine = T          # Use faster routine to compute enrichm
     return(abs(S))
   }
   
-  # KS.mean.table <- vector(length=5000, mode="numeric")
-  
-  # for (i in 1:5000) {
-  #    KS.mean.table[i] <- KS.mean(i)
-  # }
-  
-  # KS.size <-  vector(length=Ng, mode="numeric")
-  
+
   # Rescaling normalization for each gene set null
+  
   
   print("Computing rescaling normalization for each gene set null...")
   
@@ -299,12 +296,7 @@ use.fast.enrichment.routine = T          # Use faster routine to compute enrichm
       pos.m <- mean(pos.phi)
       neg.m <- mean(abs(neg.phi))
       
-      #         if (Obs.ES[i] >= 0) {
-      #            KS.size[i] <- which.min(abs(KS.mean.table - pos.m))
-      #         } else {
-      #            KS.size[i] <- which.min(abs(KS.mean.table - neg.m))
-      #         }
-      
+    
       pos.phi <- pos.phi/pos.m
       neg.phi <- neg.phi/neg.m
       for (j in 1:nperm) {
@@ -339,7 +331,10 @@ use.fast.enrichment.routine = T          # Use faster routine to compute enrichm
     }
   }
   
-  obj <- list(p.vals = p.vals, phi = phi, obs.phi = obs.phi)
+
+  
+  
+  obj <- list(p.vals = p.vals[1], phi = phi, obs.phi = obs.phi, Obs.ES = Obs.ES)
   
   
   return(obj)
@@ -1320,7 +1315,7 @@ write(paste("replace =", replace, sep=" "), file=filename, append=T)
   rows <- length(A[,1])
   
  #@
-  write.table(dataset, "Gender.txt")
+ #@ write.table(dataset, "Gender.txt")
   
   
 # preproc.type control the type of pre-processing: threshold, variation filter, normalization
@@ -1349,8 +1344,8 @@ write(paste("replace =", replace, sep=" "), file=filename, append=T)
   class.phen <- CLS$phen
 
   #@
-  write.table(class.labels, "class.labels.txt", row.names = F, col.names = F)
-  write.table(class.phen, "class.phen.txt", row.names = F, col.names = F)
+  #@ write.table(class.labels, "class.labels.txt", row.names = F, col.names = F)
+  #@ write.table(class.phen, "class.phen.txt", row.names = F, col.names = F)
   
   if (reverse.sign == T) {
      phen1 <- class.phen[2]
@@ -1379,7 +1374,7 @@ write(paste("replace =", replace, sep=" "), file=filename, append=T)
  }
 
  #@
- write.table(temp[1:2], "gs.db.txt", row.names = F, col.names = F)
+ #@ write.table(temp[1:2], "gs.db.txt", row.names = F, col.names = F)
  
  
       max.Ng <- length(temp)
@@ -1423,7 +1418,7 @@ write(paste("replace =", replace, sep=" "), file=filename, append=T)
   Ns <- length(A[1,])
 
   #@
-  Ng <- 3
+  #@ Ng <- 3
   
   print(c("Number of genes:", N))
   print(c("Number of Gene Sets:", Ng))
