@@ -1,77 +1,14 @@
-#'   run poisson regression with random effect , and keep track of warnings 
-#'   or errors of regression for a single gene
-#' 
-#' 
-#' @title Simulate normally distributed expression data 
-#'
-#' @param size  number of biological samples
-#' @param N     number of genes
-#' @param prob  DE probability
-#' @param rho   correlation coefficient for exchangeable covariance
-#' @return a list
-#' \item{data} simulated data
-#' \item{mu1} group mean from which the treatment 1 is simulated.
-#' \item{mu2} group mean from which the treatment 2 is simulated
-#'
-
 
 library(MASS)
 library(dplyr)
 
 
-# a function to calculate group mean
-
-group.mean <- function(data, group)
-{
-  
-  	id1 <- which(group == 1)
-  	nrep <- length(id1)
-  	mean1 <- apply(data[, id1], 1, mean)
-  	mean1 <- matrix(rep(mean1, nrep), ncol=nrep, byrow=F) 
-  	mean2 <- apply(data[, -id1], 1, mean)
-  	mean2 <- matrix(rep(mean2, nrep), ncol=nrep, byrow=F) 
-  
-  	data.mean <- data.frame(matrix(NA, nrow(data), ncol(data)))
-  	data.mean[, id1] <- mean1
-  	data.mean[, -id1] <- mean2
-  	colnames(data.mean) <- colnames(data)
-  	rownames(data.mean) <- rownames(data)
-  	data.mean
-}
-
-
-
-## standardize the expression data, to make it have variance 1 in each of treatmeent/control group
-standardize.microarray <- function(data, trt){
-
-	group1 <- trt == 1
-	group2 <- trt == 0
-  
-	std_by_row <- function(row_dat){
-		x1 <- row_dat[group1]
-		x2 <- row_dat[group2]
-		x <- cbind(x1, x2)
-    		x_center <- scale(x, center=T, scale = F)
-    		vas <- apply(x_center, 2, sd)
-    		x_new <- sweep(x, 2, vas, "/")
-    		return(x_new)
- 		}
-  	new_data <- t(apply(data, 1, std_by_row)) 
-  	return(new_data)
-  
-}
-
-
-
-
-
+CovSimu <- function(nu, tau, corMat){
 # convert correlation matrix to covariance matrix
 # nu: degree of freedom for inversed-chi-square distribution
 # tau: scaling parameter for inversed-chi-square distribution
 # see https://en.wikipedia.org/wiki/Scaled_inverse_chi-squared_distribution
 
-CovSimu <- function(nu, tau, corMat){
-	
 	n <- dim(corMat)[1]
   	x1 <- 1/rchisq(n, nu)                                   # inverse chi square distribution
   	s2 <- tau^2*nu*x1                                       # scaled inverse chi-square distribution
@@ -83,14 +20,14 @@ CovSimu <- function(nu, tau, corMat){
 }
 
 
+
+SimuNormal <- function(n, mu, sigma, method = "chol"){
 #### generate correlated multivariate normal data, could use package "mvtnorm"  or "MASS"
 # method: "chol" (recommended for high dimensional, much faster)
 #         "eigen"  or "svd",     or "MAS" [method from MASS]
 #     mu: mean vectors
 #  sigma: covariance structure
 #      n: number of samples
-
-SimuNormal <- function(n, mu, sigma, method = "chol"){
   
 	if (method == "MAS"){
     		data <- mvrnorm(n, mu, sigma)
@@ -106,14 +43,13 @@ SimuNormal <- function(n, mu, sigma, method = "chol"){
 
 
 
+go.term <- function(num_gene, prop, delta){
 # num_gene:  a vector of length 2, number of genes to be simulated and number of go_term genes
 # prop :  a vector of length 2, proportion of DE genes within go term and outside go_term
 # delta: magnitidue of DE, length = num_gene[1]
 
 
 ## generate go term and non-go term 
-go.term <- function(num_gene, prop, delta){
-  
 	n_gene <- num_gene[1]; go_gene <- num_gene[2]
 	go_prop <- prop[1]; no_go_prop <- prop[2]
     
@@ -138,13 +74,11 @@ go.term <- function(num_gene, prop, delta){
 
 
 ################ prepare simulation --------------
-## write a function to generate correlation matrix, go_term, and size of DE
-
-
-## rho, vector for case e & f to work
-# cor(go_term) = rho[1], cor(no_go_term) = rho[2], cor(go_term, no_go_term) = rho[3]
 
 prepare.simulation <- function(num_gene, prop, delta, case, rho){
+## write a function to generate correlation matrix, go_term, and size of DE
+## rho, vector for case e & f to work
+# cor(go_term) = rho[1], cor(no_go_term) = rho[2], cor(go_term, no_go_term) = rho[3]
   
   
     rho1 <- rho[1]; rho2 <- rho[2]; rho3 <- rho[3]
@@ -227,16 +161,15 @@ prepare.simulation <- function(num_gene, prop, delta, case, rho){
 
 
 
+
+
+real.go.term <- function(nth_largest, num_gene, prop, delta){
 ## select the n-th largest go term gene
 # this function uses the residual matrix and go_term_database as input, and 
 # returns the correlation matrix and the go term OF Desired number of genes
 # prop :  a vector of length 2, proportion of DE genes within go term and outside go_term
 # delta: magnitidue of DE, length = num_gene[1]
-
-
-
-real.go.term <- function(nth_largest, num_gene, prop, delta){
-    
+  
     
     	#arab_res <- readRDS("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/arab_residual.rds")
     	arab_res <- readRDS("/home/stats/zhuob/data/computing/arab_residual.rds")
@@ -310,15 +243,10 @@ real.go.term <- function(nth_largest, num_gene, prop, delta){
 
 
 
-
-
-
-# obj: object returned by prepare.simulation()  or  real.go.term()
-#  size: number of samples to be simulated
-# case: which covariance structure
-
-
 simulate.microarry <- function(size, obj){
+  # obj: object returned by prepare.simulation()  or  real.go.term()
+  #  size: number of samples to be simulated
+  # case: which covariance structure
   
   
 	go_term <- obj$go_term
@@ -381,6 +309,8 @@ get.residual.matrix <- function(set){
 
 	  return(residua)
 }
+
+
 
 
 
