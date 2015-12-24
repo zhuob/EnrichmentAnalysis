@@ -163,11 +163,72 @@ GSEA.Analyze.Sets(
 
 
 
+############  explore sigPathway   #############
+library(sigPathway)
+
+data(MuscleExample)
+## Prepare the pathways to analyze
+probeID <- rownames(tab)
+gsList <- selectGeneSets(G, probeID, 100, 500)
+nsim <- 1000
+ngroups <- 2
+verbose <- TRUE
+weightType <- "constant"
+methodName <- "NGSk"
+npath <- 25
+allpathways <- FALSE
+annotpkg <- "hgu133a.db"
+statV <- calcTStatFast(tab, phenotype, ngroups)$tstat
+res.NGSk <- calculate.NGSk(statV, gsList, nsim, verbose)
+## Summarize top pathways from NGSk
+res.pathways.NGSk <-
+  rankPathways.NGSk(res.NGSk, G, gsList, methodName, npath=npath)
+print(res.pathways.NGSk)
+## Get more information about the probe sets' means and other statistics
+## for the top pathway in res.pathways.NGSk
+gpsList <-
+  getPathwayStatistics.NGSk(statV, probeID, G, res.pathways.NGSk$IndexG,
+                            FALSE, annotpkg)
 
 
 
+########################
+# Well, it seems there's no need to check sigPathway at all: mentioned in Smyth's 2012
+# paper, it uses the ordinary t-statistic, and permutes gene lables, which is similar to 
+# geneSetTest() in limma package. 
+# And I read the method part of the original paper sigPathway. 
 
 
+
+microarray <- dat$data
+trt <- dat$trt
+go_term <- dat$go_term
+
+library(sigPathway)
+
+
+sigPathway.SingleSet <- function(microarray, trt, go_term, nsim = 1000, ngroups = 2, methodName = "NGSk"){
+  ## should use NTk-like statistics becaues we are answering Q1 of that paper
+  
+  phenotype <- paste("PH", trt, sep="_")
+  probID <- rownames(microarray)
+  ngroups <- 2
+  gsList <- list()
+  gsList$nprobes <- c(100, 50)
+  ids1 <- which(go_term == 1)
+  ids2 <- sample(1:500, 50)
+  gsList$indexV <- c(ids1, ids2)
+  gsList$indGused <- c(1, 2)
+  
+  
+  statV <- calcTStatFast(microarray, phenotype, ngroups)$tstat
+  res.NGSk <- calculate.NGSk(statV, gsList, nsim, verbose=T)
+  
+  
+}
+  
+  
+  
 
 
 
