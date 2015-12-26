@@ -1,0 +1,18 @@
+\begin{thebibliography}{}
+
+\bibitem[Subramanian et~al., 2005]{subramanian2005gene}
+Subramanian, A., Tamayo, P., Mootha, V.~K., Mukherjee, S., Ebert, B.~L.,
+  Gillette, M.~A., Paulovich, A., Pomeroy, S.~L., Golub, T.~R., Lander, E.~S.,
+  et~al. (2005).
+\newblock Gene set enrichment analysis: a knowledge-based approach for
+  interpreting genome-wide expression profiles.
+\newblock {\em Proceedings of the National Academy of Sciences of the United
+  States of America}, 102(43):15545--15550.
+
+\bibitem[Wu and Smyth, 2012]{wu2012camera}
+Wu, D. and Smyth, G.~K. (2012).
+\newblock Camera: a competitive gene set test accounting for inter-gene
+  correlation.
+\newblock {\em Nucleic acids research}, 40(17):e133--e133.
+
+\end{thebibliography}

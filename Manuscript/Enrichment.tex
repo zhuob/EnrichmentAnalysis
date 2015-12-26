@@ -39,10 +39,70 @@ our main point
 \section*{Abstract}
 To be filled
 
-\section{Introduction}\label{section:Introduction}
+\section{Introduction}\label{section:introduction}
 Let's get started.
-\newpage
 
+
+
+\section{Methods}\label{section:methods}
+\textbf{Overview of our method (denoted as OurMethod, will be easily replaced when we have a better new name)} \\
+Different from CAMERA\cite{wu2012camera} or GSEA \citep{subramanian2005gene}
+
+Our method is based on case-control
+
+\subsection{The general assumptions for expression data}
+In a treatment-control gene expression experiment, we denote $Y_{ijk}$ as a random variable for the expression level of gene $i$ from observational unit $j$ in treatment group $k$, with $i$ taking the values $1, \ldots, m$ (the number of genes), $j$ taking the values $1, \ldots, n_k$ (the total number of biological samples), and $k$ being either 1 for control or 2 for treatment. Correspondingly, $Y^{\ast}_{ijk}$ represents the standardized expression levels (described in REF???) for gene $i$ of sample $j$, with $Y^{\ast}_{ijk}\sim N(0, 1)$ (??? Normal assumption necessary here???)  if sample $j$ comes from the control group, and $Y^{\ast}_{ijk}\sim N(\Delta_i, 1)$ if it comes from the treatment group. 
+Here, $\Delta_i$ is an \textit{internal DE effect}: compared to the control group,  gene $i$ is not DE if $\Delta_i=0$, up-regulated if $\Delta_i >0 $ and down-regulated if $\Delta_i<0$. By "internal" we mean that every gene has a tendency to be DE with a random DE size $\Delta$, for example, for those stably-expressed genes $P(\Delta = 0) = 1$.  We assume that the DE effects are mutually independent for all genes, and that whether gene $i$ is DE or not is determined by a DE "trigger" --- the treatment applied to gene $i$ in the experiment. Let $\bm Z = (Z_1, \ldots, Z_m)$ be a vector of DE indicators, where for gene $i$ $Z_i=1$ if there is DE and $Z_i = 0$ otherwise. Furthermore, we let $\delta_i \stackrel{i.i.d}{\sim} D(\delta)$ be the DE effect size and $E(\delta_i) = \mu_{\delta}$ and $\text{Var}(\delta_i) = \sigma^2_{\delta}$. Therefore, the a hierarchical model is imposed on the DE effect $\Delta_i$
+\begin{equation}\label{eq:DEeffect}
+ \Delta_i = Z_i\delta_i,
+\end{equation}
+\begin{equation}\label{eq:DEindicator}
+Z_i \sim \text{Binom}(1, p_i), ~~~~\delta_i \sim D(\delta)
+\end{equation}
+
+
+
+
+We also assume that, conditioning on the DE effects, expression levels for different samples are independent, but expression levels for different genes of the same sample may be correlated. Denote $C_{m \times m}$ as the gene correlation matrix, with entry $\rho_{i_1, i_2}$ being the correlation between genes $i_1$ and $i_2$. Note that the between-gene correlation $\rho_{i_1, i_2}$ is a constant, regardless of whether the sample is from the treatment or the control group. In this paper, the between-gene correlations are estimated by the residual sample correlation after the treatment effects are nullified, and treated as known in the enrichment test procedure.
+
+\subsection{Hierarchical model for DE effect}
+
+
+\section{Results}\label{section:results}
+
+\section{Conclusion}\label{section:conclusion}
+
+\section{AcknowledgeMents}\label{section:acknowledgement}
+
+\section{Appendix}\label{section:appendix}
+Let $T_i=\bar{Y}_{i,2}-\bar{Y}_{i,1}$ be the difference in mean expression levels between the treatment group and the control group. We have 
+\[E(T_i) = E(\bar{Y}_{i,2})-E(\bar{Y}_{i,1}) = E(\Delta_i) = E(Z_i\delta_i) = p_i\mu_{\delta}\]
+The covariance between two genes $i_1$ and $i_2$ is given by, 
+\begin{equation}
+\begin{aligned}
+\text{Cov}(T_{i_1}, T_{i_2}) & = E\left[\text{Cov}(T_{i_1}, T_{i_2}|\Delta_{i_1}, \Delta_{i_2}) \right]  + \text{Cov}\left[E(T_{i_1}|\Delta_{i_1}), E(T_{i_2}|\Delta_{i_2})\right] \\
+& = E\left(\frac{1}{n_1}\rho + \frac{1}{n_2}\rho\right) + \text{Cov}(\Delta_{i_1}, \Delta_{i_2})\\
+& = \left(\frac{1}{n_1} + \frac{1}{n_2}\right)\rho_{i_1,i_2}
+\end{aligned}
+\end{equation}
+For gene $i$, the variance $\text{Var}(T_i) = \text{Var}(\bar{Y}_{i, 1}) + \text{Var}(\bar{Y}_{i, 2})$, with
+\[\text{Var}(\bar{Y}_{i, 1}) = \frac{1}{n_1}\] 
+\begin{equation}
+\begin{aligned}
+\text{Var}(\bar{Y}_{i, 2}) & = \frac{1}{n_2^2}\left[\sum_{j=1}^{n_2}\text{Var}(Y_{ij2}) + 2\sum_{1\leq j_1<j_2 \leq n_2} \text{Cov}(Y_{ij_12}, Y_{ij_22})\right] \\
+& = \frac{1}{n_2}\text{Var}(Y_{ij2}) + \frac{n_2-1}{n_2} \text{Cov}(Y_{ij_12}, Y_{ij_22})\\
+& = \frac{1}{n_2}\left[E\left(\text{Var}(Y_{ij2}|\Delta_i)\right) + \text{Var}\left(E(Y_{ij2}|\Delta_i)\right)\right] \\ \text{~~~} &+\frac{n_2-1}{n_2}\left[E\left(\text{Cov}(Y_{ij_12}, Y_{ij_22}|\Delta_i)\right) + \text{Cov}\left(E(Y_{ij_12}|\Delta_i), E(Y_{ij_22}|\Delta_i)\right)\right] \\
+& = \frac{1}{n_2} + \text{Var}(\Delta_i)
+\end{aligned}
+\end{equation}
+Therefore $\text{Var}(T_i)  = \frac{1}{n_1} + \frac{1}{n_2} + \text{Var}(\Delta_i)$, and it follows 
+\begin{equation}\label{eq:tvar}
+This is something
+\end{equation}
+
+
+
+\newpage
 
 \bibliographystyle{apalike}
 \bibliography{mybib}
