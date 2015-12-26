@@ -5,6 +5,38 @@ source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Linu
 source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/LinuxCode/MOMEnrichmentTest.R")
 
 
+
+case <- "a0"
+size <- 50           # number of samples to be simulated
+rho <- c(0.1, 0.05, -0.05)   # correlation for case a, e, f
+num_gene <- c(500, 100)
+prop <- c(0.0, 0.0)
+n_gene <- num_gene[1]
+delta <- rnorm(n_gene, 2 , 1)
+
+obj <- prepare.simulation(num_gene, prop, delta, case = case, rho)
+dat <- simulate.microarry(size, obj)
+
+#dat_sd <- standardize.microarray(dat$data, dat$trt)
+#dat$data <- dat_sd
+
+ data_exp <- dat$data
+ rownames(data_exp) <- paste("Gene", 1:nrow(data_exp), sep="_")
+class.label <- -1*(dat$trt-1)
+gene.label <- rownames(data_exp)
+
+ 
+ GSEA <- GSEA.GeneRanking(dat$data, class.labels = class.label, 
+                          gene.labels = gene.label, nperm = 1000)
+# result <- GSEA.SingleSet(dat$data, dat$trt, dat$go_term, nperm=1000)
+# result$p.vals 
+# result$Obs.ES
+# quantile(result$phi)
+compare_test(dat)
+
+
+####### below is a real data set from GSEA paper, aiming to test the GSEA.SingleSet()
+
 data <- read.table("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/GSEASoftware/Gender.txt")
 sample.names <- names(data)
 
@@ -75,33 +107,6 @@ pvalue <- sum(neg.phi < result$Obs.ES)/length(neg.phi)
 pvalue
 result$p.vals
 
-case <- "a"
-size <- 50           # number of samples to be simulated
-rho <- c(0.1, 0.05, -0.05)   # correlation for case a, e, f
-num_gene <- c(500, 100)
-prop <- c(0.2, 0.2)
-n_gene <- num_gene[1]
-delta <- rnorm(n_gene, 2 , 1)
-
-obj <- prepare.simulation(num_gene, prop, delta, case = case, rho)
-dat <- simulate.microarry(size, obj)
-
-dat_sd <- standardize.microarray(dat$data, dat$trt)
-dat$data <- dat_sd
-
-data_exp <- dat$data
-rownames(data_exp) <- paste("Gene", 1:nrow(data_exp), sep="_")
-class.label <- -1*(dat$trt-1)
-gene.label <- rownames(data_exp)
-
-
-GSEA <- GSEA.GeneRanking(dat$data, class.labels = class.label, 
-                              gene.labels = gene.label, nperm = 10)
-result <- GSEA.SingleSet(dat$data, dat$trt, dat$go_term, nperm=1000)
-result$p.vals 
-result$Obs.ES
-quantile(result$phi)
-compare_test(dat)
 
 
 

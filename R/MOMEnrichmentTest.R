@@ -159,7 +159,10 @@ compare_test <- function(dat){
   tes3 <- camera(microarray, index1,  design)$PValue                                    # camera proedure
   tes4 <- camera(microarray, index1,  design, use.ranks= T)$PValue                      # camera rank 
   
-  return(c(pval1, pval2, tes1, tes2, tes3, tes4))
+  tes5 <- GSEA.SingleSet(dat$data, dat$trt, dat$go_term, nperm=1000)$p.vals
+  
+  
+  return(c(pval1, pval2, tes1, tes2, tes3, tes4, tes5))
   
 }
 
