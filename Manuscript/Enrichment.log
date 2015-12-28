@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  27 DEC 2015 23:38
-=======
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  27 DEC 2015 23:33
->>>>>>> 578c4312ba07f610240fd9f064edb4477225be2d
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  27 DEC 2015 23:45
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -653,23 +649,9 @@ LaTeX Info: Redefining \nameref on input line 28.
 
 LaTeX Warning: No \author given.
 
-<<<<<<< HEAD
 [2] [3] [4] (./Enrichment.bbl)
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 186.
  [5]
-=======
-[2]
-
-Package natbib Warning: Citation `efron2007correlation' on page 3 undefined on 
-input line 108.
-
-[3] [4] (./Enrichment.bbl)
-
-Package natbib Warning: There were undefined citations.
-
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 186.
-[5]
->>>>>>> 578c4312ba07f610240fd9f064edb4477225be2d
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 186.
  (./Enrichment.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 186.
@@ -700,11 +682,7 @@ exlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texl
 ive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texli
 ve/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive
 /2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb>
-<<<<<<< HEAD
 Output written on Enrichment.pdf (5 pages, 175398 bytes).
-=======
-Output written on Enrichment.pdf (5 pages, 175155 bytes).
->>>>>>> 578c4312ba07f610240fd9f064edb4477225be2d
 PDF statistics:
  168 PDF objects out of 1000 (max. 8388607)
  145 compressed objects within 2 object streams
