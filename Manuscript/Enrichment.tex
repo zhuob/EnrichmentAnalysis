@@ -28,7 +28,12 @@
 \begin{document}
 	our main point
 	\begin{enumerate}
-		\item section 1:  introduction begins here. I'm done with it today!
+		\item section 1:  introduction begins here (suggestions: try writting your introductions last).
+		 \begin{enumerate}
+		 	\item what is my topic (question)?
+		 	\item why is it important?
+		 	\item how will I plan to proceed with my
+		 \end{enumerate}
 		\item previous comparative gene set enrichment analysis does not take....
 		\item we propose a method that allows DE within the test set as well as the background gene set.
 	\end{enumerate}
@@ -45,15 +50,15 @@
 	
 	
 	
-	\section{Methods}\label{section:methods}
+	\section{Materials and Methods}\label{section:methods}
 	\textbf{Overview of our method (denoted as OurMethod, will be easily replaced when we have a better new name)} \\
 	Different from CAMERA\cite{wu2012camera} or GSEA \citep{subramanian2005gene}
 	
 	Our method is based on case-control
 	
-	\subsection{The general assumptions for expression data}
+	\subsection{The general assumptions for expression data}\label{subsection:assumption}
 
-	In a treatment-control gene expression experiment, we denote $Y_{ijk}$ as a random variable for the expression level of gene $i$ from observational unit $j$ in treatment group $k$, with $i$ taking the values $1, \ldots, m$ (the number of genes), $j$ taking the values $1, \ldots, n_k$ (the total number of biological samples), and $k$ being either 1 for control or 2 for treatment. Correspondingly, $Y^{\ast}_{ijk}$ represents the standardized expression levels (described in REF???) for gene $i$ of sample $j$, with $Y^{\ast}_{ijk}\sim N(0, 1)$ (??? Normal assumption necessary here???)  if sample $j$ comes from the control group, and $Y^{\ast}_{ijk}\sim N(\Delta_i, 1)$ if it comes from the treatment group. Here, $\Delta_i$ is an \textit{DE effect}: compared to the control group,  gene $i$ is not DE if $\Delta_i=0$, up-regulated if $\Delta_i >0 $ and down-regulated if $\Delta_i<0$.
+	In a treatment-control gene expression experiment, we denote $Y_{ijk}$ as a random variable for the expression level of gene $i$ from observational unit $j$ in treatment group $k$, with $i$ taking the values $1, \ldots, m$ (the number of genes), $j$ taking the values $1, \ldots, n_k$ (the total number of biological samples), and $k$ being either 1 for control or 2 for treatment. Correspondingly, $Y^{\ast}_{ijk}$ represents the standardized expression levels (described in REF???) for gene $i$ of sample $j$, with $Y^{\ast}_{ijk}\sim N(0, 1)$ (??? Normal assumption necessary here???)  if sample $j$ comes from the control group, and $Y^{\ast}_{ijk}\sim N(\Delta_i, 1)$ if it comes from the treatment group. Here, $\Delta_i$ is a \textit{DE effect}: compared to the control group,  gene $i$ is not DE if $\Delta_i=0$, up-regulated if $\Delta_i >0 $ and down-regulated if $\Delta_i<0$.
 	% By "internal" we mean that every gene has a tendency to be DE with a random DE size $\Delta$, for example, for those stably-expressed genes $P(\Delta = 0) = 1$. 
 	In a gene expression experiment, the DE effect $\Delta_i$ consists of two parts: 1) the treatment which determines whether a gene is DE or not; and 2) the strength when the gene is DE. 
 	%We assume that the DE effects are mutually independent for all genes, and that whether gene $i$ is DE or not is determined by a DE "trigger" --- the treatment applied to gene $i$ in the experiment. 
@@ -77,14 +82,15 @@
 	
 	We assume that conditioning on the DE effects, expression levels for different samples are independent, but expression levels for different genes of the same sample may be correlated. Denote $C_{m \times m}$ as the gene correlation matrix, with entry $\rho_{i_1, i_2}$ being the correlation between genes $i_1$ and $i_2$. Note that the between-gene correlation $\rho_{i_1, i_2}$ is a constant, regardless of whether the sample is from the treatment or from the control group. 
 	
-	\subsection{Gene set enrichment test}
-	many method propose using a test statisitic as the measure of DE effec, and test the set against the backgroud genes. 
+	\subsection{Gene set enrichment test}\label{subsection:enrichmenttest}
+	many method propose using a test statisitic as the measure of DE effect, and test the set against the backgroud genes. 
 	
-	Let $\bm x = (x_1, \ldots, x_m)$ be a indicator vector of whether or not gene $i$ belongs to the GO term being tested, and $I_g = \{i: x_i =1\}$ be the set of GO term genes and $I_b = \{i: x_i =0\}$ the set of \textit{background genes}. We assume that the DE probability is $p_g$ for the GO term genes and $p_b$ for the background genes. For gene $i$, denote $U_i=\bar{Y}_{i.2}-\bar{Y}_{i.1}$ as the difference in mean expression levels between the treatment group and the control group, where $\bar{Y}_{i.k}= \sum_{j=1}^{n_k}Y_{ijk}/n_k$. It follows from equation \ref{eq:deltaMeanVar} that $\bm U = (U_1, \ldots, U_m)$ has mean
+	We denote by $I_t$ and $I_b$ the gene set being tested and background set (i.e., the genes not in the test set).  
+	Let $\bm x = (x_1, \ldots, x_m)$ be a indicator vector of whether or not gene $i$ belongs to the test set and thus $I_t = \{i: x_i =1\}$ and $I_b = \{i: x_i =0\}$. We assume that the DE probability is $p_t$ for genes in the test set and $p_b$ for genes in the background set. For gene $i$, denote $U_i=\bar{Y}_{i.2}-\bar{Y}_{i.1}$ as the difference in mean expression levels between the treatment and the control group, where $\bar{Y}_{i.k}= \sum_{j=1}^{n_k}Y_{ijk}/n_k$. It follows from equation (\ref{eq:deltaMeanVar}) that $\bm U = (U_1, \ldots, U_m)$ has mean
 	\begin{equation}\label{eq:expectation}
 		E(U_i) = \left \{
 		\begin{aligned}
-			&p_g\mu_{\delta}, && \text{if}\ i \in I_g \\
+			&p_t\mu_{\delta}, && \text{if}\ i \in I_t \\
 			&p_b\mu_{\delta}, && \text{if}\ i \in I_b
 		\end{aligned} \right.
 	\end{equation} 
@@ -92,17 +98,24 @@
 	\begin{equation}\label{eq:variance}
 		\text{Var}(\bm U) = \bm D  + \sigma_2^2\bm C
 	\end{equation}
-	where $\bm D = \text{diag}(d_1, \ldots, d_m)$ with $d_i = p_g\sigma_{\delta}^2 + p_g(1-p_g)\mu_{\delta}^2$ if $i\in I_g$ and $d_i =p_b\sigma_{\delta}^2 + p_b(1-p_b)\mu_{\delta}^2$ if $i\in I_b$,  $\sigma_2^2 =\frac{1}{n_1} + \frac{1}{n_2} $ and $\bm C$ is the between-gene correlation matrix . 
+	where $\bm D = \text{diag}(d_1, \ldots, d_m)$ with $d_i = p_t\sigma_{\delta}^2 + p_t(1-p_t)\mu_{\delta}^2$ if $i\in I_t$ and $d_i =p_b\sigma_{\delta}^2 + p_b(1-p_b)\mu_{\delta}^2$ if $i\in I_b$,  $\sigma_2^2 =\frac{1}{n_1} + \frac{1}{n_2} $ and $\bm C$ is the between-gene correlation matrix . 
 	
-	(\textbf{The test}) The GO term status affects both the mean vector in equation \ref{eq:expectation} and the covariance in equation \ref{eq:variance}. Under this framework, the GO term is not enriched only if the mean and variance of DE effects in the GO term genes are the same as those in the background genes. Therefore, the hypothesis for enrichment testing can be statistically formulated as
+	(\textbf{The test}) The DE probability affects both the mean vector in equation (\ref{eq:expectation}) and the covariance in equation (\ref{eq:variance}). Under this framework, the test set is not enriched only if the probability of DE in the test set is the same as that in the background set. Therefore, the hypothesis for enrichment testing can be statistically formulated as
 	\begin{equation}\label{eq:null}
-		H_0\text{: }  \mu_g = \mu_b  \text{ and } \sigma_g^2 = \sigma_b^2 \stackrel{\text{def}}{=}\sigma_1^2  \text{ Versus } H_1 \text{: at least one equation does not hold}
+		H_0\text{: }  p_t = p_b \stackrel{\text{def}}{=}p_0  \text{ Versus } H_1 \text{: } p_t \neq p_b
 	\end{equation}
-	We can combine equation \ref{eq:expectation} and \ref{eq:variance} into the following linear model
+	We can combine equations (\ref{eq:expectation}) and (\ref{eq:variance}) into the following linear model
 	\begin{equation}\label{eq:linearModel}
 		\bm U = \beta_0\bm 1_m + \beta_1\bm x + \bm \epsilon, \text{~~Cov}(\bm \epsilon) =  \bm D  + \sigma_2^2\bm C
 	\end{equation} 
-	with $ \beta_0 = \mu_b , ~\beta_1 = \mu_g-\mu_b$ and $\bm 1_m$ is a vector of ones. Under the null in \ref{eq:null}, we have $E(\bm U) = \beta_0\bm 1_m$ and $\text{Var}(\bm U) = \sigma^2_1\bm I_m + \sigma_2^2 \bm C$ where $\bm I_m$ is an identity matrix.
+	with $ \beta_0 = p_b\mu_{\delta}, ~\beta_1 = (p_t-p_b)\mu_{\delta}$ and $\bm 1_m$ being a vector of ones. Now the hypothesis testing problem in (\ref{eq:null}) becomes 
+	\begin{equation}\label{eq:linearHypothesis}
+		H_0\text{: }  \beta_1 = 0   \text{ Versus } H_1 \text{: } \beta_1 \neq 0.
+	\end{equation}
+
+	
+	
+	Under the null of (\ref{eq:linearHypothesis}), we have $E(\bm U) = \beta_0\bm 1_m$ and $\text{Var}(\bm U) = \sigma^2_1\bm I_m + \sigma_2^2 \bm C$ where $\bm I_m$ is an identity matrix and $\sigma_1^2 = p_0\sigma^2_{\delta}+ p_0(1-p_0)\mu^2_{\delta}$.
 	
 	(\textbf{Estimating the parameters}) In practice, we need to estimate $\beta_0$, $\sigma_1^2$ and $\bm C$ in \ref{eq:linearModel} for enrichment test.
 	Our strategy is to use \textit{quasi-likelihood}, which requires only the mean and the variance of $\bm U$.  The between-gene correlation matrix $\bm C$ is estimated by the residual sample correlations after the treatment differences have been nullified (the same as is done in \cite{efron2007correlation} or \cite{wu2012camera}), and is treated as known in estimating $\beta_0$ and $\sigma_1^2$. 
@@ -117,17 +130,22 @@
 			(\bm U - \beta_0\bm 1_m)^T \bm \Sigma^{-1} \hat{\bm C} (\bm U - \beta_0\bm 1_m) &= \text{trace}(\bm \Sigma^{-1}\hat{\bm C})
 		\end{aligned}
 	\end{equation}
-	.... something to catch up.....\\
-	The enrichment test statistic for the GO term is 
+	\textbf{.... something to catch up.....}\\
+	The enrichment test statistic for the test set is 
 	\begin{equation}\label{eq:teststatistic}
 		T = \frac{\left[\bm x^T(\bm U - \hat{\beta}_0 \bm 1_m )\right]^2}{\left[\bm x^T(\bm I - \bm H)\right]\bm \Sigma \left[\bm x^T(\bm I - \bm H)\right]^T}
 	\end{equation} 
-
+	Under the null, $T\sim \chi^2(1)$.
 	
+	\subsection{Other competitive gene set test}
+	We will compare OurMethod to three existing gene set tests: GSEA \citep{subramanian2005gene} modified from the original R-GSEA script (\url{http://software.broadinstitute.org/gsea/index.jsp}) to allow single gene set test, two versions of the geneSetTest procedure and two versions of the CAMERA procedure \citep{wu2012camera}  in the limma package \citep{smyth2005limma}. The two versions are, respectively, parametric and rank based,  and will be denoted by geneSetTest-modt and geneSetTest-ranks for geneSetTest, and by CAMERA-modt and CAMERA-ranks for CAMERA. Because GSEA and OurMethod do not support linear models, the implementations are restricted to two-group comparisons.
 	
-
-
+	All of the three tests use local genewise statistics as observations to conduct global tests comparing genes in the test set to the background genes. However, they may differ either in terms of the local statistics used to compare factors of interest (e.g. treatment vs. control) at the gene level, or in terms of the global statistics used to summarize the significance of the test set compared to the background set. For GSEA, the local statistics are the rankings of genes according to a ranking metric (e.g. signal-to-noise ratio, $t$-statistic), then based on the rankings an enrichment score for the test set is calculated, and the significance of the enrichment score is determined by randomly permuting the sample labels. Both the parametric geneSetTest-modt and CAMERA-modt use local statistics (e.g., the moderated $t$-statistics \citep{Smyth2004moderated}), and determine whether the mean of the local statistics is significantly different for genes in the test set versus genes in the background set. The difference is how they evaluate the global statistics: geneSetTest-modt evaluates $p$-values by comparing the observed mean of the local statistics in the test set, to those (??? is it clear?) obtained by randomly permuting the gene labels; CAMERA-modt uses a $t$-statistic that allows the local statistics in the test set to be correlated by first estimating a variance inflation factor, and then incorporating it into the $t$-statistic to adjust for between-gene correlation. geneSetTest-rank and CAMERA-rank conduct a Wilcoxon-Mann-Whitney rank sum test, and they amount to, respectively, geneSetTest-modt and CAMERA-modt in that they compare the rankings instead of the local statistics themselves for genes in the test set to those for genes in the background set. 
 	
+	(other methods such as sigPathway or PAGE will be mentioned in the introduction part.)
+	
+	\subsection{Simulations}\label{subsection:simulation}
+		
 	\section{Results}\label{section:results}
 	
 	\section{Conclusion}\label{section:conclusion}
@@ -136,8 +154,7 @@
 	
 	\section{Appendix}\label{section:appendix}
 	
-	First $E(\Delta_i) = E(Z_i\delta_i) = E(Z_i)E(\delta_i) = p_i\mu_{\delta}$. 
-	Next 
+	First $E(\Delta_i) = E(Z_i\delta_i) = E(Z_i)E(\delta_i) = p_i\mu_{\delta}$. Next note that  
 	\[\text{Var}(\Delta_i) = E[(Z_i\delta_i)^2]- [E(Z_i\delta_i)]^2 = \text{Var}(Z_i)[E(\delta_i)]^2 + \left[(EZ_i)^2 + \text{Var}(Z_i)\right]\text{Var}(\delta_i) =p_i\sigma_{\delta}^2 + p_i(1-p_i)\mu_{\delta}^2\]
 	
 	Let $T_i=\bar{Y}_{i,2}-\bar{Y}_{i,1}$ be the difference in mean expression levels between the treatment group and the control group. We have 
@@ -147,7 +164,7 @@
 				\begin{equation}
 					\begin{aligned}
 						\text{Cov}(T_{i_1}, T_{i_2}) & = E\left[\text{Cov}(T_{i_1}, T_{i_2}|\Delta_{i_1}, \Delta_{i_2}) \right]  + \text{Cov}\left[E(T_{i_1}|\Delta_{i_1}), E(T_{i_2}|\Delta_{i_2})\right] \\
-						& = E\left(\frac{1}{n_1}\rho + \frac{1}{n_2}\rho\right) + \text{Cov}(\Delta_{i_1}, \Delta_{i_2})\\
+						& = E\left(\frac{1}{n_1}\rho_{i_1,i_2} + \frac{1}{n_2}\rho_{i_1,i_2}\right) + \text{Cov}(\Delta_{i_1}, \Delta_{i_2})\\
 						& = \left(\frac{1}{n_1} + \frac{1}{n_2}\right)\rho_{i_1,i_2}
 					\end{aligned}
 				\end{equation}
@@ -163,24 +180,17 @@
 				\end{equation}
 				Therefore $\text{Var}(T_i)  = \frac{1}{n_1} + \frac{1}{n_2} + \text{Var}(\Delta_i)$, and it follows 
 				\begin{equation}\label{eq:tvar}
-					\text{Cov}(\bm T) = \sigma_1^2 \bm D_1 + \sigma^2_2 \bm D_2 + \sigma_2^2\bm C 
+					\text{Cov}(\bm T) =  \bm D + \sigma_2^2\bm C 
 				\end{equation}
-				where $\sigma_1^2 = \text{Var}(\Delta_i)$, $\sigma_2^2 =  \text{Var}(\Delta_j)$ and $\sigma_3^2 = \left(\frac{1}{n_1} + \frac{1}{n_2}\right)$
-				
-				Under the assumption $Z_i \sim \text{Bernolli}(1, p_g), i \in \bm I_g$ and $Z_i \sim \text{Bernolli}(1, p_b), i \in \bm I_b$. It immediately follows that 
-				\begin{equation}
-					\text{Var}(\Delta_i) = \left \{
-					\begin{aligned}
-						&p_g\sigma_{\delta}^2 + p_g(1-p_g)\mu_{\delta}^2, && \text{if}\ i \in I_g \\
-						&p_b\sigma_{\delta}^2 + p_b(1-p_b)\mu_{\delta}^2, && \text{if}\ i \in I_b
-					\end{aligned} \right. \\
-				\end{equation}
+				where $\bm D$ is a diagonal matrix with $\text{Var}(\Delta_i) =p_i\sigma_{\delta}^2 + p_i(1-p_i)\mu_{\delta}^2$ as its $i$th diagonal element, and $\sigma_3^2 = \left(\frac{1}{n_1} + \frac{1}{n_2}\right)$.
+
 				
 				
 				
-		\newpage
-		
-		\bibliographystyle{apalike}
-		\bibliography{mybib}
-		
-	\end{document}
+								
+\newpage
+
+\bibliographystyle{apalike}
+\bibliography{mybib}
+	
+\end{document}

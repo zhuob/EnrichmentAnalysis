@@ -5,6 +5,18 @@ Efron, B. (2007).
 \newblock Correlation and large-scale simultaneous significance testing.
 \newblock {\em Journal of the American Statistical Association}, 102(477).
 
+\bibitem[Smyth, 2004]{Smyth2004moderated}
+Smyth, G.~K. (2004).
+\newblock Linear models and empirical bayes methods for assessing differential
+  expression in microarray experiments.
+\newblock {\em Stat. Appl. Genet. Mol. Biol.}, 3, Article3.
+
+\bibitem[Smyth, 2005]{smyth2005limma}
+Smyth, G.~K. (2005).
+\newblock Limma: linear models for microarray data.
+\newblock In {\em Bioinformatics and computational biology solutions using R
+  and Bioconductor}, pages 397--420. Springer.
+
 \bibitem[Subramanian et~al., 2005]{subramanian2005gene}
 Subramanian, A., Tamayo, P., Mootha, V.~K., Mukherjee, S., Ebert, B.~L.,
   Gillette, M.~A., Paulovich, A., Pomeroy, S.~L., Golub, T.~R., Lander, E.~S.,
