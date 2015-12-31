@@ -50,7 +50,7 @@
 	
 	
 	
-	\section{Materials and Methods}\label{section:methods}
+	\section{Methods}\label{section:methods}
 	\textbf{Overview of our method (denoted as OurMethod, will be easily replaced when we have a better new name)} \\
 	Different from CAMERA\cite{wu2012camera} or GSEA \citep{subramanian2005gene}
 	
@@ -137,17 +137,87 @@
 	\end{equation} 
 	Under the null, $T\sim \chi^2(1)$.
 	
+	
 	\subsection{Other competitive gene set test}
 	We will compare OurMethod to three existing gene set tests: GSEA \citep{subramanian2005gene} modified from the original R-GSEA script (\url{http://software.broadinstitute.org/gsea/index.jsp}) to allow single gene set test, two versions of the geneSetTest procedure and two versions of the CAMERA procedure \citep{wu2012camera}  in the limma package \citep{smyth2005limma}. The two versions are, respectively, parametric and rank based,  and will be denoted by geneSetTest-modt and geneSetTest-ranks for geneSetTest, and by CAMERA-modt and CAMERA-ranks for CAMERA. Because GSEA and OurMethod do not support linear models, the implementations are restricted to two-group comparisons.
 	
 	All of the three tests use local genewise statistics as observations to conduct global tests comparing genes in the test set to the background genes. However, they may differ either in terms of the local statistics used to compare factors of interest (e.g. treatment vs. control) at the gene level, or in terms of the global statistics used to summarize the significance of the test set compared to the background set. For GSEA, the local statistics are the rankings of genes according to a ranking metric (e.g. signal-to-noise ratio, $t$-statistic), then based on the rankings an enrichment score for the test set is calculated, and the significance of the enrichment score is determined by randomly permuting the sample labels. Both the parametric geneSetTest-modt and CAMERA-modt use local statistics (e.g., the moderated $t$-statistics \citep{Smyth2004moderated}), and determine whether the mean of the local statistics is significantly different for genes in the test set versus genes in the background set. The difference is how they evaluate the global statistics: geneSetTest-modt evaluates $p$-values by comparing the observed mean of the local statistics in the test set, to those (??? is it clear?) obtained by randomly permuting the gene labels; CAMERA-modt uses a $t$-statistic that allows the local statistics in the test set to be correlated by first estimating a variance inflation factor, and then incorporating it into the $t$-statistic to adjust for between-gene correlation. geneSetTest-rank and CAMERA-rank conduct a Wilcoxon-Mann-Whitney rank sum test, and they amount to, respectively, geneSetTest-modt and CAMERA-modt in that they compare the rankings instead of the local statistics themselves for genes in the test set to those for genes in the background set. 
 	
 	(other methods such as sigPathway or PAGE will be mentioned in the introduction part.)
+
 	
+	\section{Examples and Numerical Results}\label{section:results}
+
 	\subsection{Simulations}\label{subsection:simulation}
+		In this section, we present results from type I error and power simulations under a range of between-gene correlation structures.
 		
-	\section{Results}\label{section:results}
-	
+		The simulation setup is as follows: first, we simulate an entire gene set containing $m=500$ genes, from which we sample $m_1 = 100$ genes to represent those in the test set, and the remaining $m_2=400$ genes those in the background set; second, for gene $i=1, \ldots, m$, we simulate the DE effect size $\delta_i$ from $N(2, 1)$ and DE indicators $Z_i$ from $\text{Binom}(1, p_i)$,  where $p_i= p_t$ if gene $i$ belongs to the test set and $p_i = p_b$  otherwise; third, we set the "true" mean expression values $\mu_1 = \bm 0_m$ and $\bm \mu_2 = \bm \Delta$, respectively,  for the control and treatment groups; fourth, $n_1$ samples are simulated from $\text{MVN}(\bm \mu_1, \bm \Sigma)$ for the control group and $n_2$ samples from $\text{MVN}(\bm \mu_2, \bm \Sigma)$ where the covariance $\bm \Sigma$ may represent one of the following cases: 
+		\begin{enumerate}
+			\item[(a0):] the genes are independent of each other.
+			\item[(a):] only genes in the test set are correlated, with exchangeable correlation structure, that is, $\text{Cor}(Y_{i_1}, Y_{i_2})=\rho$ for $\forall i_1, i_2 \in I_t$.
+			\item[(c):] all genes are correlated, with exchangeable correlation structure, that is, $\text{Cor}(Y_{i_1}, Y_{i_2})=\rho$ for $\forall i_1, i_2 \in I$.
+			\item[(e):] genes are correlated within the test set and within the background set, but any two genes, one from each set, are independent. That is, the correlation structure is block diagonal, with $\text{Cor}(Y_{i_1}, Y_{i_2})=\rho_1$ for $i_1, i_2 \in I_t$  , $\text{Cor}(Y_{i_3}, Y_{i_4})=\rho_2$ for $i_3, i_4\in I_b$, and  $\text{Cor}(Y_{i_5}, Y_{i_6})= 0$ for $\forall ~i_5\in I_t, \forall~ i_6\in I_b$.
+			\item[(f):] all genes are correlated, but the correlation between two genes depend on whether they belong to the test set or not. Specifically, $\text{Cor}(Y_{i_1}, Y_{i_2})=\rho_1$  for $i_1, i_2 \in I_t$,    $\text{Cor}(Y_{i_3}, Y_{i_4})=\rho_2$, for $ i_3, i_4\in I_b$, and  $\text{Cor}(Y_{i_5}, Y_{i_6})=\rho_3$ for $\forall~ i_5\in I_t, \forall~ i_6\in I_b$.
+			\item[(g):] genes are correlated in the same way as those from a real data.
+		\end{enumerate}
+		
+		
+		\subsubsection{Type I error simulations}
+		  In ( the paper to be finished), we have shown that the sample correlation is not equivalent to test statistics correlation, unless the null is true (i.e., none of the genes is DE). blablabla... 
+		  
+		  
+		  For the above simulation setup, the test set is not enriched if DE probabilities are the same for the genes in the test set and for those in the background set (i.e., $p_t = p_b = p_0$). In this section, we evaluate the type I error rates by simulations on two scenarios: case 1) none of the genes is DE with $p_0 = 0$ and, case 2) the genes in the test set and in the background set are DE with $p_0 = 0.2$.   
+		  
+		  Figure \ref{fig:typeIerror} shows the 
+		  
+		\begin{figure}[]
+			\caption{Type I error rates for gene set tests, $p$-value distribution for case (a0) - (g) from left to right, from top to bottom, NO gene is DE}\label{fig:typeIerror}
+			 \begin{center}
+				\includegraphics[width=8cm,height=6cm]{Figures/NODEA0.eps}
+				\includegraphics[width=8cm,height=6cm]{Figures/NODEA.eps}
+				\includegraphics[width=8cm,height=6cm]{Figures/NODEC.eps}
+				\includegraphics[width=8cm,height=6cm]{Figures/NODEE.eps}
+				\includegraphics[width=8cm,height=6cm]{Figures/NODEF.eps}
+				\includegraphics[width=8cm,height=6cm]{Figures/NODEG.eps}
+			\end{center} 
+		\end{figure} 
+		
+		
+\begin{table}[ht]
+	\centering
+	\caption{Type I error rate of gene set tests for correlated expression values }\label{table:typeIerror}
+	\begin{tabular}{lrrrrlrrrr}
+		\hline
+		\cline{1-10}
+		\multicolumn{1}{l}{Method} &\multicolumn{4}{c}{Norminal $p$-values}&  & \multicolumn{4}{c}{Norminal $p$-values} \\ \cline{2-10} 
+		 & 0.01 & 0.05 & 0.1 & 0.2 &    & 0.01 &0.05 & 0.1 & 0.2 \\ 
+		\hline
+		  & \multicolumn{4}{c}{(a0)} & & \multicolumn{4}{c}{(a)} \\
+		OurTest & 0.012 & 0.066 & 0.124 & 0.241 &  & 0.011 & 0.049 & 0.097 & 0.198 \\ 
+		geneSetTest-modt & 0.012 & 0.058 & 0.109 & 0.215 &  & 0.006 & 0.052 & 0.099 & 0.219 \\ 
+		geneSetTest-rank & 0.012 & 0.055 & 0.110 & 0.214 &  & 0.018 & 0.060 & 0.116 & 0.202 \\ 
+		CAMERA & 0.006 & 0.059 & 0.135 & 0.217 &  & 0.000 & 0.000 & 0.000 & 0.006 \\ 
+		CAMERA-Rank & 0.003 & 0.054 & 0.112 & 0.229 &  & 0.001 & 0.009 & 0.023 & 0.079 \\ 
+		GSEA & 0.989 & 0.995 & 0.997 & 0.997 &  & 0.228 & 0.608 & 0.794 & 0.927 \\ 
+			 & \multicolumn{4}{c}{(c)} &  & \multicolumn{4}{c}{(e)} \\
+		OurTest & 0.007 & 0.052 & 0.103 & 0.202 &  & 0.008 & 0.056 & 0.093 & 0.207 \\ 
+		geneSetTest-modt & 0.007 & 0.051 & 0.098 & 0.187 &  & 0.015 & 0.058 & 0.106 & 0.217 \\ 
+		geneSetTest-rank & 0.006 & 0.050 & 0.106 & 0.190 &  & 0.024 & 0.082 & 0.138 & 0.225 \\ 
+		CAMERA & 0.000 & 0.000 & 0.000 & 0.000 &  & 0.000 & 0.000 & 0.001 & 0.009 \\ 
+		CAMERA-Rank & 0.000 & 0.000 & 0.000 & 0.000 &  & 0.000 & 0.020 & 0.054 & 0.127 \\ 
+		GSEA & 0.942 & 0.984 & 0.992 & 0.995 &  & 0.108 & 0.469 & 0.731 & 0.899 \\ 
+			 & \multicolumn{4}{c}{(f)} & & \multicolumn{4}{c}{(g)} \\
+		OurTest & 0.012 & 0.050 & 0.098 & 0.226 &  & 0.007 & 0.059 & 0.116 & 0.211 \\ 
+		geneSetTest-modt & 0.010 & 0.071 & 0.115 & 0.213 &  & 0.010 & 0.061 & 0.104 & 0.218 \\ 
+		geneSetTest-rank & 0.007 & 0.061 & 0.112 & 0.221 &  & 0.014 & 0.072 & 0.142 & 0.247 \\ 
+		CAMERA & 0.000 & 0.000 & 0.004 & 0.019 &  & 0.000 & 0.000 & 0.001 & 0.006 \\ 
+		CAMERA-Rank & 0.006 & 0.041 & 0.096 & 0.210 &  & 0.000 & 0.000 & 0.002 & 0.009 \\ 
+		GSEA & 0.015 & 0.188 & 0.434 & 0.770 &  & 0.943 & 0.975 & 0.983 & 0.992 \\ 
+		\hline
+	\end{tabular}
+\end{table}
+		\subsubsection{Power simulation}
+		this is two
 	\section{Conclusion}\label{section:conclusion}
 	
 	\section{AcknowledgeMents}\label{section:acknowledgement}

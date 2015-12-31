@@ -1,33 +1,5 @@
 
-library(ggplot2)
-library(reshape2)
 
-create.hist2 <- function(data, figure.num, textsize = rep(20, 4))
-{
-
-  dat_new <- melt(data, value.name = "Pval", variable.name = "Method")
-  
-
-  ggplot(dat_new, aes(x=Pval)) + geom_histogram(binwidth=.05, colour="black", fill="white") + 
-    facet_grid(Method~ .)  +
-    xlim(0, 1) + 
-    theme(legend.position="top", 
-          legend.text = element_text(size = textsize[1]),
-          plot.title = element_text(size = textsize[2]), 
-          axis.text=element_text(size=textsize[3]), 
-          axis.title=element_text(size=textsize[4],face="bold")) +
-          labs(title=figure.num)    
-  
-}
-
-
-
-data <- read.table("DE_a_50.txt") 
-
-library(reshape2)
-
-   #theme(strip.text.x = element_text(size = 15, colour = "red", angle = 90))
-  theme(legend.text = element_text(size = 20))
 
 
 setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationMOMEnrichment/")
@@ -106,28 +78,64 @@ stdevs <- sqrt(s2)
 
 # add GESA 
 setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationGSEA20151223/")
+FigurePath <-"/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Manuscript/Figures/"
+  
+showcol <- c(1, 3:7)
+textsize = rep(20,20, 8, 20)
+
+data <- read.table("DE_a0_50.txt")[, showcol]
+
+create.hist2(read.table("DE_a0_50.txt")[, showcol], textsize = textsize, figure.num = "DE_a0_50")
+create.hist2(read.table("DE_a_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_a_50")
+create.hist2(read.table("DE_b_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_b_50")
+create.hist2(read.table("DE_c_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_c_50")
+create.hist2(read.table("DE_d_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_d_50")
+create.hist2(read.table("DE_e_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_e_50")
+create.hist2(read.table("DE_f_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_f_50")
+create.hist2(read.table("DE_g_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_g_50")
+create.hist2(read.table("DE_h_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_h_50")
+
+pvec <- c(0.01, 0.05, 0.10, 0.20)
+A0_NO_DE <- TypeIerror(pvec, read.table("NO_DE_a0_50.txt")[, showcol])
+A_NO_DE <- TypeIerror(pvec, read.table("NO_DE_a_50.txt")[, showcol])
+C_NO_DE <- TypeIerror(pvec, read.table("NO_DE_c_50.txt")[, showcol])
+E_NO_DE <- TypeIerror(pvec, read.table("NO_DE_e_50.txt")[, showcol])
+F_NO_DE <- TypeIerror(pvec, read.table("NO_DE_f_50.txt")[, showcol])
+G_NO_DE <- TypeIerror(pvec, read.table("NO_DE_g_50.txt")[, showcol])
+
+A0_NO_DE
+A_NO_DE
+C_NO_DE
+E_NO_DE
+F_NO_DE
+G_NO_DE
 
 
-create.hist2(read.table("DE_a0_50.txt"), figure.num = "DE_a0_50")
-create.hist2(read.table("DE_a_50.txt"), figure.num = "DE_a_50")
-create.hist2(read.table("DE_b_50.txt")[, 1:6], figure.num = "DE_b_50")
-create.hist2(read.table("DE_c_50.txt")[, 1:6], figure.num = "DE_c_50")
-create.hist2(read.table("DE_d_50.txt")[, 1:6], figure.num = "DE_d_50")
-create.hist2(read.table("DE_e_50.txt")[, 1:6], figure.num = "DE_e_50")
-create.hist2(read.table("DE_f_50.txt")[, 1:6], figure.num = "DE_f_50")
-create.hist2(read.table("DE_g_50.txt")[, 1:6], figure.num = "DE_g_50")
-create.hist2(read.table("DE_h_50.txt")[, 1:6], figure.num = "DE_h_50")
+
+create.hist2(read.table("NO_DE_a0_50.txt")[, showcol], textsize = textsize, figure.num ="", figname = "NODEA0.eps")
+create.hist2(read.table("NO_DE_a_50.txt")[, showcol], textsize = textsize, figure.num = "", figname = "NODEA.eps")
+create.hist2(read.table("NO_DE_b_50.txt")[, showcol], textsize = textsize, figure.num = "NO_DE_b_50")
+create.hist2(read.table("NO_DE_c_50.txt")[, showcol], textsize = textsize, figure.num = "", figname = "NODEC.eps")
+create.hist2(read.table("NO_DE_d_50.txt")[, showcol], textsize = textsize, figure.num = "NO_DE_d_50")
+create.hist2(read.table("NO_DE_e_50.txt")[, showcol], textsize = textsize, figure.num = "", figname = "NODEE.eps")
+create.hist2(read.table("NO_DE_f_50.txt")[, showcol], textsize = textsize, figure.num = "", figname = "NODEF.eps")
+create.hist2(read.table("NO_DE_g_50.txt")[, showcol], textsize = textsize, figure.num = "", figname = "NODEG.eps")
+create.hist2(read.table("NO_DE_h_50.txt")[, showcol], textsize = textsize, figure.num = "NO_DE_h_50")
 
 
 
-create.hist2(read.table("NO_DE_a0_50.txt"), figure.num = "NO_DE_a0_50")
-create.hist2(read.table("NO_DE_a_50.txt"), figure.num = "NO_DE_a_50")
-create.hist2(read.table("NO_DE_b_50.txt"), figure.num = "NO_DE_b_50")
-create.hist2(read.table("NO_DE_c_50.txt"), figure.num = "NO_DE_c_50")
-create.hist2(read.table("NO_DE_d_50.txt"), figure.num = "NO_DE_d_50")
-create.hist2(read.table("NO_DE_e_50.txt"), figure.num = "NO_DE_e_50")
-create.hist2(read.table("NO_DE_f_50.txt"), figure.num = "NO_DE_f_50")
-create.hist2(read.table("NO_DE_g_50.txt"), figure.num = "NO_DE_g_50")
-create.hist2(read.table("NO_DE_h_50.txt"), figure.num = "NO_DE_h_50")
+pvec <- c(0.01, 0.05, 0.10, 0.20)
+A0_DE <- TypeIerror(pvec, read.table("DE_a0_50.txt")[, showcol])
+A_DE <- TypeIerror(pvec, read.table("DE_a_50.txt")[, showcol])
+C_DE <- TypeIerror(pvec, read.table("DE_c_50.txt")[, showcol])
+E_DE <- TypeIerror(pvec, read.table("DE_e_50.txt")[, showcol])
+F_DE <- TypeIerror(pvec, read.table("DE_f_50.txt")[, showcol])
+G_DE <- TypeIerror(pvec, read.table("DE_g_50.txt")[, showcol])
+
+l1 <- rbind(A0_DE, C_DE, F_DE); l2 <- rbind(A_DE, E_DE, G_DE)
+method <- rownames(l1); ab <- data.frame(method, l1, method, l2); ab$method.1 <- ""
+
+library(xtable)
+print(xtable(ab, digits = 3), include.rownames = F)
 
 
