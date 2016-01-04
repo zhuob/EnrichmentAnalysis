@@ -1,5 +1,5 @@
 
-
+source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/summarize.results.R")
 
 
 setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationMOMEnrichment/")
@@ -112,14 +112,14 @@ G_NO_DE
 
 
 
-create.hist2(read.table("NO_DE_a0_50.txt")[, showcol], textsize = textsize, figure.num ="", figname = "NODEA0.eps")
-create.hist2(read.table("NO_DE_a_50.txt")[, showcol], textsize = textsize, figure.num = "", figname = "NODEA.eps")
+create.hist2(read.table("NO_DE_a0_50.txt")[, showcol], textsize = textsize, figure.num ="a0", figname = "NODEA0.eps")
+create.hist2(read.table("NO_DE_a_50.txt")[, showcol], textsize = textsize, figure.num = "a", figname = "NODEA.eps")
 create.hist2(read.table("NO_DE_b_50.txt")[, showcol], textsize = textsize, figure.num = "NO_DE_b_50")
-create.hist2(read.table("NO_DE_c_50.txt")[, showcol], textsize = textsize, figure.num = "", figname = "NODEC.eps")
+create.hist2(read.table("NO_DE_c_50.txt")[, showcol], textsize = textsize, figure.num = "c", figname = "NODEC.eps")
 create.hist2(read.table("NO_DE_d_50.txt")[, showcol], textsize = textsize, figure.num = "NO_DE_d_50")
-create.hist2(read.table("NO_DE_e_50.txt")[, showcol], textsize = textsize, figure.num = "", figname = "NODEE.eps")
-create.hist2(read.table("NO_DE_f_50.txt")[, showcol], textsize = textsize, figure.num = "", figname = "NODEF.eps")
-create.hist2(read.table("NO_DE_g_50.txt")[, showcol], textsize = textsize, figure.num = "", figname = "NODEG.eps")
+create.hist2(read.table("NO_DE_e_50.txt")[, showcol], textsize = textsize, figure.num = "e", figname = "NODEE.eps")
+create.hist2(read.table("NO_DE_f_50.txt")[, showcol], textsize = textsize, figure.num = "f", figname = "NODEF.eps")
+create.hist2(read.table("NO_DE_g_50.txt")[, showcol], textsize = textsize, figure.num = "g", figname = "NODEG.eps")
 create.hist2(read.table("NO_DE_h_50.txt")[, showcol], textsize = textsize, figure.num = "NO_DE_h_50")
 
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  30 DEC 2015 22:46
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013) (format=pdflatex 2013.5.30)  3 JAN 2016 17:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -650,146 +650,153 @@ LaTeX Info: Redefining \nameref on input line 28.
 LaTeX Warning: No \author given.
 
 [2] [3] [4]
+Overfull \hbox (3.21466pt too wide) in paragraph at lines 169--170
+[]\OT1/cmr/m/n/10.95 For group $\OML/cmm/m/it/10.95 A[]$\OT1/cmr/m/n/10.95 , Fi
+g-ure [][]1[][] shows the his-tograms of type I er-ror rates for the six ap-pro
+aches (OurMethod,
+ []
+
+[5]
 
 LaTeX Warning: No positions in optional float specifier.
-               Default added (so using `tbp') on input line 173.
+               Default added (so using `tbp') on input line 181.
 
 Package epstopdf Info: Source file: <Figures/NODEA0.eps>
-(epstopdf)                    date: 2015-12-30 20:35:18
-(epstopdf)                    size: 18826 bytes
+(epstopdf)                    date: 2015-12-31 14:21:12
+(epstopdf)                    size: 18884 bytes
 (epstopdf)             Output file: <./NODEA0-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-12-30 20:39:24
-(epstopdf)                    size: 13637 bytes
+(epstopdf)                    date: 2015-12-31 14:21:34
+(epstopdf)                    size: 13654 bytes
 (epstopdf)             Command: <repstopdf --outfile=./NODEA0-eps-converted-to.
 pdf Figures/NODEA0.eps>
-(epstopdf)             \includegraphics on input line 176.
+(epstopdf)             \includegraphics on input line 184.
 Package epstopdf Info: Output file is already uptodate.
-<./NODEA0-eps-converted-to.pdf, id=136, 722.7pt x 361.35pt>
+<./NODEA0-eps-converted-to.pdf, id=153, 722.7pt x 361.35pt>
 File: ./NODEA0-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ./NODEA0-eps-converted-to.pdf>
-Package pdftex.def Info: ./NODEA0-eps-converted-to.pdf used on input line 176.
-(pdftex.def)             Requested size: 227.61862pt x 170.71672pt.
+Package pdftex.def Info: ./NODEA0-eps-converted-to.pdf used on input line 184.
+(pdftex.def)             Requested size: 227.61862pt x 142.26578pt.
 Package epstopdf Info: Source file: <Figures/NODEA.eps>
-(epstopdf)                    date: 2015-12-30 20:32:52
-(epstopdf)                    size: 19517 bytes
+(epstopdf)                    date: 2015-12-31 14:21:14
+(epstopdf)                    size: 19574 bytes
 (epstopdf)             Output file: <./NODEA-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-12-30 20:33:08
-(epstopdf)                    size: 13644 bytes
+(epstopdf)                    date: 2015-12-31 14:21:35
+(epstopdf)                    size: 13660 bytes
 (epstopdf)             Command: <repstopdf --outfile=./NODEA-eps-converted-to.p
 df Figures/NODEA.eps>
-(epstopdf)             \includegraphics on input line 177.
+(epstopdf)             \includegraphics on input line 185.
 Package epstopdf Info: Output file is already uptodate.
 
-<./NODEA-eps-converted-to.pdf, id=137, 722.7pt x 361.35pt>
+<./NODEA-eps-converted-to.pdf, id=154, 722.7pt x 361.35pt>
 File: ./NODEA-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ./NODEA-eps-converted-to.pdf>
-Package pdftex.def Info: ./NODEA-eps-converted-to.pdf used on input line 177.
-(pdftex.def)             Requested size: 227.61862pt x 170.71672pt.
+Package pdftex.def Info: ./NODEA-eps-converted-to.pdf used on input line 185.
+(pdftex.def)             Requested size: 227.61862pt x 142.26578pt.
 Package epstopdf Info: Source file: <Figures/NODEC.eps>
-(epstopdf)                    date: 2015-12-30 20:32:55
-(epstopdf)                    size: 18817 bytes
+(epstopdf)                    date: 2015-12-31 14:21:17
+(epstopdf)                    size: 18874 bytes
 (epstopdf)             Output file: <./NODEC-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-12-30 20:40:57
-(epstopdf)                    size: 13511 bytes
+(epstopdf)                    date: 2015-12-31 14:21:36
+(epstopdf)                    size: 13596 bytes
 (epstopdf)             Command: <repstopdf --outfile=./NODEC-eps-converted-to.p
 df Figures/NODEC.eps>
-(epstopdf)             \includegraphics on input line 178.
+(epstopdf)             \includegraphics on input line 186.
 Package epstopdf Info: Output file is already uptodate.
 
-<./NODEC-eps-converted-to.pdf, id=138, 722.7pt x 361.35pt>
+<./NODEC-eps-converted-to.pdf, id=155, 722.7pt x 361.35pt>
 File: ./NODEC-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ./NODEC-eps-converted-to.pdf>
-Package pdftex.def Info: ./NODEC-eps-converted-to.pdf used on input line 178.
-(pdftex.def)             Requested size: 227.61862pt x 170.71672pt.
+Package pdftex.def Info: ./NODEC-eps-converted-to.pdf used on input line 186.
+(pdftex.def)             Requested size: 227.61862pt x 142.26578pt.
 Package epstopdf Info: Source file: <Figures/NODEE.eps>
-(epstopdf)                    date: 2015-12-30 20:32:57
-(epstopdf)                    size: 19010 bytes
+(epstopdf)                    date: 2015-12-31 14:21:19
+(epstopdf)                    size: 19067 bytes
 (epstopdf)             Output file: <./NODEE-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-12-30 20:40:34
-(epstopdf)                    size: 13885 bytes
+(epstopdf)                    date: 2015-12-31 14:21:37
+(epstopdf)                    size: 13903 bytes
 (epstopdf)             Command: <repstopdf --outfile=./NODEE-eps-converted-to.p
 df Figures/NODEE.eps>
-(epstopdf)             \includegraphics on input line 179.
+(epstopdf)             \includegraphics on input line 187.
 Package epstopdf Info: Output file is already uptodate.
 
-<./NODEE-eps-converted-to.pdf, id=139, 722.7pt x 361.35pt>
+<./NODEE-eps-converted-to.pdf, id=156, 722.7pt x 361.35pt>
 File: ./NODEE-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ./NODEE-eps-converted-to.pdf>
-Package pdftex.def Info: ./NODEE-eps-converted-to.pdf used on input line 179.
-(pdftex.def)             Requested size: 227.61862pt x 170.71672pt.
+Package pdftex.def Info: ./NODEE-eps-converted-to.pdf used on input line 187.
+(pdftex.def)             Requested size: 227.61862pt x 142.26578pt.
 Package epstopdf Info: Source file: <Figures/NODEF.eps>
-(epstopdf)                    date: 2015-12-30 20:32:58
-(epstopdf)                    size: 19441 bytes
+(epstopdf)                    date: 2015-12-31 14:21:21
+(epstopdf)                    size: 19498 bytes
 (epstopdf)             Output file: <./NODEF-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-12-30 20:40:35
-(epstopdf)                    size: 13703 bytes
+(epstopdf)                    date: 2015-12-31 14:21:38
+(epstopdf)                    size: 13781 bytes
 (epstopdf)             Command: <repstopdf --outfile=./NODEF-eps-converted-to.p
 df Figures/NODEF.eps>
-(epstopdf)             \includegraphics on input line 180.
+(epstopdf)             \includegraphics on input line 188.
 Package epstopdf Info: Output file is already uptodate.
 
-<./NODEF-eps-converted-to.pdf, id=140, 722.7pt x 361.35pt>
+<./NODEF-eps-converted-to.pdf, id=157, 722.7pt x 361.35pt>
 File: ./NODEF-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ./NODEF-eps-converted-to.pdf>
-Package pdftex.def Info: ./NODEF-eps-converted-to.pdf used on input line 180.
-(pdftex.def)             Requested size: 227.61862pt x 170.71672pt.
+Package pdftex.def Info: ./NODEF-eps-converted-to.pdf used on input line 188.
+(pdftex.def)             Requested size: 227.61862pt x 142.26578pt.
 Package epstopdf Info: Source file: <Figures/NODEG.eps>
-(epstopdf)                    date: 2015-12-30 20:32:59
-(epstopdf)                    size: 19507 bytes
+(epstopdf)                    date: 2015-12-31 14:21:22
+(epstopdf)                    size: 19564 bytes
 (epstopdf)             Output file: <./NODEG-eps-converted-to.pdf>
-(epstopdf)                    date: 2015-12-30 20:40:36
-(epstopdf)                    size: 13706 bytes
+(epstopdf)                    date: 2015-12-31 14:21:39
+(epstopdf)                    size: 13861 bytes
 (epstopdf)             Command: <repstopdf --outfile=./NODEG-eps-converted-to.p
 df Figures/NODEG.eps>
-(epstopdf)             \includegraphics on input line 181.
+(epstopdf)             \includegraphics on input line 189.
 Package epstopdf Info: Output file is already uptodate.
 
-<./NODEG-eps-converted-to.pdf, id=141, 722.7pt x 361.35pt>
+<./NODEG-eps-converted-to.pdf, id=158, 722.7pt x 361.35pt>
 File: ./NODEG-eps-converted-to.pdf Graphic file (type pdf)
 
 <use ./NODEG-eps-converted-to.pdf>
-Package pdftex.def Info: ./NODEG-eps-converted-to.pdf used on input line 181.
-(pdftex.def)             Requested size: 227.61862pt x 170.71672pt.
- [5pdfTeX warning (ext4): destination with the same identifier (name{table.1}) 
-has been already used, duplicate ignored
+Package pdftex.def Info: ./NODEG-eps-converted-to.pdf used on input line 189.
+(pdftex.def)             Requested size: 227.61862pt x 142.26578pt.
+ [6pdfTeX warning (ext4): destination with the same identifier (name{figure.1})
+ has been already used, duplicate ignored
 
 \AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
                                                   \fi \fi 
-l.228 ...a_{\delta}^2 + p_i(1-p_i)\mu_{\delta}^2\]
-                                                  ] [6pdfTeX warning (ext4): de
-stination with the same identifier (name{figure.1}) has been already used, dupl
-icate ignored
-
-\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
-                                                  \fi \fi 
-l.228 ...a_{\delta}^2 + p_i(1-p_i)\mu_{\delta}^2\]
+l.238 ...a_{\delta}^2 + p_i(1-p_i)\mu_{\delta}^2\]
                                                    <./NODEA0-eps-converted-to.p
 df> <./NODEA-eps-converted-to.pdf> <./NODEC-eps-converted-to.pdf> <./NODEE-eps-
 converted-to.pdf> <./NODEF-eps-converted-to.pdf> <./NODEG-eps-converted-to.pdf>
-] [7] (./Enrichment.bbl)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 266.
- [8]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 266.
+] [7pdfTeX warning (ext4): destination with the same identifier (name{table.1})
+ has been already used, duplicate ignored
+
+\AtBegShi@Output ...ipout \box \AtBeginShipoutBox 
+                                                  \fi \fi 
+l.252 ...xt{Var}(\bar{Y}_{i, 1}) = \frac{1}{n_1}\]
+                                                  ] [8] (./Enrichment.bbl)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 276.
+
+[9]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 276.
  (./Enrichment.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 266.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 266.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 276.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 276.
 Package rerunfilecheck Info: File `Enrichment.out' has not changed.
-(rerunfilecheck)             Checksum: 2798B0B7C98722D18FD752AF70BC07E3;759.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 266.
+(rerunfilecheck)             Checksum: DB78689B729D5E255E3D3A314BA5B8F4;838.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 276.
  ) 
 Here is how much of TeX's memory you used:
- 7486 strings out of 493315
- 106430 string characters out of 6137904
- 221489 words of memory out of 5000000
- 10775 multiletter control sequences out of 15000+600000
+ 7489 strings out of 493315
+ 106466 string characters out of 6137904
+ 220489 words of memory out of 5000000
+ 10776 multiletter control sequences out of 15000+600000
  13298 words of font info for 47 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 30i,11n,35p,1825b,386s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 30i,11n,35p,1953b,388s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb
 ></usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
 </usr/local/texlive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><
@@ -805,10 +812,10 @@ ive/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texli
 ve/2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive
 /2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/
 2013/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on Enrichment.pdf (8 pages, 264378 bytes).
+Output written on Enrichment.pdf (9 pages, 270202 bytes).
 PDF statistics:
- 289 PDF objects out of 1000 (max. 8388607)
- 237 compressed objects within 3 object streams
- 51 named destinations out of 1000 (max. 500000)
- 127 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 303 PDF objects out of 1000 (max. 8388607)
+ 250 compressed objects within 3 object streams
+ 53 named destinations out of 1000 (max. 500000)
+ 135 words of extra memory for PDF output out of 10000 (max. 10000000)
 
