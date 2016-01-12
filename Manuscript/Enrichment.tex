@@ -12,7 +12,7 @@
 \usepackage{float}  % PUT FIGURE HERE
 \usepackage{multirow}
 \usepackage{booktabs} % Create TABS
-\title{Comparative gene set enrichment analysis for correlated expression data}
+\title{Competitive gene set enrichment analysis for correlated expression data}
 \date{} % Today's date or a custom date
 
 
@@ -47,15 +47,23 @@
 	
 	\section{Introduction}\label{section:introduction}
 	\textbf{What is competitive gene set test}\\
-	 Competitive gene set test \citep{goeman2007analyzing} is a gene expression analysis that compares differential expression (DE) for a pre-defined set of genes to that for all other genes. The pre-defined set of genes may represent biological pathways or network. Incorporating such prior knowledge of the grouping makes it easier for biologists to interpret the results of DE analysis.
+	 Competitive gene set test \citep{goeman2007analyzing} is a gene expression analysis that compares differential expression (DE) for a pre-defined set of genes to that for all other genes. The pre-defined set of genes may represent biological pathways or network. Incorporating such prior knowledge of the grouping makes it easier for biologists to interpret the results of DE analysis. Most competitive gene set tests are two-stage procedures: on the first stage, a \textit{local statistics} that measures the association between the response (e.g., the expression value) and the predictors (e.g., treatment condition) is calculated for each gene; on the second stage, a $p$-value is reported from some form of global statistics that use local statistics as observations and gene set information as predictor. 
 	
 	\textbf{What are the existing methods}\\
-	 Most competitive gene set tests report a $p$-value from some form of global test that use local genewise statistics as observations. However, they fall into two groups: gene set tests that assume independence of genes, and those that doesn't. The former includes,  among many others, the fisher's exact test that examines the over-representation of DE genes in the test set (see \cite{huang2009bioinformatics} for a review), and permutation-based test that evaluates $p$-values by permuting gene lables (e.g., sigPathway of \cite{tian2005discovering}). However, tests assuming independence of genes may result in inflated false discovery rate (REF) and loss of power as genes in a gene set are often correlated and function together. For this reason, the tests allowing for between-gene correlations are...
-	 
 	
-	\textbf{What are the problems with them} \\
+	\textbf{Independent gene set test} \\
+	 A number of gene set tests assume independence of gene expression profiles. They are parametric or rank-based procedures that assume the local statistics to be independent and identically distributed, or gene permutation procedures that generates the same approximate null. Examples include, among many others, $z$-test/$t$-test that compares the mean of the local statistics in the test set to the mean of those not in the test (e.g., \citealp{kim2005page}), the $2\times 2$ contingency-table-based tests that examine the over-representation of DE genes in the test set (see \citealp{huang2009bioinformatics} for a review), and permutation-based tests that evaluate $p$-values by permuting gene lables (e.g., sigPathway of \citealp{tian2005discovering}, "geneSetTest" in the limma package \citealp{Smyth2004moderated}). However, tests assuming independence of genes may result in inflated false discovery rate \citep{efron2007testing} and loss of power %\citep{huang2013gene} 
+	 as genes in a gene set are often correlated and function together.
+	 
+	  \textbf{Tests that account for between-gene correlations}\\
+	  To accont for between-gene correlation in gene set tests, methods have been proposed. One attempt is to evaluate the $p$-value of the global test by permuting the biological samples (see, for example, \citealp{subramanian2005gene} and \citealp{efron2007testing}). Permuting the sample lables preserves, in contrast to permuting gene lables that ignores, the between-gene correlaiton structure and thus protects the test against such correlation. The very famous example of this kind is the \textit{Gene Set Enrichment Analysis }(GSEA) proposed by \cite{subramanian2005gene}.  However, this approach implicitly alters the null hypothesis being tested and therefore the null and the alternative hypotheses are difficult to characterize. 
+	  
+	   Another attempt is to conduct global test that works with the between-gene correlation structures. \cite{wu2012camera} proposed Correlation Adjusted MEan RAnk (CAMERA) gene set test that estimates a variance inflation factor associated with correaltions between gene expression profiles, and then incorporates it into the parametric or rank-based test. However, as shown by (the paper to be finished) that the correlation of local test statistics can be over-estimated when a fraction of genes are DE. CAMERA, relying on the assumption that correlations between local statisitcs are euqal to correlations between expression profiles, may be too conservative since the variance inflation factor is over-estimated. (This is a self-contained gene set test) \cite{huang2013gene} uses a multivariate linear regression model in which the between-gene correlations are explicitly modeled by a working covariance matrix.
+
 	
 	\textbf{What do we propose?} \\
+	
+	
 	
 	\textbf{What is the plan of this paper?} \\
 	\section{Methods}\label{section:methods}
