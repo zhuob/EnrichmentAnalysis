@@ -144,3 +144,5 @@ P_a <- TypeIerror(pvec, read.table("Power_a_50.txt")[, showcol])
 P_g <- TypeIerror(pvec, read.table("Power_g_50.txt")[, showcol])
 P_a
 P_g
+
+
