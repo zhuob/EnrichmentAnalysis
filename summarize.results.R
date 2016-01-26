@@ -3,7 +3,7 @@
 library(ggplot2)
 library(reshape2)
 
-create.hist2 <- function(data, figure.num, textsize = rep(20, 4), figname = "all.eps")
+create.hist2 <- function(data, figure.num = "", textsize = rep(20, 4), figname = "all.eps")
 {
   dat_new <- melt(data, value.name = "Pval", variable.name = "Method")
   
@@ -11,7 +11,7 @@ create.hist2 <- function(data, figure.num, textsize = rep(20, 4), figname = "all
   postscript(paste(FigurePath, figname, sep=""), width = 10, height = 5)
   
   A <- ggplot(dat_new, aes(x=Pval)) + geom_histogram(binwidth=.05, colour="black", fill="white") + 
-    facet_grid(Method~ .)  +
+    facet_grid(Method~ ., scales = "free")  +
     xlim(0, 1) + 
     theme(legend.position="top", 
           legend.text = element_text(size = textsize[1]),
@@ -37,3 +37,11 @@ TypeIerror <- function(norminal = 0.05, data){
   colnames(actual) <- names(data)
   return(t(actual)) 
 }
+
+
+
+
+
+
+
+

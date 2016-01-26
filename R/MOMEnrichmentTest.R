@@ -159,10 +159,19 @@ compare_test <- function(dat){
   tes3 <- camera(microarray, index1,  design)$PValue                                    # camera proedure
   tes4 <- camera(microarray, index1,  design, use.ranks= T)$PValue                      # camera rank 
   
-  tes5 <- GSEA.SingleSet(dat$data, dat$trt, dat$go_term, nperm=1000)$p.vals
+  tes5 <- GSEA.SingleSet(dat$data, dat$trt, dat$go_term, nperm=1000)$p.vals             # GSEA
+  
+  ## qusage <Yaari, 2013>
+  geneSets <- list()
+  geneSets[[paste("Set",1)]] <- which(go_term == 1)
+  labels <- rep(NA, length(trt))
+  labels[trt == 1] <- "B"; labels[trt==0] <- "A"
+  qsarray <- qusage(microarray, labels, contrast = "B-A" , geneSets)  # calculate the probability for all genes
+  tes6 <- pdf.pVal(qsarray, alternative = "two.sided", selfContained = F)  # competitive test
   
   
-  return(c(pval1, pval2, tes1, tes2, tes3, tes4, tes5))
+  
+  return(c(pval1, pval2, tes1, tes2, tes3, tes4, tes5, tes6))
   
 }
 

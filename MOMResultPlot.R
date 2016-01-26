@@ -81,12 +81,12 @@ setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/Simulat
 FigurePath <-"/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Manuscript/Figures/"
   
 showcol <- c(1, 3:7)
-textsize = rep(20,20, 8, 20)
+textsize = rep(20,20, 6, 20)
 
 data <- read.table("DE_a0_50.txt")[, showcol]
 
-create.hist2(read.table("DE_a0_50.txt")[, showcol], textsize = textsize, figure.num = "DE_a0_50")
-create.hist2(read.table("DE_a_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_a_50")
+create.hist2(read.table("DE_a0_50.txt")[, showcol], textsize = textsize, figure.num = "DE_a0_50", figname = "DE_a0_50")
+create.hist2(read.table("DE_a_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_a_50", figname = "DE_a_50")
 create.hist2(read.table("DE_b_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_b_50")
 create.hist2(read.table("DE_c_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_c_50")
 create.hist2(read.table("DE_d_50.txt")[, showcol],  textsize = textsize, figure.num = "DE_d_50")
@@ -144,5 +144,39 @@ P_a <- TypeIerror(pvec, read.table("Power_a_50.txt")[, showcol])
 P_g <- TypeIerror(pvec, read.table("Power_g_50.txt")[, showcol])
 P_a
 P_g
+
+
+
+#################################################################################
+##  add qusage
+
+## simulation setup  for this data 
+nsim <- 1000
+
+size <- 50           # number of samples to be simulated
+rho <- c(0.1, 0.05, -0.05)   # correlation for case a, e, f
+num_gene <- c(500, 100)
+prop <- c(0.2, 0.2)
+n_gene <- num_gene[1]
+delta <- rnorm(n_gene, 0.5 , 1)  # the DE is very small 
+
+
+
+setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationQUsage20160125/")
+FigurePath <-"/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Manuscript/Figures/"
+
+showcol <- c(1, 3:8)
+textsize = rep(20,20, 8, 20)
+
+data <- read.table("NO_DE_a0_50.txt")[, showcol]
+create.hist2(read.table("NO_DE_a0_50.txt")[, showcol], textsize = textsize, figure.num ="a0", figname = "NODEA0.eps")
+create.hist2(read.table("NO_DE_a_50.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "NODEA.eps")
+create.hist2(read.table("NO_DE_c_50.txt")[, showcol], textsize = textsize, figure.num ="c", figname = "NODEC.eps")
+create.hist2(read.table("NO_DE_e_50.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "NODEE.eps")
+create.hist2(read.table("NO_DE_f_50.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "NODEF.eps")
+create.hist2(read.table("NO_DE_g_50.txt")[, showcol], textsize = textsize, figure.num ="g", figname = "NODEG.eps")
+
+
+
 
 

@@ -1,15 +1,15 @@
 ### comparison of GSEA code downloaded from Broad Institute
 
 source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/GSEA.1.0.R")
-source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/LinuxCode/SimulateLabDataNew.R")
-source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/LinuxCode/MOMEnrichmentTest.R")
+source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/R/SimulateLabDataNew.R")
+source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/R/MOMEnrichmentTest.R")
 
 
 
 case <- "a0"
 size <- 50           # number of samples to be simulated
 rho <- c(0.1, 0.05, -0.05)   # correlation for case a, e, f
-num_gene <- c(500, 100)
+num_gene <- c(1000, 200)
 prop <- c(0.0, 0.0)
 n_gene <- num_gene[1]
 delta <- rnorm(n_gene, 2 , 1)
@@ -240,28 +240,90 @@ sigPathway.SingleSet <- function(microarray, trt, go_term, nsim = 1000, ngroups 
 
 
 
+##############  test the following methods ####################### 
+
+
+library(PCGSE)
+library(safe)
+library(qusage)
+library(GSA)
+
+
+
+
+test.new.GSA <- function(dat){
+  
+  microarray <- dat$data
+  trt <- dat$trt
+  go_term <- dat$go_term
+  
+  # for now I'll skip this one, because there seems to be no treatment structure. 
+  # And perhaps I don't understand the paper
+  # result1 <- pcgse(t(microarray), gene.sets = t(matrix(go_term)))
+  
+  # I need the safeExpress package
+  # result2 <- safe(microarray, y.vec = trt, method = "express", C.mat = matrix(go_term))
+  # result2 <- safe(microarray, y.vec = trt, method = "permutation", C.mat = matrix(go_term), error = "none")
+  
+  # the qusage 
+  geneSets <- list()
+  geneSets[[paste("Set",1)]] <- which(go_term == 1)
+  labels <- rep(NA, length(trt))
+  labels[trt == 1] <- "B"; labels[trt==0] <- "A"
+  qsarray <- qusage(microarray, labels, contrast = "B-A" , geneSets)  # calculate the probability for all genes
+  result3 <- pdf.pVal(qsarray, alternative = "two.sided", selfContained = F)  # competitive test
+  
+  # the GSA method by Efron 
+  genenames = paste("g", 1:nrow(microarray), sep="")
+  geneSets[[1]] <- rownames(microarray)[go_term ==1]
+  result4 <- GSA(x = as.matrix(microarray), y = trt+1, genenames = rownames(microarray), 
+                 genesets = geneSets, resp.type="Two class unpaired", nperms=100)
+  
+  
+}
 
 
 
 
 
 
+g.alt <- 100
+g.null <- 900
+n <- 20
+data<-matrix(rnorm(n*(g.alt+g.null)),g.alt+g.null,n)
+data[1:g.alt,1:(n/2)] <- data[1:g.alt,1:(n/2)] +
+  seq(2,2/g.alt,length=g.alt)
+dimnames(data) <- list(c(paste("Alt",1:g.alt),
+                         paste("Null",1:g.null)),
+                       paste("Array",1:n))
+## A treatment vector
+trt <- rep(c("Trt","Ctr"),each=n/2)
+## 2 alt. categories and 18 null categories of size 50
+C.matrix <- kronecker(diag(20),rep(1,50))
+dimnames(C.matrix) <- list(dimnames(data)[[1]],
+                           c(paste("TrueCat",1:2),paste("NullCat",1:18)))
+dim(C.matrix)
+results <- safe(data,trt,C.mat = C.matrix,Pi.mat = 100)
+results
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
+set.seed(100)
+x<-matrix(rnorm(1000*20),ncol=20)
+dd<-sample(1:1000,size=100)
+u<-matrix(2*rnorm(100),ncol=10,nrow=100)
+x[dd,11:20]<-x[dd,11:20]+u
+y<-c(rep(1,10),rep(2,10))
+genenames=paste("g",1:1000,sep="")
+#create some random gene sets
+genesets=vector("list",50)
+for(i in 1:50){
+  genesets[[i]]=paste("g",sample(1:1000,size=30),sep="")
+}
+geneset.names=paste("set",as.character(1:50),sep="")
+GSA.obj<-GSA(microarray,y, genenames=genenames, genesets=genesets, resp.type="Two class unpaired", nperms=100)
 
 
 
