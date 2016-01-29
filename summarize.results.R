@@ -8,7 +8,7 @@ create.hist2 <- function(data, figure.num = "", textsize = rep(20, 4), figname =
   dat_new <- melt(data, value.name = "Pval", variable.name = "Method")
   
   setEPS() 
-  postscript(paste(FigurePath, figname, sep=""), width = 10, height = 5)
+  postscript(paste(FigurePath, figname, sep=""), width = 10, height = 7)
   
   A <- ggplot(dat_new, aes(x=Pval)) + geom_histogram(binwidth=.05, colour="black", fill="white") + 
     facet_grid(Method~ ., scales = "free")  +

@@ -112,14 +112,14 @@ G_NO_DE
 
 
 
-create.hist2(read.table("NO_DE_a0_50.txt")[, showcol], textsize = textsize, figure.num ="a0", figname = "NODEA0.eps")
-create.hist2(read.table("NO_DE_a_50.txt")[, showcol], textsize = textsize, figure.num = "a", figname = "NODEA.eps")
+create.hist2(read.table("NO_DE_a0_50.txt")[, showcol], textsize = textsize, figure.num ="a0", figname = "DEA0.eps")
+create.hist2(read.table("NO_DE_a_50.txt")[, showcol], textsize = textsize, figure.num = "a", figname = "DEA.eps")
 create.hist2(read.table("NO_DE_b_50.txt")[, showcol], textsize = textsize, figure.num = "NO_DE_b_50")
-create.hist2(read.table("NO_DE_c_50.txt")[, showcol], textsize = textsize, figure.num = "c", figname = "NODEC.eps")
+create.hist2(read.table("NO_DE_c_50.txt")[, showcol], textsize = textsize, figure.num = "c", figname = "DEC.eps")
 create.hist2(read.table("NO_DE_d_50.txt")[, showcol], textsize = textsize, figure.num = "NO_DE_d_50")
-create.hist2(read.table("NO_DE_e_50.txt")[, showcol], textsize = textsize, figure.num = "e", figname = "NODEE.eps")
-create.hist2(read.table("NO_DE_f_50.txt")[, showcol], textsize = textsize, figure.num = "f", figname = "NODEF.eps")
-create.hist2(read.table("NO_DE_g_50.txt")[, showcol], textsize = textsize, figure.num = "g", figname = "NODEG.eps")
+create.hist2(read.table("NO_DE_e_50.txt")[, showcol], textsize = textsize, figure.num = "e", figname = "DEE.eps")
+create.hist2(read.table("NO_DE_f_50.txt")[, showcol], textsize = textsize, figure.num = "f", figname = "DEF.eps")
+create.hist2(read.table("NO_DE_g_50.txt")[, showcol], textsize = textsize, figure.num = "g", figname = "DEG.eps")
 create.hist2(read.table("NO_DE_h_50.txt")[, showcol], textsize = textsize, figure.num = "NO_DE_h_50")
 
 
@@ -165,7 +165,7 @@ delta <- rnorm(n_gene, 0.5 , 1)  # the DE is very small
 setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationQUsage20160125/")
 FigurePath <-"/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Manuscript/Figures/"
 
-showcol <- c(1, 3:8)
+showcol <- c(1, 4:8)
 textsize = rep(20,20, 8, 20)
 
 data <- read.table("NO_DE_a0_50.txt")[, showcol]
@@ -176,7 +176,49 @@ create.hist2(read.table("NO_DE_e_50.txt")[, showcol], textsize = textsize, figur
 create.hist2(read.table("NO_DE_f_50.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "NODEF.eps")
 create.hist2(read.table("NO_DE_g_50.txt")[, showcol], textsize = textsize, figure.num ="g", figname = "NODEG.eps")
 
+create.hist2(read.table("DE_a0_50.txt")[, showcol], textsize = textsize, figure.num ="a0", figname = "DEA0.eps")
+create.hist2(read.table("DE_a_50.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "DEA.eps")
+create.hist2(read.table("DE_c_50.txt")[, showcol], textsize = textsize, figure.num ="c", figname = "DEC.eps")
+create.hist2(read.table("DE_e_50.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "DEE.eps")
+create.hist2(read.table("DE_f_50.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "DEF.eps")
+create.hist2(read.table("DE_g_50.txt")[, showcol], textsize = textsize, figure.num ="g", figname = "DEG.eps")
 
 
+create.hist2(read.table("DE_a_50_large.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "DEA_LargeRho.eps")
+create.hist2(read.table("DE_e_50_large.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "DEe_LargeRho.eps")
+create.hist2(read.table("DE_f_50_large.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "DEf_LargeRho.eps")
+
+
+create.hist2(read.table("DE_a_50_12.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "DEA_sample12.eps")
+create.hist2(read.table("DE_e_50_12.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "DEe_sample12.eps")
+
+
+create.hist2(read.table("DE_a_50_DE10PCT.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "DEa_10PCT.eps")
+create.hist2(read.table("DE_e_50_DE10PCT.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "DEe_10PCT.eps")
+create.hist2(read.table("DE_f_50_DE10PCT.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "DEf_10PCT.eps")
+
+
+##########################################   Jan 28th ##########################
+source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/summarize.results.R")
+setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160128/")
+FigurePath <-"/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160128/"
+
+showcol <- c(1, 4:8)
+textsize = rep(20,20, 8, 20)
+create.hist2(read.table("DE_a_50_DE10PCT.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "DEa_10PCT.eps")
+create.hist2(read.table("DE_e_50_DE10PCT.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "DEe_10PCT.eps")
+create.hist2(read.table("DE_f_50_DE10PCT.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "DEf_10PCT.eps")
+
+create.hist2(read.table("DE_a_50_large.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "DEA_LargeRho.eps")
+create.hist2(read.table("DE_e_50_large.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "DEe_LargeRho.eps")
+create.hist2(read.table("DE_f_50_large.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "DEf_LargeRho.eps")
+
+create.hist2(read.table("Power_a_50_a.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "Power_a_a.eps")
+create.hist2(read.table("Power_e_50_a.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "Power_e_a.eps")
+create.hist2(read.table("Power_f_50_a.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "Power_f_a.eps")
+
+create.hist2(read.table("Power_a_50_b.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "Power_a_b.eps")
+create.hist2(read.table("Power_e_50_b.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "Power_e_b.eps")
+create.hist2(read.table("Power_f_50_b.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "Power_f_b.eps")
 
 
