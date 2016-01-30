@@ -221,4 +221,10 @@ create.hist2(read.table("Power_a_50_b.txt")[, showcol], textsize = textsize, fig
 create.hist2(read.table("Power_e_50_b.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "Power_e_b.eps")
 create.hist2(read.table("Power_f_50_b.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "Power_f_b.eps")
 
+create.hist2(read.table("DE_a0_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="a0", figname = "DE_a0_50_10PCT.eps")
+create.hist2(read.table("DE_a_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "DE_a_50_10PCT.eps")
+create.hist2(read.table("DE_c_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="c", figname = "DE_c_50_10PCT.eps")
+create.hist2(read.table("DE_e_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "DE_e_50_10PCT.eps")
+create.hist2(read.table("DE_f_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "DE_f_50_10PCT.eps")
+create.hist2(read.table("DE_g_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="g", figname = "DE_g_50_10PCT.eps")
 

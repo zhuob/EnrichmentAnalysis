@@ -26,19 +26,7 @@
 }
 
 \begin{document}
-	our main point
-	\begin{enumerate}
-		\item section 1:  introduction begins here (suggestions: try writting your introductions last).
-		 \begin{enumerate}
-		 	\item what is my topic (question)?
-		 	\item why is it important?
-		 	\item how will I plan to proceed with my
-		 \end{enumerate}
-		\item previous comparative gene set enrichment analysis does not take....
-		\item we propose a method that allows DE within the test set as well as the background gene set.
-	\end{enumerate}
-	
-	
+
 	\newpage
 	\maketitle
 	
@@ -52,23 +40,23 @@
 	 
 	 	\textbf{What are the differences between self-contained and competitive test? And how does they work?}\\
 	 Depending on the definition of the null hypothesis, there are two types of gene set test: the \textit{self-contained} and \textit{competitive} test \citep{goeman2007analyzing}. A \textit{self-contained} test evaluates a set of genes by a fixed standard without reference to other genes in the genome \citep{goeman2005testing, wu2010roast}. A \textit{competitive} test examines
-	 genes in the test set to those not in the test set \citep{tian2005discovering, wu2012camera, yaari2013quantitative}. Many methods, regardless of the type of test, perform a three-stage analysis \citep{khatri2012ten}: on the first stage, a \textit{gene-level statistic} that measures the association between the expression profiles and the experimental design variables is calculated for each gene; such gene-level statistics include, among others, signal-to-noise ration \citep{subramanian2005gene}, moderated $t$ statistics \citep{Smyth2004moderated} and  $Z$-score \citep{efron2007correlation}. On the second stage, a \textit{set-level statistic} is calculated by using gene-level statistics and prior information about the test set (i.e., whether the gene belongs to the set) as input. On the last stage, a $p$-value is assigned to the test set by comparing the set-level statistic to its reference distribution. The competitive gene set test is much more popular among genomic literatures \citep{goeman2007analyzing, gatti2010heading}.  
+	 genes in the test set to those not in the test set \citep{tian2005discovering, wu2012camera, yaari2013quantitative}. Many methods, regardless of the type of test, perform a three-stage analysis \citep{khatri2012ten}: on the first stage, a \textit{gene-level statistic} that measures the association between the expression profiles and the experimental design variables is calculated for each gene; such gene-level statistics include, among others, signal-to-noise ration \citep{subramanian2005gene}, moderated $t$ statistics \citep{Smyth2004moderated} and  $Z$-score \citep{efron2007correlation}. On the second stage, a \textit{set-level statistic} is calculated by using gene-level statistics and prior information about the test set (i.e., whether the gene belongs to the test set) as input. On the last stage, a $p$-value is assigned to the test set by comparing the set-level statistic to its reference distribution. The competitive gene set test is much more popular among genomic literatures \citep{goeman2007analyzing, gatti2010heading}.  
 	 
 	 %Competitive gene set test \citep{goeman2007analyzing} is a gene expression analysis that compares differential expression (DE) for genes in the test set to that for genes not in the test set. Most competitive gene set tests, as described by \cite{barry2008statistical}, are typically two-stage procedures:  on the second stage, a $p$-value is reported from the The test set may represent biological pathways or network, or some other grouping based on biological knowledge. Incorporating such prior information of the grouping makes it easier for biologists to interpret the results of DE analysis.
 	
 	\textbf{Independent gene set test} \\
-	 Many competitive gene set tests rely on independence of gene regarding expression profiles (REF). Those tests are parametric or rank-based procedures that assume the gene-level statistics to be independent and identically distributed, or gene permutation procedures that generate the same approximate null (For what??). Examples include, among many others, $z$-test/$t$-test that compares the mean of the gene-level statistics in the test set to the mean of those not in the test (e.g., the PAGE procedure of \citealp{kim2005page}), the $2\times 2$ contingency-table-based tests that examine the over-representation of DE genes in the test set (see \citealp{huang2009bioinformatics} for a review), and permutation-based tests that evaluate the set-level $p$-values by permuting gene lables (e.g., sigPathway of \citealp{tian2005discovering}, "geneSetTest" in the limma package \citealp{Smyth2004moderated}). However, tests assuming independence of genes may result in inflated false discovery rate \citep{efron2007testing}
-	 as genes in a gene set are often correlated and function together (REF).
+	 Many competitive gene set test approaches rely on independence of genes regarding expression profiles. Those tests are parametric or rank-based procedures that assume the gene-level statistics to be independent and identically distributed, or gene permutation procedures that generate the same approximate null for the set-level statistics. Examples include, among many others, $z$-test/$t$-test that compare the mean of the gene-level statistics in the test set to the mean of those not in the test (e.g., the PAGE procedure of \citealp{kim2005page}), the $2\times 2$ contingency-table-based tests that examine the over-representation of DE genes in the test set (see \citealp{huang2009bioinformatics} for a review), and permutation-based tests that evaluate the set-level $p$-values by permuting gene lables (e.g., sigPathway of \citealp{tian2005discovering}, "geneSetTest" in the limma package \citealp{Smyth2004moderated}). However, tests assuming independence of genes may result in inflated false discovery rate \citep{efron2007testing}
+	 as genes in a gene set are often correlated and function together.
 	 
 	  \textbf{Tests that account for between-gene correlations}\\
-
-	  A number of methods have been proposed to accont for between-gene correlation in gene set tests. One attempt is to evaluate the set-level $p$-value by permuting the biological samples (see, for example, \citealp{subramanian2005gene} and \citealp{efron2007testing}). Permuting the sample labels preserves, in contrast to permuting gene labels that ignores, the between-gene correlaiton structure and thus protects the test against such correlation. The very famous example of this kind is the \textit{Gene Set Enrichment Analysis }(GSEA) proposed by \cite{subramanian2005gene}.  However, this approach implicitly alters the null hypothesis being tested and therefore the null and the alternative hypotheses are difficult to characterize \citep{khatri2012ten}. Another attempt is to conduct set-level test that works with the between-gene correlation structures. \cite{wu2012camera} proposed Correlation Adjusted MEan RAnk (CAMERA) gene set test that estimates a variance inflation factor associated with correaltions between gene expression profiles, and then incorporates it into the parametric or rank-based test. Estimating the variance inflation factor relies on the assumption that correlations between any two local statisitcs are almost the same as correlations between their corresponding expression profiles. However, as shown by (the paper to be finished), the correlations of local test statistics can be over-estimated by using sample correlations as approximation when a fraction of genes are DE. The CAMERA procedure thus may be too conservative for controling type I error in the presence of DE genes, as we will demonstrate in our simulation study. 
+	  A number of methods have been proposed to accont for between-gene correlation in gene set tests. One attempt is to evaluate the set-level statistic by permuting the biological samples (see, for example, \cite{subramanian2005gene, efron2007testing}). Permuting samples does not require an explicit understanding of the underlying structure and thus protects the test against such correlation. The very famous example of this kind is the \textit{Gene Set Enrichment Analysis }(GSEA) proposed by \cite{subramanian2005gene}.  However, this approach implicitly alters the null hypothesis being tested and therefore it is diffucult to characterize the null and the alternative hypotheses \citep{goeman2007analyzing, khatri2012ten}. Another attempt is to conduct set-level test that works with the between-gene correlation structures. \cite{wu2012camera} proposed Correlation Adjusted MEan RAnk (CAMERA) gene set test that estimates a \textit{variance inflation factor} (VIF) associated with correaltions between gene expression profiles, and then incorporates it into the parametric or rank-based version of CAMERA test. \cite{yaari2013quantitative} also used the idea of incorporating VIF to adjust for correlation in their distribution-based gene set analysis. Valid estimation of VIF relies on the assumption that correlations between any two local statisitcs are almost the same as correlations between their corresponding expression profiles. This assumption has been demonstrated (??? a better word???) by \cite{barry2008statistical} for several gene-level statistics (e.g., $t$-statistic, Wald-type statistic for regressing expression on censored time-to-event data through a Cox proportional hazards model). However, as shown by (the paper to be finished), the correlation among gene-level $t$-test statistics can be badly estimated by sample correlations when a fraction of genes are DE. 
+		% The CAMERA procedure thus may be too conservative for controling type I error in the presence of DE genes, as will be demonstrated in our simulation study. 
 
 	   
 	  % (This is a self-contained gene set test) \cite{huang2013gene} uses a multivariate linear regression model in which the between-gene correlations are explicitly modeled by a working covariance matrix. 
 	
 	\textbf{What do we propose?} \\
-	In this paper, we propose a new competitive gene set test procedure that takes into account the correlations among gene-level statistics in the set-level test. This procedure aims to correct for the discrepancy between correlations among expression profiles and those among gene-level statistics. Our stretagy is to first model the covariance of gene-level statistics by two variance components, one attributable to the correlations among expression profiles and the other attributable to the DE effect caused by the treatment, and then incorporate the estimated covariance into the set-level statistics of our gene set test procedure. OurMethod works for a two group comparison experiment, and does not require any particular correlation structure. 
+	In this paper, we propose a new competitive gene set test procedure that takes into account the correlations among gene-level statistics in the set-level test statistic. This procedure aims to correct for the discrepancy between correlation among expression profiles and that among gene-level statistics. Our stretagy is to model the covariance of gene-level statistics by two variance components, one attributable to the correlations among expression profiles and the other attributable to the DE effect associated with the treatment. OurMethod is a three-stage procedure: first, we use the mean difference between two experimental conditions as the gene-level statistics; then we estimate the covaraince from the data and incorporate it into the set-level statistic; lastly, we use the set-level statisitc to evaluate the significance of the test set. OurMethod works for a two group comparison experiment, and does not require any particular correlation structure. 
 		
 	\textbf{What is the plan of this paper?} \\
 	\section{Methods}\label{section:methods}
@@ -308,3 +296,18 @@
 \bibliography{mybib}
 	
 \end{document}
+
+
+
+	our main point
+	\begin{enumerate}
+		\item section 1:  introduction begins here (suggestions: try writting your introductions last).
+		\begin{enumerate}
+			\item what is my topic (question)?
+			\item why is it important?
+			\item how will I plan to proceed with my
+		\end{enumerate}
+		\item previous comparative gene set enrichment analysis does not take....
+		\item we propose a method that allows DE within the test set as well as the background gene set.
+	\end{enumerate}
+	
