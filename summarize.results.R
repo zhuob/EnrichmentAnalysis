@@ -40,6 +40,25 @@ TypeIerror <- function(norminal = 0.05, data){
 
 
 
+## the recalibrated power
+
+RecalibratePower <- function(data1, data2, alpha_level = 0.05, colnum = showcol){
+  
+  data1 <- data1[, showcol]
+  data2 <- data2[, showcol]
+  adjusted_alpha <- sapply(data1, quantile, alpha_level)
+  
+  power <- c()
+  for ( i in 1: ncol(data1))
+  {
+    power[i] <- mean(data2[, i] <= adjusted_alpha[i])
+  }
+  names(power) <- colnames(data1)
+  names(adjusted_alpha) <- colnames(data1)
+  
+  return(list(adjusted_alpha = adjusted_alpha, power = power))
+  }
+
 
 
 

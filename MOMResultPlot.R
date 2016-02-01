@@ -228,3 +228,41 @@ create.hist2(read.table("DE_e_50_10PCT.txt")[, showcol], textsize = textsize, fi
 create.hist2(read.table("DE_f_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "DE_f_50_10PCT.eps")
 create.hist2(read.table("DE_g_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="g", figname = "DE_g_50_10PCT.eps")
 
+
+
+
+#################################################################################
+##  simulate type I error and re-calibrated power ###############################
+
+source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/summarize.results.R")
+setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160129/")
+FigurePath <-"/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160129/"
+showcol <- c(1, 4:8)
+textsize = rep(20,20, 8, 20)
+
+
+## type I error for 20,000 simulations
+
+create.hist2(read.table("DE_a0_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="a0", figname = "DE_a0_50_10PCT.eps")
+create.hist2(read.table("DE_a_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "DE_a_50_10PCT.eps")
+create.hist2(read.table("DE_c_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="c", figname = "DE_c_50_10PCT.eps")
+create.hist2(read.table("DE_e_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "DE_e_50_10PCT.eps")
+create.hist2(read.table("DE_f_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "DE_f_50_10PCT.eps")
+create.hist2(read.table("DE_g_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="g", figname = "DE_g_50_10PCT.eps")
+
+
+
+## recalibrated power for DE 20% VS 10%, with null 10% DE, 20000 simulations for the type I error and 1000 for power
+RecalibratePower(read.table("DE_a0_50_10PCT.txt"), read.table("Power_a0_50_20VS10PCT.txt"), colnum = showcol)
+RecalibratePower(read.table("DE_a_50_10PCT.txt"), read.table("Power_a_50_20VS10PCT.txt"), colnum = showcol)
+RecalibratePower(read.table("DE_c_50_10PCT.txt"), read.table("Power_c_50_20VS10PCT.txt"), colnum = showcol)
+RecalibratePower(read.table("DE_e_50_10PCT.txt"), read.table("Power_e_50_20VS10PCT.txt"), colnum = showcol)
+RecalibratePower(read.table("DE_f_50_10PCT.txt"), read.table("Power_f_50_20VS10PCT.txt"), colnum = showcol)
+RecalibratePower(read.table("DE_g_50_10PCT.txt"), read.table("Power_g_50_20VS10PCT.txt"), colnum = showcol)
+
+for( k in 1: 6){
+  x1 <- quantile(data1[, k], 0.05)
+  print(x1)
+  print(mean(data2[, k] <= x1))
+}
+
