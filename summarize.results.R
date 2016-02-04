@@ -51,7 +51,7 @@ RecalibratePower <- function(data1, data2, alpha_level = 0.05, colnum = showcol)
   power <- c()
   for ( i in 1: ncol(data1))
   {
-    power[i] <- mean(data2[, i] <= adjusted_alpha[i])
+    power[i] <- mean(data2[, i] < adjusted_alpha[i])
   }
   names(power) <- colnames(data1)
   names(adjusted_alpha) <- colnames(data1)

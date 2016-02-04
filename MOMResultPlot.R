@@ -237,11 +237,11 @@ create.hist2(read.table("DE_g_50_10PCT.txt")[, showcol], textsize = textsize, fi
 source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/summarize.results.R")
 setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160129/")
 FigurePath <-"/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160129/"
-showcol <- c(1, 4:8)
+showcol <- c(1, 3:8)
 textsize = rep(20,20, 8, 20)
 
 
-## type I error for 20,000 simulations
+## type I error for 20,000 simulations 10% DE
 
 create.hist2(read.table("DE_a0_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="a0", figname = "DE_a0_50_10PCT.eps")
 create.hist2(read.table("DE_a_50_10PCT.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "DE_a_50_10PCT.eps")
@@ -260,9 +260,24 @@ RecalibratePower(read.table("DE_e_50_10PCT.txt"), read.table("Power_e_50_20VS10P
 RecalibratePower(read.table("DE_f_50_10PCT.txt"), read.table("Power_f_50_20VS10PCT.txt"), colnum = showcol)
 RecalibratePower(read.table("DE_g_50_10PCT.txt"), read.table("Power_g_50_20VS10PCT.txt"), colnum = showcol)
 
-for( k in 1: 6){
-  x1 <- quantile(data1[, k], 0.05)
-  print(x1)
-  print(mean(data2[, k] <= x1))
-}
+
+
+## type I error for 20,000 simulations NO DE
+
+create.hist2(read.table("NODE_a0_50.txt")[, showcol], textsize = textsize, figure.num ="a0", figname = "NODE_a0_50.eps")
+create.hist2(read.table("NODE_a_50.txt")[, showcol], textsize = textsize, figure.num ="a", figname = "NODE_a_50.eps")
+create.hist2(read.table("NODE_c_50.txt")[, showcol], textsize = textsize, figure.num ="c", figname = "NODE_c_50.eps")
+create.hist2(read.table("NODE_e_50.txt")[, showcol], textsize = textsize, figure.num ="e", figname = "NODE_e_50.eps")
+create.hist2(read.table("NODE_f_50.txt")[, showcol], textsize = textsize, figure.num ="f", figname = "NODE_f_50.eps")
+create.hist2(read.table("NODE_g_50.txt")[, showcol], textsize = textsize, figure.num ="g", figname = "NODE_g_50.eps")
+
+
+
+## recalibrated power for 10% VS 0%,  20000 simulations for the type I error and 1000 for power
+RecalibratePower(read.table("NODE_a0_50.txt"), read.table("Power_a0_50_10VS0PCT.txt"), colnum = showcol, alpha_level = 0.01)
+RecalibratePower(read.table("NODE_a_50.txt"), read.table("Power_a_50_10VS0PCT.txt"), colnum = showcol)
+RecalibratePower(read.table("NODE_c_50.txt"), read.table("Power_c_50_10VS0PCT.txt"), colnum = showcol)
+RecalibratePower(read.table("NODE_e_50.txt"), read.table("Power_e_50_10VS0PCT.txt"), colnum = showcol)
+RecalibratePower(read.table("NODE_f_50.txt"), read.table("Power_f_50_10VS0PCT.txt"), colnum = showcol)
+RecalibratePower(read.table("NODE_g_50.txt"), read.table("Power_g_50_10VS0PCT.txt"), colnum = showcol)
 
