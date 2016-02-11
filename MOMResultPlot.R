@@ -235,8 +235,8 @@ create.hist2(read.table("DE_g_50_10PCT.txt")[, showcol], textsize = textsize, fi
 ##  simulate type I error and re-calibrated power ###############################
 
 source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/summarize.results.R")
-setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160129/")
-FigurePath <-"/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160129/"
+setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160203/")
+FigurePath <-"/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160203/"
 showcol <- c(1, 3:8)
 textsize = rep(20,20, 8, 20)
 

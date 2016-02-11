@@ -4,67 +4,72 @@
 library(limma)         # needed for camera() and geneSetTest()
 
 
-group.mean <- function(data, group){
+
+readGeneSet <- function(msigdb){
+## read the gene sets from MsigDB   
+  gene_set <- readLines(msigdb)                                        # the gene sets
+  temp <- gene_set
+  gs.line <- list()
+  
+  max.Ng <- length(temp)
+  temp.size.G <- vector(length = max.Ng, mode = "numeric") 
+  for (i in 1:max.Ng) {
+    temp.size.G[i] <- length(unlist(strsplit(temp[[i]], "\t"))) - 2
+    gs.line[[i]] <- noquote(unlist(strsplit(temp[[i]], "\t")))
+  }
+  return(list(NumofSets = length(temp.size.G), size = temp.size.G, geneSet = gs.line))
+}
+
+
+
+group.mean <- function(microarray, group){
   # a function to calculate group mean
   
   id1 <- which(group == 1)
   nrep1 <- length(id1)
-  nrep2 <- ncol(data)-nrep1
-  mean1 <- apply(data[, id1], 1, mean)
+  nrep2 <- ncol(microarray)-nrep1
+  mean1 <- apply(microarray[, id1], 1, mean)
   mean1 <- matrix(rep(mean1, nrep1), ncol=nrep1, byrow=F) 
-  mean2 <- apply(data[, -id1], 1, mean)
+  mean2 <- apply(microarray[, -id1], 1, mean)
   mean2 <- matrix(rep(mean2, nrep2), ncol=nrep2, byrow=F) 
   
-  data.mean <- data.frame(matrix(NA, nrow(data), ncol(data)))
+  data.mean <- data.frame(matrix(NA, nrow(microarray), ncol(microarray)))
   data.mean[, id1] <- mean1
   data.mean[, -id1] <- mean2
-  colnames(data.mean) <- colnames(data)
-  rownames(data.mean) <- rownames(data)
+  colnames(data.mean) <- colnames(microarray)
+  rownames(data.mean) <- rownames(microarray)
   data.mean
 }
 
 
-
-standardize.microarray <- function(data, trt){
+standardize.microarray <- function(microarray, trt){
   ## standardize the expression data, to make it have variance 1 in each of treatmeent/control group
   #  first remove the means within each group to get sd, and then original data by sd
-  data1 <- as.matrix(data)
   
-  std_by_row <- function(row_dat, trt){
-    
-    group1 <- trt == 1
-    group2 <- trt == 0
-    
-    x1 <- row_dat[group1]
-    x2 <- row_dat[group2]
-    
-    x1_center <- x1-mean(x1)
-    vas1 <- sd(x1_center)
-    x1_new <- x1/vas1
-    
-    x2_center <- x2-mean(x2)
-    vas2 <- sd(x2_center)
-    x2_new <- x2/vas2
-    
-    x_return <- rep(NA, length(row_dat))  
-    x_return[group1] <- x1_new
-    x_return[group2] <- x2_new
-    return(x_return)
-  }
-  new_data <- data.frame(matrix(NA, nrow(data), ncol(data)))
+  group1 <- trt == 1
+  group2 <- trt == 0
+  col_index <- 1:ncol(microarray)
   
-  for ( i in 1:nrow(data1)){
-    new_data[i, ] <- std_by_row(data1[i, ], trt)
-  }
+  set1 <- microarray[, group1]
+  set2 <- microarray[, group2]
   
-  rownames(new_data) <- rownames(data)
-  colnames(new_data) <- colnames(data)
+  s1 <- apply(set1, 1, sd)
+  s2 <- apply(set2, 1, sd)
+  
+  s1[s1==0] <- 1; s2[s2==0] <- 1;            ### if the sd is 0, replace with 1. 
+  
+  set1_sd <- set1/s1
+  set2_sd <- set2/s2
+  
+  new_data <- data.frame(matrix(NA, nrow(microarray), ncol(microarray)))
+  new_data[, group1] <- set1_sd
+  new_data[, group2] <- set2_sd
+  
+  rownames(new_data) <- rownames(microarray); 
+  colnames(new_data) <- colnames(microarray)
   
   return(new_data)
-  
-}
-
-
+  }
 
 
 estimate.sigma <- function(microarray, trt){
@@ -122,7 +127,111 @@ MOM_test <- function(microarray, trt, go_term, standardize=T){
 }
   
 
+MOM_test_multiple <- function(newData, trt, geneset, standardize = T, minSetSize = 100){
+## conduct enrichment analysis for a battery of gene sets and return the raw p values 
+## as well as adjusted p values
+##  input: 
+##      microarray: the raw expression matrix
+##             trt: the treatment lables
+##         geneset: object from readGeneSet function
+##          
+    microarray <- newData[, -(1:2)]
 
+   if (standardize == T){             # do the standardization 
+    microarray <- standardize.microarray(microarray, trt)
+    }
+  
+    est_sigma <- estimate.sigma(microarray, trt)
+    sigma <- est_sigma$sigma
+    t_val <- est_sigma$t_val
+  
+    beta0 <- mean(t_val)
+    ones <- rep(1, length(t_val))
+    all_genes <-  newData[, 2]
+      
+    keep_term <- which(geneset$size >= minSetSize)
+    print(paste("number of sets to be tested:", length(keep_term)))
+    length(keep_term)
+    
+    pval <- c()      
+    for ( i in 1:length(keep_term)){
+      print(paste("testing gene set: ", i))
+      gset1 <- geneset$geneSet[[i]][-(1:2)]
+      go_term <- ifelse(all_genes %in% gset1, 1, 0)
+      
+      numer <- (crossprod(go_term, (t_val - beta0*ones)))^2
+      go_bar <- rep(mean(go_term), length(go_term))
+      denom2 <- t(go_term-go_bar) %*% sigma %*% (go_term- go_bar)
+      
+      test_stat <- drop(numer/denom2)
+      pval[i] <- 1 - pchisq(test_stat, 1)
+      
+    }  
+    
+    return(pval)
+    
+}
+
+
+
+
+
+MOM_test_multiple <- function(newData, trt, geneset, standardize = T, minSetSize = 100){
+  ## conduct enrichment analysis for a battery of gene sets and return the raw p values
+  ## as well as adjusted p values
+  ##  input:
+  ##	microarray: the raw expression matrix
+  ##             trt: the treatment lables
+  ##         geneset: object from readGeneSet function
+  ##
+  microarray <- newData[, -(1:2)]
+  
+  if (standardize == T){             # do the standardization
+    microarray <- standardize.microarray(microarray, trt)
+  }
+  
+  est_sigma <- estimate.sigma(microarray, trt)
+  sigma <- est_sigma$sigma
+  t_val <- est_sigma$t_val
+  
+  beta0 <- mean(t_val)
+  ones <- rep(1, length(t_val))
+  all_genes <-  newData[, 2]
+  
+  keep_term <- which(geneset$size >= minSetSize)
+  print(paste("number of sets to be tested:", length(keep_term)))
+  length(keep_term)
+  
+  pval <- c()
+  set_size <- c()
+  set_name <- c()
+  
+  cat("\n this might take a long time...  \n")
+  cat("\n testing gene set: \n")
+  
+  for ( i in 1:length(keep_term)){
+    gset1 <- geneset$geneSet[[keep_term[i]]][-(1:2)]
+    cat('\r', i)
+    set_size[i] <- geneset$size[[keep_term[i]]]
+    set_name[i] <- geneset$geneSet[[keep_term[i]]][1]
+    go_term <- ifelse(all_genes %in% gset1, 1, 0)
+    
+    numer <- (crossprod(go_term, (t_val - beta0*ones)))^2
+    go_bar <- rep(mean(go_term), length(go_term))
+    denom2 <- t(go_term-go_bar) %*% sigma %*% (go_term- go_bar)
+    
+    test_stat <- drop(numer/denom2)
+    pval[i] <- 1 - pchisq(test_stat, 1)
+    
+  }
+   cat("\n")
+  
+  p_fdr <- p.adjust(pval, method = "fdr")
+  
+  results <- data.frame(set.name = set_name, set.size = set_size, p=pval, p.fdr = p_fdr)
+  return(results)
+  
+}
 
 
 
