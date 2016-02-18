@@ -281,3 +281,20 @@ RecalibratePower(read.table("NODE_e_50.txt"), read.table("Power_e_50_10VS0PCT.tx
 RecalibratePower(read.table("NODE_f_50.txt"), read.table("Power_f_50_10VS0PCT.txt"), colnum = showcol)
 RecalibratePower(read.table("NODE_g_50.txt"), read.table("Power_g_50_10VS0PCT.txt"), colnum = showcol)
 
+
+
+
+
+##########################################   Feb 11 ##########################
+
+source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/summarize.results.R")
+setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160211/")
+
+showcol <- c(1, 4:8)
+textsize = rep(20,20, 8, 20)
+
+RecalibratePower(read.table("NODE_a0_50.txt"), read.table("Power_a0_50_5VS0PCT.txt"), colnum = showcol)
+dat <- read.table("Power_a0_5VS0PCT.txt")
+
+
+

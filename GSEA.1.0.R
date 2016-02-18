@@ -1318,8 +1318,11 @@ write(paste("replace =", replace, sep=" "), file=filename, append=T)
 
   time1 <- proc.time()
 
+
   if (is.data.frame(input.ds)) {
-     dataset <- input.ds
+#@@@@@ I modified this to accomendate my data setting, for this perticular data set
+    dataset <- input.ds[, -(1:2)]
+#@@@@@     dataset <- input.ds
   } else {
      if (regexpr(pattern=".gct", input.ds) == -1) {
          dataset <- GSEA.Res2Frame(filename = input.ds)
@@ -1328,8 +1331,9 @@ write(paste("replace =", replace, sep=" "), file=filename, append=T)
          dataset <- GSEA.Gct2Frame2(filename = input.ds)
      }
   }
-  gene.labels <- row.names(dataset)
-  sample.names <- names(dataset)
+#@  gene.labels <- row.names(dataset)
+    gene.labels <- input.ds[, 2]
+    sample.names <- names(dataset)
   A <- data.matrix(dataset)
   dim(A) 
   cols <- length(A[1,])

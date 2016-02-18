@@ -234,6 +234,27 @@ MOM_test_multiple <- function(newData, trt, geneset, standardize = T, minSetSize
 }
 
 
+Camera_multiple <- function(newData, trt, geneset, use.rank = F){
+  ##  Use Camera procedure to do a battery of gene set test.
+  
+  microarray <- newData[, -(1:2)]
+  all_genes <-  newData[, 2]
+  
+  gset1 <- list()
+  
+  for ( i in 1:length(geneset$size)){
+    gset1[[i]] <- geneset$geneSet[[i]][-(1:2)]
+  }
+  
+  c2.indices <- ids2indices(gset1, all_genes)	 # it contains multiple lists
+  
+  design <- model.matrix(~trt)
+  Results <- camera(microarray, c2.indices,  design, use.ranks = use.rank, sort = F)
+  return(Results)
+  
+}
+
+
 
 
 compare_test <- function(dat){
