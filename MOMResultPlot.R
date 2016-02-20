@@ -297,4 +297,9 @@ RecalibratePower(read.table("NODE_a0_50.txt"), read.table("Power_a0_50_5VS0PCT.t
 dat <- read.table("Power_a0_5VS0PCT.txt")
 
 
-
+t1 <- read.table("NODE_a0_50.txt")
+t2 <- read.table("Power_a0_50_5VS0PCT.txt")
+t3 <- read.table("SizePoint1/Power_a_25VS10PCT.txt")
+par(mfrow=c(2, 2))
+plot(t3$OurTest, t3$Camera); plot(t3$OurTest, t3$CameraRank)
+plot(t3$OurTest, t3$GSEA); plot(t3$Camera, t3$GSEA)

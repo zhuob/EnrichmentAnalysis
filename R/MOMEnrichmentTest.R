@@ -56,14 +56,15 @@ standardize.microarray <- function(microarray, trt){
   s1 <- apply(set1, 1, sd)
   s2 <- apply(set2, 1, sd)
   
-  s1[s1==0] <- 1; s2[s2==0] <- 1;            ### if the sd is 0, replace with 1. 
+  n1 <- length(group1)
+  n2 <- length(group2)
   
-  set1_sd <- set1/s1
-  set2_sd <- set2/s2
+  poolsd <-  sqrt( ( s1^2*(n1-1) + s2^2*(n2-1)  ) / (n1 + n2-2)  )  # calculate the pooled standard deviation
   
+  poolsd[poolsd ==0] <- 1           ### if the sd is 0, replace with 1. 
+
   new_data <- data.frame(matrix(NA, nrow(microarray), ncol(microarray)))
-  new_data[, group1] <- set1_sd
-  new_data[, group2] <- set2_sd
+  new_data <- microarray/poolsd
   
   rownames(new_data) <- rownames(microarray); 
   colnames(new_data) <- colnames(microarray)

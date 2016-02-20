@@ -118,11 +118,5 @@ plotPower <- function(powertable,   textsize = rep(20, 4), xtext = c("DE percent
 }
 
 
-
-
 powertable <- producePower(0.05, "BACK0", coln=1)[1:5, ]
 plotPower(powertable)
-
-powertable <- producePower(0.1, "BACK10", coln=1)[1:5, ]
-plotPower(powertable)
-
