@@ -10,6 +10,10 @@
 \usepackage[outdir=./]{epstopdf}
 \usepackage{lscape}
 \usepackage{float}  % PUT FIGURE HERE
+\usepackage{array}  % fix column width 
+\usepackage{caption}
+\captionsetup[figure]{labelfont=bf}
+\captionsetup[table]{labelfont=bf}
 \usepackage{multirow}
 \usepackage{booktabs} % Create TABS
 \title{Competitive gene set enrichment analysis for correlated expression data}
@@ -35,28 +39,28 @@
 	\section{Introduction}\label{section:introduction}
 	
 	\textbf{What is enrichment analysis? Why would people care about that?}\\
-	 \textit{Gene set test} is a method that studies the association between a list of genes which are significantly correlated with treatment or experimental design variables and a \textit{prior} set of genes which are biologically related. A typical gene expression analysis involves the detection of a list of differentially expressed genes. Differential expression (DE) analysis focuses on individual genes, and therefore it fails to provide insight into the association of treatment variable with the gene set under study. Gene set test helps researchers better understand the underlying biological processes.
+	 \textit{Gene set test} is a method of studying the association between a set of genes, which are significantly correlated with treatment or experimental design variables, and a \textit{prior} set of genes, which are biologically related. A typical gene expression analysis involves the detection of a set of differentially expressed genes. Differential expression (DE) analysis focuses on individual genes, and therefore it fails to provide insight into the association of treatment variable with the gene set under study. Gene set test helps researchers better understand the underlying biological processes.
 	 
 	 	\textbf{What are the differences between self-contained and competitive test? And how does they work?}\\
 	 Depending on the definition of the null hypothesis, there are two types of gene set test: the \textit{self-contained} and \textit{competitive} test \citep{goeman2007analyzing}. A \textit{self-contained} test evaluates a set of genes by a fixed standard without reference to other genes in the genome (see \cite{goeman2004global,goeman2005testing, tsai2009multivariate, wu2010roast, huang2013gene} for example). A \textit{competitive} test compares DE
-	 genes in the test set to those not in the test set \citep{tian2005discovering, wu2012camera, yaari2013quantitative}. Many methods, regardless of the type of test, perform a three-stage analysis \citep{khatri2012ten}: on the first stage, a \textit{gene-level statistic} that measures the association between the expression profiles and the experimental design variables is calculated for each gene; such gene-level statistics include, among others, the \textit{signal-to-noise ratio} \citep{subramanian2005gene}, the ordinary \textit{$t$ statistic} \citep{tian2005discovering} or its moderated version \citep{Smyth2004moderated}, the \textit{log fold change} \citep{kim2005page} and the \textit{$Z$-score} \citep{efron2007correlation}. On the second stage, a \textit{set-level statistic} is summarized by using gene-level statistics and prior information about the test set (i.e., whether the gene belongs to the test set) as input. Examples of the set-level statistics are the \textit{enrichment score} \citep{subramanian2005gene}, the \textit{maxmean statistic} \citep{efron2007testing}, and statistic derived from joint distribution of gene-level statistics \citep{yaari2013quantitative}, to name a few. On the last stage, a $p$-value is assigned to the test set by comparing the set-level statistic to its reference distribution. The competitive gene set test is much more popular among genomic literatures \citep{goeman2007analyzing, gatti2010heading}.  
+	 genes in the test set to those not in the test set \citep{tian2005discovering, wu2012camera, yaari2013quantitative}. Many methods, regardless of the type of test, perform a three-stage analysis \citep{khatri2012ten}: on the first stage, a \textit{gene-level statistic} that measures the association between the expression profiles and the experimental design variables is calculated for each gene; such gene-level statistics include, among others, the \textit{signal-to-noise ratio} \citep{subramanian2005gene}, the ordinary \textit{$t$-statistic} \citep{tian2005discovering} or a moderated $t$-statistic \citep{Smyth2004moderated}, the \textit{log fold change} \citep{kim2005page} and the \textit{$Z$-score} \citep{efron2007correlation}. On the second stage, a \textit{set-level statistic} is summarized by using gene-level statistics and prior information about the test set (i.e., whether the gene belongs to the test set) as input. Examples of the set-level statistics are the \textit{enrichment score} \citep{subramanian2005gene}, the \textit{maxmean statistic} \citep{efron2007testing}, and statistic derived from joint distribution of gene-level statistics \citep{yaari2013quantitative}, to name a few. On the last stage, a $p$-value is assigned to the test set by comparing the set-level statistic to its reference distribution. The competitive gene set test is much more popular among genomic literatures \citep{goeman2007analyzing, gatti2010heading}.  
 	 
 	 %Competitive gene set test \citep{goeman2007analyzing} is a gene expression analysis that compares differential expression (DE) for genes in the test set to that for genes not in the test set. Most competitive gene set tests, as described by \cite{barry2008statistical}, are typically two-stage procedures:  on the second stage, a $p$-value is reported from the The test set may represent biological pathways or network, or some other grouping based on biological knowledge. Incorporating such prior information of the grouping makes it easier for biologists to interpret the results of DE analysis.
 	
 	\textbf{Independent gene set test} \\
-	 Many competitive gene set test approaches rely on independence of genes regarding gene-level statistics. Those tests are parametric or rank-based procedures that assume the gene-level statistics to be independent and identically distributed, or gene permutation procedures that generate the same approximate null for the set-level statistics. For example, PAGE  \citep{kim2005page} conducts one-sample $z$-test by comparing the mean of gene-level statistics in the test set to a normal distribution under the null, assuming the  gene-level statistics (log fold changes) to be independent. The $2\times 2$ contingency-table-based tests examines the significance of the test set by dichotomizing the outcomes of DE analysis and cross-classifying the genes according to whether they are indicated as DE and whether they are in the test set (see \cite{huang2009bioinformatics} for a review and references therein). sigPathway \citep{tian2005discovering} and "geneSetTest" in the limma package \citep{Smyth2004moderated} evaluate the set-level $p$-values by permuting gene labels. However, tests assuming independence of genes may result in inflated false discovery rate \citep{efron2007testing,goeman2007analyzing, gatti2010heading,wu2012camera,yaari2013quantitative}
+	 Many competitive gene set test approaches rely on independence of genes regarding gene-level statistics. Those tests are parametric or rank-based procedures that assume the gene-level statistics to be independent and identically distributed, or gene permutation procedures that generate the same approximate null for the set-level statistics. For example, PAGE  \citep{kim2005page} conducts one-sample $z$-test by comparing the mean of gene-level statistics (i.e., log fold changes) in the test set to a normal distribution under the null, assuming the  gene-level statistics to be independent. The $2\times 2$ contingency-table-based tests examine the significance of the test set by dichotomizing the outcomes of DE analysis and cross-classifying the genes according to whether they are indicated as DE and whether they are in the test set (see \cite{huang2009bioinformatics} for a review and references therein). sigPathway \citep{tian2005discovering} and "geneSetTest" in the limma package \citep{Smyth2004moderated} evaluate the set-level $p$-values by permuting gene labels. However, tests assuming independence of genes may result in inflated false discovery rate \citep{efron2007testing,goeman2007analyzing, gatti2010heading,wu2012camera,yaari2013quantitative},
 	 as genes in a gene set are often correlated and function together.
 
 	  \textbf{Tests that account for between-gene correlation}\\
-	  A handful of methods have been proposed to account for between-gene correlation in gene set tests. One attempt is to evaluate the set-level statistic by permuting the biological samples (see, for example, \cite{subramanian2005gene, efron2007testing}). Permuting samples does not require an explicit understanding of the underlying structure and thus protects the test against such correlation at the cost of computational efficiency. \cite{zhou2013empirical} proposed an analytic approximation to permutations for set-level score statistics, which preserves the essence of permutation gene set analysis with greatly reduced computational burden.  However, an unavoidable problem arises from sample permutation approach is that it implicitly alters the null hypothesis being tested and therefore makes it difficult to characterize the null and the alternative hypotheses \citep{goeman2007analyzing, khatri2012ten, 
-	  	wu2012camera}. We will further discuss this point in later sections of this paper. Another attempt is to conduct set-level test that works with the between-gene correlation structures. \cite{wu2012camera} proposed Correlation Adjusted MEan RAnk (CAMERA) gene set test that first estimates a \textit{variance inflation factor} (VIF) associated with correlation between gene expression profiles, and then incorporates it into the parametric and rank-based version of CAMERA tests. \cite{yaari2013quantitative} also used the idea of incorporating VIF to adjust for correlation in their distribution-based gene set analysis. Valid estimation of VIF relies on the assumption that correlation between any two local statistics are almost the same as correlation between their corresponding expression profiles. This assumption has been demonstrated (??? a better word???) by \cite{barry2008statistical} for several gene-level statistics (e.g., $t$-statistic, Wald-type statistic for regressing expression on censored time-to-event data through a Cox proportional hazards model). However, as shown by (the paper to be finished), this assumption holds only for the case where all of the gene-level tests are under the null (i.e., no gene is DE), and the correlation among gene-level statistics (e.g., $t$-statistics) can be badly estimated by sample correlation when a fraction of genes are DE. 
+	  A handful of methods have been proposed to account for between-gene correlation in competitive gene set test. One attempt is to evaluate the set-level statistic by permuting the biological samples (see, for example, \cite{subramanian2005gene, efron2007testing}). Permuting samples does not require an explicit understanding of the underlying correlation structure among genes and thus protects the test against such correlation. Since permuting sample labels is computationally inefficient, \cite{zhou2013empirical} proposed an analytic approximation to permutations for set-level score statistics, which preserves the essence of permutation gene set analysis with greatly reduced computational burden.  However, an unavoidable problem arising from sample permutation approach is that it implicitly alters the null hypothesis being tested and therefore makes it difficult to characterize the null and the alternative hypotheses \citep{goeman2007analyzing, khatri2012ten, 
+	  	wu2012camera}. We will further discuss this point in later sections of this paper. Another attempt is to conduct set-level test that works with the between-gene correlation structures. \cite{wu2012camera} proposed Correlation Adjusted MEan RAnk (CAMERA) gene set test that first estimates a \textit{variance inflation factor} (VIF) associated with correlation between gene expression profiles, and then incorporates it into two versions (i.e., the parametric and the rank-based) of CAMERA tests. \cite{yaari2013quantitative} also used the idea of incorporating VIF to adjust for correlation in their distribution-based gene set analysis. Valid estimation of VIF relies on the assumption that correlation between any two local statistics are almost the same as correlation between their corresponding expression profiles. This assumption has been demonstrated (??? a better word???) by \cite{barry2008statistical} for several gene-level statistics (e.g., $t$-statistic, Wald-type statistic for regressing expression on censored time-to-event data through a Cox proportional hazards model). However, as shown by (the paper to be finished), this assumption holds only for the case where all of the gene-level tests are under the null (i.e., no gene is DE), and the correlation among gene-level statistics (e.g., $t$-statistics) can be badly estimated by sample correlation when a fraction of genes are DE. 
 		% The CAMERA procedure thus may be too conservative for controling type I error in the presence of DE genes, as will be demonstrated in our simulation study. 
 
 	   
 	  % (This is a self-contained gene set test) \cite{huang2013gene} uses a multivariate linear regression model in which the between-gene correlation are explicitly modeled by a working covariance matrix. 
 	
 	\textbf{What do we propose?} \\
-	In this paper, we propose a new competitive gene set test procedure that takes into account the correlation among gene-level statistics in the set-level test statistic. This procedure aims to correct for the discrepancy between correlation among expression profiles and that among gene-level statistics in the formulation of set-level statistic. The discrepancy is caused by the presence of DE genes for several typically used gene-level statistics (REF the paper to be finished). As a remedy, our strategy is to model the covariance matrix of gene-level statistics by two variance components, one attributable to the correlation among expression profiles and the other attributable to the DE effect associated with the treatment. OurMethod follows the three-stage paradigm and works for a two group comparison experiment under all correlation structures. Our simulations show that OurMethod controls type I error correctly and maintains good power for different correlation structures we examined. It is also computationally fast.
+	In this paper, we propose a new competitive gene set test procedure that takes into account the correlation among gene-level statistics in the set-level test statistic. This procedure aims to correct for the discrepancy between correlation among expression profiles and that among gene-level statistics in the formulation of set-level statistic. The discrepancy is caused by the presence of DE genes for several typically used gene-level statistics (REF the paper to be finished). As a remedy, our strategy is to model the covariance matrix of gene-level statistics by two variance components, one attributable to the correlation among expression profiles and the other attributable to the DE effect associated with the treatment. OurMethod follows the three-stage paradigm and works for a two group comparison experiment under all correlation structures. Our simulations show that OurMethod controls type I error correctly and maintains good power for different correlation structures we examined. 
 		
 	\textbf{What is the plan of this paper?} \\
 	The rest of the paper is organized as follows: in Section \ref{section:methods} we describe OurMethod.....
@@ -162,7 +166,7 @@
 	\subsection{Simulations}\label{subsection:simulation}
 		In this section, we present results from type I error and power simulations under a range of between-gene correlation structures.
 		
-		The simulations run as follows: first, we simulate an entire gene set containing $m=500$ genes, from which we sample $m_1 = 100$ genes to represent those in the test set, and the remaining $m_2=400$ genes those in the background set; second, for gene $i=1, \ldots, m$, we simulate the DE effect $\Delta_i$ by first generating the DE size $\delta_i$ from $N(0.5, 1)$ and the DE indicator $Z_i$ from $\text{Binom}(1, p_i)$,  where $p_i= p_t$ if gene $i$ belongs to the test set and $p_i = p_b$  otherwise, and then setting $\Delta_i$ to be the product of $Z_i$ and $\delta_i$; third, we set the "true" mean expression values $\mu_1 = \bm 0_m$ and $\bm \mu_2 = \bm \Delta$, respectively,  for the control and treatment groups; fourth, we simulate $n_1$ samples from $\text{MVN}(\bm \mu_1, \bm \Sigma)$ for the control group and $n_2$ samples from $\text{MVN}(\bm \mu_2, \bm \Sigma)$, where the covariance $\bm \Sigma = (\sigma_{i_1, i_2})_{m\times m} $ may take one of the following forms: 
+		The simulations run as follows: first, we simulate an entire gene set containing $m=500$ genes, from which we sample $m_1 = 100$ genes to represent those in the test set, and the remaining $m_2=400$ genes those in the background set; second, for gene $i=1, \ldots, m$, we simulate the DE effect $\Delta_i$ by first generating the DE size $\delta_i$ from $N(0.2, 1)$ and the DE indicator $Z_i$ from $\text{Binom}(1, p_i)$,  where $p_i= p_t$ if gene $i$ belongs to the test set and $p_i = p_b$  otherwise, and then setting $\Delta_i$ to be the product of $Z_i$ and $\delta_i$; third, we set the "true" mean expression values $\mu_1 = \bm 0_m$ and $\bm \mu_2 = \bm \Delta$, respectively,  for the control and treatment groups; fourth, we simulate $n_1$ samples from $\text{MVN}(\bm \mu_1, \bm \Sigma)$ for the control group and $n_2$ samples from $\text{MVN}(\bm \mu_2, \bm \Sigma)$, where the covariance $\bm \Sigma = (\sigma_{i_1, i_2})_{m\times m} $ may take one of the following forms: 
 		\begin{enumerate}
 			\item[(a0):] the genes are independent of each other (i.e., $\bm \Sigma = \bm I_m$).
 			\item[(a):] only the genes in the test set are correlated, with exchangeable correlation structure, that is, $\text{Cor}(Y_{i_1}, Y_{i_2})=\sigma_{i_1, i_2}=\rho$ for $\forall i_1, i_2 \in I_t$ and  $\text{Cor}(Y_{i_3}, Y_{i_4})=\sigma_{i_3, i_4}=0$ if at least one of $i_3, i_4$ does not belong to $I_t$.
@@ -183,11 +187,11 @@
 		 
 		 
 		 \textbf{Explain why this happens}\\
-		Consistent accuracy is shown for OurMethod across all simulations, but the accuracy of the other three methods may be affected by two factors: the between-gene correlation structures, and DE probability of each gene. OurMethod controls the size of type I error rates well because it takes into account the between-gene correlation and works directly with the sample correlation between genes, and therefore is robust against the two factors. (rewrite from here, because this is only my understanding.)  The GSEA evaluates the enrichment score of a test set by generating its null distribution from sample permutation, and therefore the between-gene correlation is preserved when there are no DE genes, but [ explain when DE exists]... 
+		OurMethod shows consistent accuracy for type I error control across all simulations, but the accuracy of the other three methods may be affected by two factors: the between-gene correlation structures, and DE probability of each gene. OurMethod controls the size of type I error rates well because it takes into account the between-gene correlation and works directly with the sample correlation between genes, and therefore is robust against the two factors. (rewrite from here, because this is only my understanding.)  The GSEA evaluates the enrichment score of a test set by generating its null distribution from sample permutation, and therefore the between-gene correlation is preserved when there are no DE genes, but [ explain when DE exists]... 
 		For CAMERA, the set-level statistics take into account only the between-gene correlation in the test set, and therefore does not work for cases where genes in the background set are also correlated in group $A_1$ simulations. More importantly, according to (the paper to be finished), the variance inflation factor of the gene-level statistics (moderated $t$-test in \cite{wu2012camera}) may be over-estimated when a fraction of genes are DE, and therefore the set-level test statistic is under-estimated, resulting in conservative $p$-values in group $A_2$ simulations. geneSetTest permutes the gene labels to examine the significance of the test set, and therefore it relies on independence between genes. The performances of both versions of geneSetTest are thus unpredictable in group $A_1$. In group $A_2$ where there are DE genes both in the test set and in the background set, the correlation between the gene-level statistics are smaller (in absolute value) than the correlation between the genes. Since the genes are simulated to be slightly correlated ($\rho_1=0.1, \rho_2 = 0.05, \rho_3 = -0.05$), the correlation between the gene-level statistics are almost negligible for geneSetTest procedure. 
 			
 
-		\begin{figure}[]
+		\begin{figure}[H]
 			\caption{Type I error rates for gene set tests, $p$-value distribution for case (a0) - (g) from left to right, from top to bottom, NO gene is DE}\label{fig:typeIerror}
 			 \begin{center}
 				\includegraphics[width=8cm,height=5cm]{Figures/NODEA0.eps}
@@ -199,7 +203,7 @@
 			\end{center} 
 		\end{figure} 
 		
-			\begin{figure}[]
+			\begin{figure}[H]
 				\caption{Type I error rates for gene set tests, $p$-value distribution for case (a0) - (g) from left to right, from top to bottom, DE = 20\%}\label{fig:typeIerrorDE}
 				\begin{center}
 					\includegraphics[width=8cm,height=5cm]{Figures/DEA0.eps}
@@ -212,41 +216,108 @@
 			\end{figure} 
 			
 		
-\begin{table}[ht]
-	\centering
-	\caption{Type I error rate of gene set tests for correlated expression values }\label{table:typeIerror}
-	\begin{tabular}{lrrrrlrrrr}
-		\hline
-		\cline{1-10}
-		\multicolumn{1}{l}{Method} &\multicolumn{4}{c}{Norminal $p$-values}&  & \multicolumn{4}{c}{Norminal $p$-values} \\ \cline{2-10} 
-		 & 0.01 & 0.05 & 0.1 & 0.2 &    & 0.01 &0.05 & 0.1 & 0.2 \\ 
-		\hline
-		  & \multicolumn{4}{c}{(a0)} & & \multicolumn{4}{c}{(a)} \\
-		OurTest & 0.012 & 0.066 & 0.124 & 0.241 &  & 0.011 & 0.049 & 0.097 & 0.198 \\ 
-		geneSetTest-modt & 0.012 & 0.058 & 0.109 & 0.215 &  & 0.006 & 0.052 & 0.099 & 0.219 \\ 
-		geneSetTest-rank & 0.012 & 0.055 & 0.110 & 0.214 &  & 0.018 & 0.060 & 0.116 & 0.202 \\ 
-		CAMERA & 0.006 & 0.059 & 0.135 & 0.217 &  & 0.000 & 0.000 & 0.000 & 0.006 \\ 
-		CAMERA-Rank & 0.003 & 0.054 & 0.112 & 0.229 &  & 0.001 & 0.009 & 0.023 & 0.079 \\ 
-		GSEA & 0.989 & 0.995 & 0.997 & 0.997 &  & 0.228 & 0.608 & 0.794 & 0.927 \\ 
-			 & \multicolumn{4}{c}{(c)} &  & \multicolumn{4}{c}{(e)} \\
-		OurTest & 0.007 & 0.052 & 0.103 & 0.202 &  & 0.008 & 0.056 & 0.093 & 0.207 \\ 
-		geneSetTest-modt & 0.007 & 0.051 & 0.098 & 0.187 &  & 0.015 & 0.058 & 0.106 & 0.217 \\ 
-		geneSetTest-rank & 0.006 & 0.050 & 0.106 & 0.190 &  & 0.024 & 0.082 & 0.138 & 0.225 \\ 
-		CAMERA & 0.000 & 0.000 & 0.000 & 0.000 &  & 0.000 & 0.000 & 0.001 & 0.009 \\ 
-		CAMERA-Rank & 0.000 & 0.000 & 0.000 & 0.000 &  & 0.000 & 0.020 & 0.054 & 0.127 \\ 
-		GSEA & 0.942 & 0.984 & 0.992 & 0.995 &  & 0.108 & 0.469 & 0.731 & 0.899 \\ 
-			 & \multicolumn{4}{c}{(f)} & & \multicolumn{4}{c}{(g)} \\
-		OurTest & 0.012 & 0.050 & 0.098 & 0.226 &  & 0.007 & 0.059 & 0.116 & 0.211 \\ 
-		geneSetTest-modt & 0.010 & 0.071 & 0.115 & 0.213 &  & 0.010 & 0.061 & 0.104 & 0.218 \\ 
-		geneSetTest-rank & 0.007 & 0.061 & 0.112 & 0.221 &  & 0.014 & 0.072 & 0.142 & 0.247 \\ 
-		CAMERA & 0.000 & 0.000 & 0.004 & 0.019 &  & 0.000 & 0.000 & 0.001 & 0.006 \\ 
-		CAMERA-Rank & 0.006 & 0.041 & 0.096 & 0.210 &  & 0.000 & 0.000 & 0.002 & 0.009 \\ 
-		GSEA & 0.015 & 0.188 & 0.434 & 0.770 &  & 0.943 & 0.975 & 0.983 & 0.992 \\ 
-		\hline
-	\end{tabular}
-\end{table}
-		\subsubsection{Power simulation}
-		WHAT TO PRESENT
+%\begin{table}[ht]
+%	\centering
+%	\caption{Type I error rate of gene set tests for correlated expression values }\label{table:typeIerror}
+%	\begin{tabular}{lrrrrlrrrr}
+%		\hline
+%		\cline{1-10}
+%		\multicolumn{1}{l}{Method} &\multicolumn{4}{c}{Norminal $p$-values}&  & \multicolumn{4}{c}{Norminal $p$-values} \\ \cline{2-10} 
+%		 & 0.01 & 0.05 & 0.1 & 0.2 &    & 0.01 &0.05 & 0.1 & 0.2 \\ 
+%		\hline
+%		  & \multicolumn{4}{c}{(a0)} & & \multicolumn{4}{c}{(a)} \\
+%		OurTest & 0.012 & 0.066 & 0.124 & 0.241 &  & 0.011 & 0.049 & 0.097 & 0.198 \\ 
+%		geneSetTest-modt & 0.012 & 0.058 & 0.109 & 0.215 &  & 0.006 & 0.052 & 0.099 & 0.219 \\ 
+%		geneSetTest-rank & 0.012 & 0.055 & 0.110 & 0.214 &  & 0.018 & 0.060 & 0.116 & 0.202 \\ 
+%		CAMERA & 0.006 & 0.059 & 0.135 & 0.217 &  & 0.000 & 0.000 & 0.000 & 0.006 \\ 
+%		CAMERA-Rank & 0.003 & 0.054 & 0.112 & 0.229 &  & 0.001 & 0.009 & 0.023 & 0.079 \\ 
+%		GSEA & 0.989 & 0.995 & 0.997 & 0.997 &  & 0.228 & 0.608 & 0.794 & 0.927 \\ 
+%			 & \multicolumn{4}{c}{(c)} &  & \multicolumn{4}{c}{(e)} \\
+%		OurTest & 0.007 & 0.052 & 0.103 & 0.202 &  & 0.008 & 0.056 & 0.093 & 0.207 \\ 
+%		geneSetTest-modt & 0.007 & 0.051 & 0.098 & 0.187 &  & 0.015 & 0.058 & 0.106 & 0.217 \\ 
+%		geneSetTest-rank & 0.006 & 0.050 & 0.106 & 0.190 &  & 0.024 & 0.082 & 0.138 & 0.225 \\ 
+%		CAMERA & 0.000 & 0.000 & 0.000 & 0.000 &  & 0.000 & 0.000 & 0.001 & 0.009 \\ 
+%		CAMERA-Rank & 0.000 & 0.000 & 0.000 & 0.000 &  & 0.000 & 0.020 & 0.054 & 0.127 \\ 
+%		GSEA & 0.942 & 0.984 & 0.992 & 0.995 &  & 0.108 & 0.469 & 0.731 & 0.899 \\ 
+%			 & \multicolumn{4}{c}{(f)} & & \multicolumn{4}{c}{(g)} \\
+%		OurTest & 0.012 & 0.050 & 0.098 & 0.226 &  & 0.007 & 0.059 & 0.116 & 0.211 \\ 
+%		geneSetTest-modt & 0.010 & 0.071 & 0.115 & 0.213 &  & 0.010 & 0.061 & 0.104 & 0.218 \\ 
+%		geneSetTest-rank & 0.007 & 0.061 & 0.112 & 0.221 &  & 0.014 & 0.072 & 0.142 & 0.247 \\ 
+%		CAMERA & 0.000 & 0.000 & 0.004 & 0.019 &  & 0.000 & 0.000 & 0.001 & 0.006 \\ 
+%		CAMERA-Rank & 0.006 & 0.041 & 0.096 & 0.210 &  & 0.000 & 0.000 & 0.002 & 0.009 \\ 
+%		GSEA & 0.015 & 0.188 & 0.434 & 0.770 &  & 0.943 & 0.975 & 0.983 & 0.992 \\ 
+%		\hline
+%	\end{tabular}
+%\end{table}
+
+
+		\subsubsection{Power simulation}\label{subsection:typeIerror}		 
+		  Similar to the type I error simulation, we did two groups of simulations to get a glimpse into the power issues: in group $A_3$, we considered four different alternative scenarios by setting DE probability to be $0\%$ for genes in the background set and $5\%, 10\%, 15\%$ and $20\%$ for genes in the test set; in group $A_4$, we set DE probability to be $10\%$ for genes in the background set and $15\%, 20\%, 25\%$ and $30\%$ for genes in the test set. In both groups of simulation, we fixed the DE size $\delta$ for each comparison under all six different correlation structures. The power simulation were done by generating a large number of data sets under each alternative scenario and comparing the proportion of data sets for which each test would reject at a given level $\alpha$. 
+		 
+		 We compare the power of OurMethod to that of the other (How many methods) under different correlation structures. Since some of these tests are not well calibrated at the sample size considered (see Section \ref{subsection:typeIerror}), we report calibrated power. For calibrated power, the critical value $c(\alpha)$ is chosen so that when the null hypothesis is true, exactly $100\cdot\alpha\%$ of the resulting $p$-values are less than $c(\alpha)$; that is, $c(\alpha)$ is  the $\alpha$ quantile of null distribution of $p$-values, in which the null distribution is generated from simulation. Calibrated power allows a more fair comparison among tests, as tests that are too conservative under the null hypothesis will have greater power due to the tendency to produce small $p$-values, yet this apparent power does not truly distinguish between the null and the alternative.  
+		 
+		  Table \ref{table:power1} and Table \ref{table:power2} summarize the calibrated power under correlation structure a0 (for power comparisons under the other five correlation structures, see online supplementary materials). In Table \ref{table:power1} we set the DE size $\delta$ to be 0.05 and simulated the genes in the background set under the null hypothesis (i.e., $p_b=0$). The GSEA has the highest calibrated power, and the rank based MRSGE has the lowest calibrated power across all four alternative scenarios. The CAMERA and OurMethod have virtually no difference in the calibrated power.  Furthermore, when the DE probability is $10\%$ or higher, both CAMERA and OurMethod have comparable calibrated power to that of GSEA. In Table \ref{table:power2}, we set the DE size $\delta$ to be 0.1 and simulated $10\%$ of the genes in the background set as DE.
+		  CAMERA and OurMethod still have indistinguishable calibrated power and both are better than MRSGE. GSEA has virtually no power at all. These results indicate that....
+		  
+		  		
+	% latex table generated in R 3.2.0 by xtable 1.8-0 package
+	% Sat Feb 20 19:49:34 2016
+	\begin{table}[ht]
+		\centering
+			\caption{power simulation results}\label{table:power1}
+		\begin{tabular}{rrrrr}
+			\hline
+		
+		Method & \multicolumn{4}{c}{DE size = 0.05} \\
+			\cline{2-5}
+			& 5\% VS 0\% & 10\% VS 0\% & 15\% VS 0\% & 20\% VS 0\% \\ 
+			\hline 
+			OurTest & 0.660 & 0.967 & 0.998 & 1.000 \\ 
+			lm & 0.674 & 0.970 & 0.997 & 1.000 \\ 
+			ModeratedT & 0.856 & 0.994 & 0.999 & 1.000 \\ 
+			MRSGE & 0.201 & 0.417 & 0.682 & 0.901 \\ 
+			Camera & 0.663 & 0.964 & 0.997 & 1.000 \\ 
+			CameraRank & 0.133 & 0.297 & 0.583 & 0.828 \\ 
+			GSEA & 0.847 & 0.994 & 1.000 & 1.000 \\ 
+			QUSAGE & 0.747 & 0.984 & 0.999 & 1.000 \\ 
+			\hline
+		\end{tabular}
+	\end{table}
+	
+	
+	% latex table generated in R 3.2.0 by xtable 1.8-0 package
+	% Sat Feb 20 19:50:54 2016
+	\begin{table}[ht]
+		\centering
+	    \caption{power simulation results}\label{table:power2}
+		\begin{tabular}{rrrrr}
+			\hline
+		Method & \multicolumn{4}{c}{DE size = 0.1} \\
+			\cline{2-5}
+			& 15\% VS 10\% & 20\% VS 10\% & 25\% VS 10\% & 30\% VS 10\% \\ 
+			\hline
+		OurTest & 0.243 & 0.562 & 0.892 & 0.980 \\ 
+		lm & 0.245 & 0.578 & 0.897 & 0.984 \\ 
+		ModeratedT & 0.325 & 0.670 & 0.921 & 0.991 \\ 
+		MRSGE & 0.176 & 0.413 & 0.716 & 0.898 \\ 
+		Camera & 0.254 & 0.564 & 0.891 & 0.982 \\ 
+		CameraRank & 0.130 & 0.272 & 0.620 & 0.810 \\ 
+		GSEA & 0.000 & 0.000 & 0.000 & 0.000 \\ 
+		QUSAGE & 0.265 & 0.589 & 0.899 & 0.987 \\ 
+			\hline
+		\end{tabular}
+	\end{table}
+	
+		Figure \ref{fig:power} shows for OurMethod, the variations in power according to different correlation structures across four alternative scenarios. The left part is the power for group $A_3$ with a DE size of 0.05, and the right part is the power for group $A_4$ with a DE size of 0.1. For each correlation structure and each alternative, we calibrate the power at a significance level of 0.05 from 1000 simulated data sets. 
+		The powers for case (a0) and (c) are very similar and among the highest under each of the four alternatives. It's not surprising because they correspond to the simplest correlation structures: in (a0) genes are simulated to be independent and in (c) genes are simulated to have the same correlation 0.1. As the correlation structure becomes more complicated, from (a) to (e) then to (f), the power decrease for every given alternative scenario. The power under correlation structure (f) is the lowest for both $A_3$ and $A_4$ simulations. We also note that the power decreases when DE genes are present in the background set as compared to the case where there are no DE genes in the background set. (We might need the same DE size to illustrate this point.)
+		
+			\begin{figure}[H]
+				\caption{power: left, DE size = 0.05, and no DE genes in the background set; right; DE size = 0.10, DE probability is 0.1 in the background set.}\label{fig:power}
+				\begin{center}
+					\includegraphics[width=8cm,height=5cm]{Figures/powerBack0pct.eps}
+					\includegraphics[width=8cm,height=5cm]{Figures/powerBack10pct.eps}
+				\end{center} 
+			\end{figure} 
 		
 		\subsection{Maybe real data analysis??? }
 		
