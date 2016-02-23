@@ -4,9 +4,8 @@
 library(limma)         # needed for camera() and geneSetTest()
 
 
-
 readGeneSet <- function(msigdb){
-## read the gene sets from MsigDB   
+ ## read the gene sets from MsigDB   
   gene_set <- readLines(msigdb)                                        # the gene sets
   temp <- gene_set
   gs.line <- list()
@@ -22,24 +21,27 @@ readGeneSet <- function(msigdb){
 
 
 
-group.mean <- function(microarray, group){
+
+group.mean <- function(data, group){
   # a function to calculate group mean
   
   id1 <- which(group == 1)
   nrep1 <- length(id1)
-  nrep2 <- ncol(microarray)-nrep1
-  mean1 <- apply(microarray[, id1], 1, mean)
+  nrep2 <- ncol(data)-nrep1
+  mean1 <- apply(data[, id1], 1, mean)
   mean1 <- matrix(rep(mean1, nrep1), ncol=nrep1, byrow=F) 
-  mean2 <- apply(microarray[, -id1], 1, mean)
+  mean2 <- apply(data[, -id1], 1, mean)
   mean2 <- matrix(rep(mean2, nrep2), ncol=nrep2, byrow=F) 
   
-  data.mean <- data.frame(matrix(NA, nrow(microarray), ncol(microarray)))
+  data.mean <- data.frame(matrix(NA, nrow(data), ncol(data)))
   data.mean[, id1] <- mean1
   data.mean[, -id1] <- mean2
-  colnames(data.mean) <- colnames(microarray)
-  rownames(data.mean) <- rownames(microarray)
+  colnames(data.mean) <- colnames(data)
+  rownames(data.mean) <- rownames(data)
   data.mean
 }
+
+
 
 
 standardize.microarray <- function(microarray, trt){
@@ -55,17 +57,19 @@ standardize.microarray <- function(microarray, trt){
   
   s1 <- apply(set1, 1, sd)
   s2 <- apply(set2, 1, sd)
-  
+
+### modified on Feb 18, 2016, use pooled variacne to do standardization....
+
   n1 <- length(group1)
   n2 <- length(group2)
   
-  poolsd <-  sqrt( ( s1^2*(n1-1) + s2^2*(n2-1)  ) / (n1 + n2-2)  )  # calculate the pooled standard deviation
-  
+  poolsd <-  sqrt( ( s1^2*(n1-1) + s2^2*(n2-1) ) / (n1 + n2-2) )  # calculate the pooled standard deviation  
   poolsd[poolsd ==0] <- 1           ### if the sd is 0, replace with 1. 
-
-  new_data <- data.frame(matrix(NA, nrow(microarray), ncol(microarray)))
-  new_data <- microarray/poolsd
   
+  new_data <- data.frame(matrix(NA, nrow(microarray), ncol(microarray)))
+ 
+  new_data <- microarray/poolsd
+ 
   rownames(new_data) <- rownames(microarray); 
   colnames(new_data) <- colnames(microarray)
   
@@ -79,7 +83,11 @@ estimate.sigma <- function(microarray, trt){
   group_mean <- as.matrix(group.mean(microarray, trt))     # calculate correlation matrix
   resid_mat <- microarray - group_mean                     # the trt effects are removed from matrix
   samp_rho <- cor(t(resid_mat))                 
-  
+
+# two lines correction for inflated type I error.	  
+#   nsamp <- ncol(microarray)
+#  samp_rho <- cov(t(resid_mat)) * (nsamp-1)/(nsamp-2)
+
   factors <- unique(trt)
   m1 <- sum(trt == factors[1])
   m2 <- sum(trt == factors[2]) 
@@ -128,7 +136,62 @@ MOM_test <- function(microarray, trt, go_term, standardize=T){
 }
   
 
-MOM_test_multiple <- function(newData, trt, geneset, standardize = T, minSetSize = 100){
+
+
+#####  our test  (return the correlations)  
+MOM_test2 <- function(microarray, trt, go_term, standardize=T){
+##  we need to standardize it here.
+
+  if (standardize == T){             # do the standardization 
+    microarray <- standardize.microarray(microarray, trt)
+  }
+
+   est_sigma <- estimate.sigma(microarray, trt)
+   sigma <- est_sigma$sigma
+   t_val <- est_sigma$t_val
+   
+   #	## calcuate the sample correlations
+   microarray <- as.matrix(microarray)
+   group_mean <- as.matrix(group.mean(microarray, trt))     # calculate correlation matrix
+   resid_mat <- microarray - group_mean                     # the trt effects are removed from matrix
+#   samp_rho <- cor(t(resid_mat))
+   nsamp <- ncol(microarray)
+   samp_rho <- cov(t(resid_mat)) * (nsamp-1)/(nsamp-2)
+
+   
+   # testSet_cor <- backSet_cor <- interCor <- NA
+   
+   go_ind <- which(go_term==1)
+   testSet_cor <- mean(samp_rho[go_ind, go_ind])
+   backSet_cor <- mean(samp_rho[-go_ind, -go_ind])
+   interCor <- mean(samp_rho[-go_ind, go_ind])
+   
+   beta0 <- mean(t_val)
+   ones <- rep(1, length(t_val))
+   
+   numer <- (crossprod(go_term, (t_val - beta0*ones)))^2
+   go_bar <- rep(mean(go_term), length(go_term))
+   denom2 <- t(go_term-go_bar) %*% sigma %*% (go_term- go_bar)
+
+   test_stat <- drop(numer/denom2)
+   pval <- 1 - pchisq(test_stat, 1)
+  
+   results <- list(stat = test_stat, p= pval, testCor = testSet_cor, backCor = backSet_cor, interCor = interCor)
+  
+   return(results)  
+#   return(list(stat = test_stat, p= pval, testCor = testSet_cor, backCor = backSet_cor, interCor = interCor) )  
+#   return(list(stat = test_stat, p = pval))
+}
+  
+
+
+  
+
+
+
+
+
+MOM_test_multiple <- function(expression, trt, geneset, standardize = T, minSetSize = 100){
 ## conduct enrichment analysis for a battery of gene sets and return the raw p values 
 ## as well as adjusted p values
 ##  input: 
@@ -136,7 +199,17 @@ MOM_test_multiple <- function(newData, trt, geneset, standardize = T, minSetSize
 ##             trt: the treatment lables
 ##         geneset: object from readGeneSet function
 ##          
-    microarray <- newData[, -(1:2)]
+
+############### for GSE64810 USE the following two lines. Otherwise comment it
+
+	# remove rows with duplicated HGNC.symbol, the same as have been done by CAMERA and GSEA
+#	dup.index <- duplicated(expression$HGNC.symbol)
+#	expression <- expression[dup.index==F, ]
+#	microarray <- expression[, -(1:2)]
+#	all_genes <-  expression[, 2]
+	
+	microarray <- expression
+	all_genes <- rownames(microarray)	
 
    if (standardize == T){             # do the standardization 
     microarray <- standardize.microarray(microarray, trt)
@@ -145,21 +218,45 @@ MOM_test_multiple <- function(newData, trt, geneset, standardize = T, minSetSize
     est_sigma <- estimate.sigma(microarray, trt)
     sigma <- est_sigma$sigma
     t_val <- est_sigma$t_val
+
+### when t_val is negative, change the sign  (the real data shows this might not be a good idea) 
+#	neg_sign <- which(t_val <0 )
+#	t_val[neg_sign] <- t_val[neg_sign] *(-1)
   
+#	## calcuate the sample correlations
+#	microarray <- as.matrix(microarray)
+#  	group_mean <- as.matrix(group.mean(microarray, trt))     # calculate correlation matrix
+#  	resid_mat <- microarray - group_mean                     # the trt effects are removed from matrix
+# 	samp_rho <- cor(t(resid_mat))
+
     beta0 <- mean(t_val)
     ones <- rep(1, length(t_val))
-    all_genes <-  newData[, 2]
       
     keep_term <- which(geneset$size >= minSetSize)
     print(paste("number of sets to be tested:", length(keep_term)))
     length(keep_term)
     
-    pval <- c()      
-    for ( i in 1:length(keep_term)){
-      print(paste("testing gene set: ", i))
-      gset1 <- geneset$geneSet[[i]][-(1:2)]
-      go_term <- ifelse(all_genes %in% gset1, 1, 0)
-      
+    pval <- c()
+    set_size <- c()      
+    set_name <- c()
+    testSet_cor <- backSet_cor <- interCor <- rep(NA, length(keep_term))	
+
+	cat("\n this might take a long time...  \n")    
+	cat("\n testing gene set: \n")
+
+   for ( i in 1:length(keep_term)){
+      gset1 <- geneset$geneSet[[keep_term[i]]][-(1:2)]
+	cat('\r', i)      
+#	set_size[i] <- geneset$size[[keep_term[i]]]
+	set_name[i] <- geneset$geneSet[[keep_term[i]]][1]
+	go_term <- ifelse(all_genes %in% gset1, 1, 0)
+	set_size[i] <- sum(go_term) 
+     		
+	go_ind <- which(go_term==1)
+#	testSet_cor[i] <- mean(samp_rho[go_ind, go_ind])
+#	backSet_cor[i] <- mean(samp_rho[-go_ind, -go_ind])
+#	interCor[i] <- mean(samp_rho[-go_ind, go_ind])
+
       numer <- (crossprod(go_term, (t_val - beta0*ones)))^2
       go_bar <- rep(mean(go_term), length(go_term))
       denom2 <- t(go_term-go_bar) %*% sigma %*% (go_term- go_bar)
@@ -168,91 +265,35 @@ MOM_test_multiple <- function(newData, trt, geneset, standardize = T, minSetSize
       pval[i] <- 1 - pchisq(test_stat, 1)
       
     }  
-    
-    return(pval)
-    
-}
+    cat("\n")
+	p_fdr <- p.adjust(pval, method = "fdr")
+#   	backSet_cor <- rep(mean(sigma), length(keep_term))
 
-
-
-
-
-MOM_test_multiple <- function(newData, trt, geneset, standardize = T, minSetSize = 100){
-  ## conduct enrichment analysis for a battery of gene sets and return the raw p values
-  ## as well as adjusted p values
-  ##  input:
-  ##	microarray: the raw expression matrix
-  ##             trt: the treatment lables
-  ##         geneset: object from readGeneSet function
-  ##
-  microarray <- newData[, -(1:2)]
-  
-  if (standardize == T){             # do the standardization
-    microarray <- standardize.microarray(microarray, trt)
-  }
-  
-  est_sigma <- estimate.sigma(microarray, trt)
-  sigma <- est_sigma$sigma
-  t_val <- est_sigma$t_val
-  
-  beta0 <- mean(t_val)
-  ones <- rep(1, length(t_val))
-  all_genes <-  newData[, 2]
-  
-  keep_term <- which(geneset$size >= minSetSize)
-  print(paste("number of sets to be tested:", length(keep_term)))
-  length(keep_term)
-  
-  pval <- c()
-  set_size <- c()
-  set_name <- c()
-  
-  cat("\n this might take a long time...  \n")
-  cat("\n testing gene set: \n")
-  
-  for ( i in 1:length(keep_term)){
-    gset1 <- geneset$geneSet[[keep_term[i]]][-(1:2)]
-    cat('\r', i)
-    set_size[i] <- geneset$size[[keep_term[i]]]
-    set_name[i] <- geneset$geneSet[[keep_term[i]]][1]
-    go_term <- ifelse(all_genes %in% gset1, 1, 0)
+	results <- data.frame(set.name = set_name, set.size = set_size, testsetCor = testSet_cor, 
+			backSetCor = backSet_cor, interCor = interCor, p=pval, p.fdr = p_fdr)
+	 return(results)
     
-    numer <- (crossprod(go_term, (t_val - beta0*ones)))^2
-    go_bar <- rep(mean(go_term), length(go_term))
-    denom2 <- t(go_term-go_bar) %*% sigma %*% (go_term- go_bar)
-    
-    test_stat <- drop(numer/denom2)
-    pval[i] <- 1 - pchisq(test_stat, 1)
-    
-  }
-   cat("\n")
-  
-  p_fdr <- p.adjust(pval, method = "fdr")
-  
-  results <- data.frame(set.name = set_name, set.size = set_size, p=pval, p.fdr = p_fdr)
-  return(results)
-  
 }
 
 
 Camera_multiple <- function(newData, trt, geneset, use.rank = F){
-  ##  Use Camera procedure to do a battery of gene set test.
-  
-  microarray <- newData[, -(1:2)]
-  all_genes <-  newData[, 2]
-  
-  gset1 <- list()
-  
-  for ( i in 1:length(geneset$size)){
-    gset1[[i]] <- geneset$geneSet[[i]][-(1:2)]
-  }
-  
-  c2.indices <- ids2indices(gset1, all_genes)	 # it contains multiple lists
-  
-  design <- model.matrix(~trt)
-  Results <- camera(microarray, c2.indices,  design, use.ranks = use.rank, sort = F)
-  return(Results)
-  
+##  Use Camera procedure to do a battery of gene set test. 
+
+	microarray <- newData[, -(1:2)]
+	all_genes <-  newData[, 2]
+
+	gset1 <- list()
+
+	for ( i in 1:length(geneset$size)){
+                gset1[[i]] <- geneset$geneSet[[i]][-(1:2)]
+	}
+
+	c2.indices <- ids2indices(gset1, all_genes)      # it contains multiple lists
+
+	design <- model.matrix(~trt)
+  	Results <- camera(microarray, c2.indices,  design, use.ranks = use.rank, sort = F)
+	return(Results)
+
 }
 
 
@@ -260,6 +301,8 @@ Camera_multiple <- function(newData, trt, geneset, use.rank = F){
 
 compare_test <- function(dat){
 ########  a function to incorporate all test procedures
+
+library(limma)
 
     microarray <- dat$data
   trt <- dat$trt
@@ -289,20 +332,26 @@ compare_test <- function(dat){
   tes2 <- geneSetTest(index = index1, stat, alternative = alter, ranks.only= T)         # moderated t GeneSet Rank
   tes3 <- camera(microarray, index1,  design)$PValue                                    # camera proedure
   tes4 <- camera(microarray, index1,  design, use.ranks= T)$PValue                      # camera rank 
-  
-  tes5 <- GSEA.SingleSet(dat$data, dat$trt, dat$go_term, nperm=1000)$p.vals             # GSEA
-  
+
+ tes5 <- GSEA.SingleSet(dat$data, dat$trt, dat$go_term, nperm=1000)$p.vals		# GSEA
+
+
   ## qusage <Yaari, 2013>
   geneSets <- list()
   geneSets[[paste("Set",1)]] <- which(go_term == 1)
   labels <- rep(NA, length(trt))
   labels[trt == 1] <- "B"; labels[trt==0] <- "A"
-  qsarray <- qusage(microarray, labels, contrast = "B-A" , geneSets)  # calculate the probability for all genes
-  tes6 <- pdf.pVal(qsarray, alternative = "two.sided", selfContained = F)  # competitive test
+  qsarray <- qusage(microarray, labels, contrast = "B-A" , geneSets)  			# calculate the probability for all genes
+  tes6 <- pdf.pVal(qsarray, alternative = "two.sided", selfContained = F) 		# competitive test
   
   
   
   return(c(pval1, pval2, tes1, tes2, tes3, tes4, tes5, tes6))
   
 }
+
+
+
+
+
 
