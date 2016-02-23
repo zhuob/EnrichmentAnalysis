@@ -274,7 +274,7 @@ create.hist2(read.table("NODE_g_50.txt")[, showcol], textsize = textsize, figure
 
 
 ## recalibrated power for 10% VS 0%,  20000 simulations for the type I error and 1000 for power
-RecalibratePower(read.table("NODE_a0_50.txt"), read.table("Power_a0_50_10VS0PCT.txt"), colnum = showcol, alpha_level = 0.01)
+RecalibratePower(read.table("NODE_a0_50.txt"), read.table("Power_a0_50_10VS0PCT.txt"), colnum = showcol, alpha_level = 0.05)
 RecalibratePower(read.table("NODE_a_50.txt"), read.table("Power_a_50_10VS0PCT.txt"), colnum = showcol)
 RecalibratePower(read.table("NODE_c_50.txt"), read.table("Power_c_50_10VS0PCT.txt"), colnum = showcol)
 RecalibratePower(read.table("NODE_e_50.txt"), read.table("Power_e_50_10VS0PCT.txt"), colnum = showcol)
