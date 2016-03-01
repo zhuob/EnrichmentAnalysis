@@ -53,15 +53,17 @@ RecalibratePower <- function(data1, data2, alpha_level = 0.05, colnum = 1:8){
   data2 <- data2[, showcol]
   adjusted_alpha <- sapply(data1, quantile, alpha_level)
   
-  power <- c()
+  power <- se <- c()
   for ( i in 1: ncol(data1))
   {
     power[i] <- mean(data2[, i] < adjusted_alpha[i])
+    se[i] <- sd(data2[, i] < adjusted_alpha[i])/sqrt(nrow(data2))
   }
   names(power) <- colnames(data1)
   names(adjusted_alpha) <- colnames(data1)
+  names(se) <- colnames(data1)
   
-  return(list(adjusted_alpha = adjusted_alpha, power = power))
+  return(list(adjusted_alpha = adjusted_alpha, power = power, se = se))
   }
 
 
@@ -76,7 +78,7 @@ producePower <- function(size, background, coln,  alpha_level= 0.05){
     
   setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160211/")
   
-  case <- c("a0", "a", "c", "e", "f", "g")
+  case <- c("a0", "a", "c", "e", "f")
   sim1 <- c("5VS0", "10VS0", "15VS0", "20VS0")
   sim2 <- c("15VS10", "20VS10", "25VS10", "30VS10")
 
@@ -101,8 +103,13 @@ producePower <- function(size, background, coln,  alpha_level= 0.05){
   return(power)
 }
 
+producePower(0.05, "BACK0", coln=1)
+producePower(0.05, "BACK10", coln=1)
 
-combinePvalue <- function(size, background, coln, case){
+
+
+
+summarizePower<- function(size, background, coln, case){
   ## size: the three levels, 0.05, 0.1, 0.2
   ## background: has two levels, "BACK0", "BACK10"
   
@@ -145,12 +152,12 @@ combinePvalue <- function(size, background, coln, case){
 plotPower <- function(size,  background = "BACK0", coln=1, textsize = rep(20, 4), xtext = c("DE percentage", "Power")){
   
   
-  r1 <- combinePvalue(size,  background, coln=coln, case = "a0" )
+  r1 <- summarizePower(size,  background, coln=coln, case = "a0" )
   
   case <- c("a", "c", "e", "f")
   for (i in 1:length(case))
   {
-    r2 <- combinePvalue(size, background, coln=coln, case = case[i] )
+    r2 <- summarizePower(size, background, coln=coln, case = case[i] )
     r1 <- rbind(r1, r2)
   }
   
@@ -177,19 +184,8 @@ plotPower(0.05);
 plotPower(0.05, background = "BACK10")
 
 
-powertable <- producePower(0.05, "BACK0", coln=1)[1:5, ]
-plotPower(powertable, background = "BACK0")
 
-powertable <- producePower(0.05, "BACK10", coln=1)[1:5, ]
-plotPower(powertable, background = "BACK10")
-
-
-
-
-
-powertable <- producePower(0.05, "BACK0", coln=1)[1:5, ]
-
-## comparing power of different methods
+## comparing power (not calibrated) of different methods
 
 powerDiffMethod <- function(rown, size, background, alpha_level=0.05){
 # rown: specifies which case we want to compare
@@ -219,6 +215,7 @@ xtable(p2, digits = 3)
 
 ## use the calibrated power at level 0.05
 
+# Produce power table 1
 showcol <- c(1:8)
 
 power05 <-RecalibratePower(read.table("SizePoint05/TypeIerror_a0_0PCT_SizePoint05.txt"), read.table("SizePoint05/Power_a0_5VS0PCT.txt"), colnum = showcol)
@@ -226,42 +223,37 @@ power10 <-RecalibratePower(read.table("SizePoint05/TypeIerror_a0_0PCT_SizePoint0
 power15 <-RecalibratePower(read.table("SizePoint05/TypeIerror_a0_0PCT_SizePoint05.txt"), read.table("SizePoint05/Power_a0_15VS0PCT.txt"), colnum = showcol)
 power20 <-RecalibratePower(read.table("SizePoint05/TypeIerror_a0_0PCT_SizePoint05.txt"), read.table("SizePoint05/Power_a0_20VS0PCT.txt"), colnum = showcol)
 calib_power <- rbind(power05$power, power10$power, power15$power, power20$power)
-xtable(t(calib_power), digits =3)
+se <- rbind(power05$se, power10$se, power15$se, power20$se)
+
+export_tab <- se
+for( i in 1:nrow(se)){
+  for ( j in 1:ncol(se))
+  {export_tab[i, j] <- paste(format(round(calib_power[i, j], 3), nsmall=3), 
+                                    "(", format(round(se[i, j], 3), nsmall =3), ")", sep = "")
+  }
+}
+  
+xtable(t(export_tab))
+
+## produce power table 2
 
 p15 <-RecalibratePower(read.table("SizePoint1/TypeIerror_a0_10PCT_SizePoint1.txt"), read.table("SizePoint1/Power_a0_15VS10PCT.txt"), colnum = showcol)
 p20 <-RecalibratePower(read.table("SizePoint1/TypeIerror_a0_10PCT_SizePoint1.txt"), read.table("SizePoint1/Power_a0_20VS10PCT.txt"), colnum = showcol)
 p25 <-RecalibratePower(read.table("SizePoint1/TypeIerror_a0_10PCT_SizePoint1.txt"), read.table("SizePoint1/Power_a0_25VS10PCT.txt"), colnum = showcol)
 p30 <-RecalibratePower(read.table("SizePoint1/TypeIerror_a0_10PCT_SizePoint1.txt"), read.table("SizePoint1/Power_a0_30VS10PCT.txt"), colnum = showcol)
-calib_power2 <- rbind(p15$power, p20$power, p25$power, p30$power)
-xtable(t(calib_power2), digits =3)
+calib_power <- rbind(p15$power, p20$power, p25$power, p30$power)
+se <- rbind(power15$se, power20$se, power25$se, power30$se)
 
-
-
-## type I error simulation plots
-
-FigurePath <-"/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/SimulationPower20160211/SizePoint05/"
-setwd(FigurePath)
-
-showcol <- c(1, 3:8)
-textsize = rep(20,20, 6, 20)
-
-case <- "c"
-typeIdata <- paste("TypeIerror_", case, "_10PCT_SizePoint1.txt", sep = "")
-figure_num <- paste("TypeIerror_", case, "_10PCT", sep = "")
-figure_name <- paste("TypeIerror_", case, "_10PCT.eps", sep = "")
-
-create.hist2(read.table(typeIdata)[, showcol], textsize = textsize, figure.num =figure_num, figname = figure_name)
-
-library(gap)
-
-case <- c("a0", "a", "c", "e", "f")
-par(mfrow = c(3, 2))
-method <- 1
-for ( i in case){
-  typeIdata <- paste("TypeIerror_", i, "_0PCT_SizePoint05.txt", sep = "")
-  x <- read.table(typeIdata)
-  qqunif(x[, method], main = paste("Q-Q plot", i, "0PCT") )
+export_tab <- se
+for( i in 1:nrow(se)){
+  for ( j in 1:ncol(se))
+  {export_tab[i, j] <- paste(format(round(calib_power[i, j], 3), nsmall=3), 
+                             "(", format(round(se[i, j], 3), nsmall =3), ")", sep = "")
+  }
 }
+
+xtable(t(export_tab))
+
 
 
 
