@@ -307,81 +307,119 @@
 			\end{figure} 
 		
 		\subsection{Real Data}
-		We compared OurMethod to GSEA and CAMERA on two example data sets. Specifically, we compared ( something here).
+		We applied OurMethod to two example data sets, and compare the enriched gene sets to those obtained by GSEA and by CAMERA. In both examples, OurMethod are able to identify more enriched gene sets. Our results lend credence to previous studies in finding potential gene sets correlated with Huntington's disease and those correlated with chromosome Y and Y bands in lymphoblastoid cells.  
 		
 		\subsubsection*{Huntington's Disease Data}
-		 We examined the Huntington's Disease RNA-Sequencing (RNA-Seq) data 	\citep{labadorf2015rna}  to identify (what is our goal?? find some enriched pathways related to HD??). The mRNA expression profiles in human prefrontal cortex were obtained from 20 Huntington's Disease (HD) and 49 neurologically normal controls.  Expression values were normalized and filtered as described in the methods section of \citep{labadorf2015rna}.
-		 The data is available as a series GSE64810 in the GEO database (\url{http://www.ncbi.nlm.nih.gov/geo/}). The data set contains $28,087$ genes and the genes were named by their ensembl IDs. We performed enrichment analysis using the MsigDB \citep{subramanian2005gene} C2 Canonical Pathways gene sets (February 5, 2016, data last accessed). The C2 Canonical Pathway gene sets have a collection of 1330 gene sets, and the average set size is 50 (the set sizes range from 6 to 1028, and the median is 29). Since the genes in C2 Canonical Pathway gene sets are named by HGNC symbols, we converted the ensembl IDs in the expression data into HGNC symbols using \textit{BioMart} (\url{http://uswest.ensembl.org/biomart/martview/}). We retained $26,941$ genes that have corresponding HGNC symbols. For OurMethod, we standardized the data in the way as described in Section....
+		 We examined the Huntington's Disease (HD) RNA-Sequencing (RNA-Seq) data 	\citep{labadorf2015rna}  to identify which gene sets are enriched among DE genes in HD. The mRNA expression profiles in human prefrontal cortex were obtained from 20 Huntington's Disease and 49 neurologically normal controls.  Expression values were normalized and filtered as described in the methods section of \citep{labadorf2015rna}.
+		 The data is available as a series GSE64810 in the GEO database (\url{http://www.ncbi.nlm.nih.gov/geo/}). The data set contains $28,087$ genes and the genes were named by their ensembl IDs. We performed enrichment analysis using the MsigDB \citep{subramanian2005gene} C2 Canonical Pathways gene sets (February 5, 2016, data last accessed). The C2 Canonical Pathway gene sets have a collection of 1330 gene sets, with an average set size of 50 (the set sizes range from 3 to 1028, and the median is 29). Since the genes in C2 Canonical Pathway gene sets are named by HGNC symbols, we converted the ensembl IDs in the expression data into HGNC symbols using \textit{BioMart} (\url{http://uswest.ensembl.org/biomart/martview/}). We retained $26,941$ genes that have corresponding HGNC symbols. For OurMethod, we standardized the data in the way as described in Section....
 		 
 		 
-		 We run OurMethod for the contrast for all the gene sets in the C2 Canonical Pathway, and found 176 signatures,
-		{\scriptsize
-		\begin{longtable}{p{3in}rp{0.5in}rp{0.5in}rp{0.5in}rp{0.5in}rp{0.5in}rp{0.5in}}
-			\label{figure:topEnrich} \\
-			\caption{Top Enriched gene sets} \\
-			\hline
-			\hline
-			set.name & set.size & Correlation & backSetCor & interCor & p & FDR \\ 
-			\hline
-			PID SMAD2 3NUCLEAR PATHWAY & 79 & 0.071 & 0.001 & 0.017 & 7.5E-07 & 9.9E-04 \\ 
-			PID NFKAPPAB CANONICAL PATHWAY & 22 & 0.124 & 0.001 & 0.020 & 2.4E-06 & 1.6E-03 \\ 
-			BIOCARTA NTHI PATHWAY & 23 & 0.124 & 0.001 & 0.024 & 7.5E-06 & 1.7E-03 \\ 
-			KEGG PATHWAYS IN CANCER & 311 & 0.029 & 0.001 & 0.010 & 8.9E-06 & 1.7E-03 \\ 
-			REACTOME INNATE IMMUNE SYSTEM & 209 & 0.048 & 0.001 & 0.010 & 7.8E-06 & 1.7E-03 \\ 
-			REACTOME SIGNALING BY TGF BETA RECEPTOR COMPLEX & 60 & 0.045 & 0.001 & 0.015 & 7.3E-06 & 1.7E-03 \\ 
-			REACTOME YAP1 AND WWTR1 TAZ STIMULATED GENE EXPRESSION & 23 & 0.130 & 0.001 & 0.018 & 4.4E-06 & 1.7E-03 \\ 
-			KEGG NOD LIKE RECEPTOR SIGNALING PATHWAY & 55 & 0.054 & 0.001 & 0.010 & 1.3E-05 & 1.9E-03 \\ 
-			REACTOME DOWNSTREAM TCR SIGNALING & 31 & 0.095 & 0.001 & 0.013 & 1.2E-05 & 1.9E-03 \\ 
-			PID IL4 2PATHWAY & 59 & 0.086 & 0.001 & 0.012 & 1.4E-05 & 1.9E-03 \\ 
-			KEGG TGF BETA SIGNALING PATHWAY & 82 & 0.062 & 0.001 & 0.013 & 2.7E-05 & 3.3E-03 \\ 
-			BIOCARTA 41BB PATHWAY & 14 & 0.095 & 0.001 & 0.023 & 3.2E-05 & 3.4E-03 \\ 
-			PID P53 DOWNSTREAM PATHWAY & 131 & 0.052 & 0.001 & 0.013 & 3.4E-05 & 3.4E-03 \\ 
-			REACTOME TCR SIGNALING & 48 & 0.098 & 0.001 & 0.016 & 3.6E-05 & 3.5E-03 \\ 
-			REACTOME ACTIVATED TLR4 SIGNALLING & 87 & 0.027 & 0.001 & 0.010 & 4.9E-05 & 4.2E-03 \\ 
-			REACTOME TOLL RECEPTOR CASCADES & 110 & 0.038 & 0.001 & 0.010 & 5.2E-05 & 4.2E-03 \\ 
-			REACTOME TRANSCRIPTIONAL REGULATION OF WHITE ADIPOCYTE DIFFERENTIATION & 69 & 0.015 & 0.001 & 0.010 & 5.4E-05 & 4.2E-03 \\ 
-			BIOCARTA TID PATHWAY & 18 & 0.125 & 0.001 & 0.017 & 5.7E-05 & 4.2E-03 \\ 
-			BIOCARTA ALK PATHWAY & 34 & 0.064 & 0.001 & 0.011 & 7.4E-05 & 5.1E-03 \\ 
-			REACTOME SMAD2 SMAD3 SMAD4 HETEROTRIMER REGULATES TRANSCRIPTION & 25 & 0.102 & 0.001 & 0.021 & 7.6E-05 & 5.1E-03 \\ 
-			BIOCARTA AKT PATHWAY & 20 & 0.023 & 0.001 & 0.010 & 8.8E-05 & 5.1E-03 \\ 
-			KEGG APOPTOSIS & 82 & 0.041 & 0.001 & 0.009 & 1.0E-04 & 5.1E-03 \\ 
-			KEGG P53 SIGNALING PATHWAY & 65 & 0.037 & 0.001 & 0.007 & 9.7E-05 & 5.1E-03 \\ 
-			PID ANGIOPOIETIN RECEPTOR PATHWAY & 50 & 0.082 & 0.001 & 0.013 & 9.3E-05 & 5.1E-03 \\ 
-			REACTOME TRANSCRIPTIONAL ACTIVITY OF SMAD2 SMAD3 SMAD4 HETEROTRIMER & 36 & 0.079 & 0.001 & 0.021 & 8.3E-05 & 5.1E-03 \\ 
-			ST TUMOR NECROSIS FACTOR PATHWAY & 28 & 0.039 & 0.001 & 0.016 & 9.0E-05 & 5.1E-03 \\ 
-			BIOCARTA PPARA PATHWAY & 53 & 0.026 & 0.001 & 0.008 & 1.1E-04 & 5.2E-03 \\ 
-			REACTOME MYD88 MAL CASCADE INITIATED ON PLASMA MEMBRANE & 78 & 0.026 & 0.001 & 0.010 & 1.1E-04 & 5.2E-03 \\ 
-			PID BCR 5PATHWAY & 64 & 0.064 & 0.001 & 0.016 & 1.2E-04 & 5.3E-03 \\ 
-			PID HIF1 TFPATHWAY & 64 & 0.067 & 0.001 & 0.011 & 1.2E-04 & 5.3E-03 \\ 
-			\hline
-			\hline
-		\end{longtable}
+		 We used three test procedures (OurMethod, GSEA and CAMERA) to run enrichment analysis for the entire C2 Canonical Pathway gene sets, and compare the three tests in terms of resulting enriched gene sets. OurMethod found 176 out of 1330 gene sets to be enriched using the Benjamini-Hochberg (BH) procedure at a false discovery rate (FDR) of 0.05 (for multiple hypothesis testing, unless specified otherwise, all $p$-values in Real Data section are adjusted by B-H procedure). GSEA found 9 enriched gene sets---8 of them are also among the 176 gene sets we identified (the one that is not significant according to OurMethod has a $p$-value of 0.008026062 and FDR 0.05739066). CAMERA found no enriched gene sets. In Figure \ref{fig:HDdatap} we present the pairwise $p$-value plots for OurMethod, GSEA and CAMERA. When plotted against $p$-values of GSEA, smaller $p$-values (e.g., less than 0.1) are more likely to cluster---as compared to larger $p$-values for OurMethod; that is, OurMethod produces significantly more small $p$-values than GSEA does while OurMethod and GSEA do not differ much in producing larger $p$-values.
+		 The $p$-values of CAMERA are overwhelmingly larger than their counterparts of OurMethod, even if $p$-values of the two methods are highly correlated (Pearson's correlation is 0.96). This is consistent with our argument earlier (REF before) that CAMERA is too conservative in practice. There is no significant difference in $p$-values of GSEA and those of CAMERA. 
+		 		 	\begin{figure}[H]
+		 		 		\caption{raw p value plots for different methods}\label{fig:HDdatap}
+		 		 		\begin{center}
+		 		 			\includegraphics[width=5.5cm,height=5cm]{Figures/P_GSEA.eps}
+		 		 			\includegraphics[width=5.5cm,height=5cm]{Figures/P_Camera.eps}
+		 		 			\includegraphics[width=5.5cm,height=5cm]{Figures/P_GSEA_CAMERA.eps}
+		 		 		\end{center} 
+		 		 	\end{figure} 
+		 		 	
+		 		 	\begin{figure}[H]
+		 		 		\caption{raw p value plots for different methods, -log10(p  + 1e-6)}\label{fig:HDdatalog10p}
+		 		 		\begin{center}
+		 		 			\includegraphics[width=5.5cm,height=5cm]{Figures/log10P_Camera.eps}
+		 		 			\includegraphics[width=5.5cm,height=5cm]{Figures/log10P_GSEA.eps}
+		 		 			\includegraphics[width=5.5cm,height=5cm]{Figures/log10P_GSEA_CAMERA.eps}
+		 		 		\end{center} 
+		 		 	\end{figure} 
+		 		 	
+		  We report the top 30 enriched gene sets in Table \ref{table:top30}. Five enriched gene sets identified by GSEA are also present (noted by "$\ast$" in the table). Originally, \cite{labadorf2015rna} used the same HD data set to conduct enrichment analysis using topGo \citep{alexa2010topgo}. They found that the enriched gene sets they identified show a clear immune response and inflammation-related pattern, including REACTOME INNATE IMMUNE SYSTEM, PID IL4 2PATHWAY, and PID NFKAPPAB CANONICAL PATHWAY. These three gene sets rank 6,10 and 2 respectively in Table \ref{table:top30}.
+		  
+		   Many of our enriched gene sets have been shown to be closely related to HD pathogenesis. For example, the top enriched gene set by OurMethod, "PID SMAD2 3NUCLEAR PATHWAY" (see Table \ref{table:top30}), is responsible for regulation of nuclear SMAD2/3 signaling. \cite{katsuno2010disrupted} showed that nuclear SMAD2/3 are related to polyglutamine disease, which includes HD. The second enriched gene set, "PID NFKAPPAB CANONICAL PATHWAY", is a canonical NF-kappaB pathway, and its dysregulation causes HD immune dysfunction \citep{trager2014htt}. Also, \cite{marcora2010huntington} found that reduced transport of NF-kappaB out of dendritic spines and its activity in neuronal nuclei may contribute to the etiology of HD. 
+		   %HD mutation can reduce the transport of NF-kappaB out of dendritic spines and its activity in neuronal nuclei and this reduction may contribute to the etiology of HD. 
+		    Another gene set, "REACTOME INNATE IMMUNE SYSTEM", contributes to HD pathogenesis \citep{trager2014htt, labadorf2015rna}. \cite{diamanti2013whole} showed that "REACTOME TRANSCRIPTIONAL ACTIVITY OF SMAD2 SMAD3 SMAD4 HETEROTRIMER", a gene set involved in transcriptional activity of SMAD2/SMAD3:SMAD4 heterotrimer, is also enriched in their microarray study of HD pathology from blood samples of R6/2 at manifest stage and wild type littermate mice. For AKT signaling pathway, "BIOCARTA AKT PATHWAY", \cite{humbert2002igf} demonstrated that huntingtin is a substrate of AKT and that phosphorylation of huntingtin by AKT is crucial to mediate the neuroprotective effects of IGF-1. They also showed that AKT is altered in Huntington’s disease patients.  
+			\cite{chiang2010modulation} demonstrated that the systematic downregulation of PPAR$\gamma$, related to "BIOCARTA PPARA PATHWAY", seems to play a critical role in the dysregulation of energy homeostasis observed in HD, and that PPAR$\gamma$ is a potential therapeutic target for this disease. For "REACTOME SIGNALING BY TGF BETA RECEPTOR COMPLEX",  \cite{kandasamy2011transforming} demonstrated that TGF-beta1 signaling appears to be a crucial modulator of neurogenesis in HD pathology and it can be a promising target for endogenous cell-based regenerative therapy. 
+		   For "PID P53 DOWNSTREAM PATHWAY", \cite{ghose2011regulation} showed the likely involvement of NFkB (RelA), p53 and miRNAs in the regulation of cell death in HD pathogenesis. 
+		 	 	
+	
+	
+		{\scriptsize \begin{longtable}{p{3in}rp{0.5in}p{0.5in}rp{0.5in}p{0.5in}rp{0.5in}p{0.5in}lp{0.1in}}
+				\label{table:top30} \\
+				\caption{Top Enriched gene sets} \\
+				\hline
+				\hline
+				Gene Set & Size & $\rho_1$ & $\rho_2$ & $\rho_3$ & $p$-value & FDR & \\ 
+				\hline
+		PID SMAD2 3NUCLEAR PATHWAY & 79 & 0.071 & 0.011 & 0.017 & 7.5E-07 & 9.9E-04 & $\ast$ \\ 
+		PID NFKAPPAB CANONICAL PATHWAY & 22 & 0.124 & 0.011 & 0.020 & 2.4E-06 & 1.6E-03 &  \\ 
+		REACTOME YAP1 AND WWTR1 TAZ STIMULATED GENE EXPRESSION & 23 & 0.130 & 0.011 & 0.018 & 4.4E-06 & 1.7E-03 &  \\ 
+		REACTOME SIGNALING BY TGF BETA RECEPTOR COMPLEX & 60 & 0.045 & 0.011 & 0.015 & 7.3E-06 & 1.7E-03 &  \\ 
+		BIOCARTA NTHI PATHWAY & 23 & 0.124 & 0.011 & 0.024 & 7.5E-06 & 1.7E-03 &  \\ 
+		REACTOME INNATE IMMUNE SYSTEM & 209 & 0.048 & 0.011 & 0.010 & 7.8E-06 & 1.7E-03 &  \\ 
+		KEGG PATHWAYS IN CANCER & 311 & 0.029 & 0.011 & 0.010 & 8.9E-06 & 1.7E-03 &  \\ 
+		REACTOME DOWNSTREAM TCR SIGNALING & 31 & 0.095 & 0.011 & 0.013 & 1.2E-05 & 1.9E-03 &  \\ 
+		KEGG NOD LIKE RECEPTOR SIGNALING PATHWAY & 55 & 0.054 & 0.011 & 0.010 & 1.3E-05 & 1.9E-03 &  \\ 
+		PID IL4 2PATHWAY & 59 & 0.086 & 0.011 & 0.012 & 1.4E-05 & 1.9E-03 &  \\ 
+		KEGG TGF BETA SIGNALING PATHWAY & 82 & 0.062 & 0.011 & 0.013 & 2.7E-05 & 3.3E-03 &  \\ 
+		BIOCARTA 41BB PATHWAY & 14 & 0.095 & 0.011 & 0.023 & 3.2E-05 & 3.4E-03 &  \\ 
+		PID P53 DOWNSTREAM PATHWAY & 131 & 0.052 & 0.011 & 0.013 & 3.4E-05 & 3.4E-03 &  \\ 
+		REACTOME TCR SIGNALING & 48 & 0.098 & 0.011 & 0.016 & 3.6E-05 & 3.5E-03 &  \\ 
+		REACTOME ACTIVATED TLR4 SIGNALLING & 87 & 0.027 & 0.011 & 0.010 & 4.9E-05 & 4.2E-03 &  \\ 
+		REACTOME TOLL RECEPTOR CASCADES & 110 & 0.038 & 0.011 & 0.010 & 5.2E-05 & 4.2E-03 &  \\ 
+		REACTOME TRANSCRIPTIONAL REGULATION OF WHITE ADIPOCYTE DIFFERENTIATION & 69 & 0.015 & 0.011 & 0.010 & 5.4E-05 & 4.2E-03 &  \\ 
+		BIOCARTA TID PATHWAY & 18 & 0.125 & 0.011 & 0.017 & 5.7E-05 & 4.2E-03 &  \\ 
+		BIOCARTA ALK PATHWAY & 34 & 0.064 & 0.011 & 0.011 & 7.4E-05 & 5.1E-03 & $\ast$ \\ 
+		REACTOME SMAD2 SMAD3 SMAD4 HETEROTRIMER REGULATES TRANSCRIPTION & 25 & 0.102 & 0.011 & 0.021 & 7.6E-05 & 5.1E-03 & $\ast$ \\ 
+		REACTOME TRANSCRIPTIONAL ACTIVITY OF SMAD2 SMAD3 SMAD4 HETEROTRIMER & 36 & 0.079 & 0.011 & 0.021 & 8.3E-05 & 5.1E-03 &  \\ 
+		BIOCARTA AKT PATHWAY & 20 & 0.023 & 0.011 & 0.010 & 8.8E-05 & 5.1E-03 & $\ast$ \\ 
+		ST TUMOR NECROSIS FACTOR PATHWAY & 28 & 0.039 & 0.011 & 0.016 & 9.0E-05 & 5.1E-03 & $\ast$ \\ 
+		PID ANGIOPOIETIN RECEPTOR PATHWAY & 50 & 0.082 & 0.011 & 0.013 & 9.3E-05 & 5.1E-03 &  \\ 
+		KEGG P53 SIGNALING PATHWAY & 65 & 0.037 & 0.011 & 0.007 & 9.7E-05 & 5.1E-03 &  \\ 
+		KEGG APOPTOSIS & 82 & 0.041 & 0.011 & 0.009 & 1.0E-04 & 5.1E-03 &  \\ 
+		BIOCARTA PPARA PATHWAY & 53 & 0.026 & 0.011 & 0.008 & 1.1E-04 & 5.2E-03 &  \\ 
+		REACTOME MYD88 MAL CASCADE INITIATED ON PLASMA MEMBRANE & 78 & 0.026 & 0.011 & 0.010 & 1.1E-04 & 5.2E-03 &  \\ 
+		PID BCR 5PATHWAY & 64 & 0.064 & 0.011 & 0.016 & 1.2E-04 & 5.3E-03 &  \\ 
+		PID HIF1 TFPATHWAY & 64 & 0.067 & 0.011 & 0.011 & 1.2E-04 & 5.3E-03 &  \\ 
+		
+		\hline	
+				\hline
+		\multicolumn{7}{l}{$\rho_1$: average sample correlation between genes in the test set. }	 \\	
+		\multicolumn{7}{l}{$\rho_2$: average sample correlation between genes in the background set. }	 \\	
+		\multicolumn{7}{l}{$\rho_3$: average sample correlation between two genes, one from the test set and the other from the background set. }	 \\	
+		\multicolumn{7}{l}{ ~~$\ast$: enriched gene sets identified by GSEA.}	 \\	
+				\end{longtable}
 		}
+		
 
-
-		 	\begin{figure}[H]
-		 		\caption{raw p value plots for different methods, -log10(p  + 1e-6)}\label{fig:HDdata}
-		 		\begin{center}
-		 			\includegraphics[width=5cm,height=5cm]{Figures/log10P_Camera.eps}
-		 			\includegraphics[width=5cm,height=5cm]{Figures/log10P_GSEA.eps}
-		 			\includegraphics[width=5cm,height=5cm]{Figures/log10P_GSEA_CAMERA.eps}
-		 		\end{center} 
-		 	\end{figure} 
-		 	
-		 	The top two most significantly enriched gene sets: PID SMAD2 3NUCLEAR PATHWAY and  PID NFKAPPAB CANONICAL PATHWAY
-		 	\cite{marcora2010huntington}
-		 	
 		 	
 
 
 
 		\subsubsection*{Male vs Female Lymphoblastoid Cells Data}
-			\textit{\textbf{Cytogenetic sets (C1, 319 gene sets)}}. This catalog
+		We analyzed the mRNA expression profiles data from lymphoblastoid cell lines derived from 17 females and 15 males. \cite{subramanian2005gene} examined this data set with their GSEA method, testing the enrichment of the  cytogenetic gene sets (C1). C1 includes 24 sets, one for each of the 24 human chromosomes, and 295 sets corresponding to cytogenetic bands. \cite{subramanian2005gene} expected to find gene sets in chromosome Y to be correlated with the comparison "\text{male}$>$\text{female}". We run enrichment analysis with three tests (OurMethod, GSEA and CAMERA). In Table \ref{table:gender}, we summarized all the gene sets called significant by at least one test for the FDR level of 0.05.
+		 Three gene sets, one from chromosome Y and two Y bands, are found to be enriched by all three tests for the "\text{male}$>$\text{female}" comparison. Interestingly, OurMethod identified another Y band chrYp22. In fact, the four gene sets in Table \ref{table:gender} are the only four containing at least 3 genes in C1 and corresponding to chromosome Y and Y bands. 
 		
+		\begin{table}[ht]
+		%	\label{table:gender} 
+			\centering
+			\caption{enriched gene sets for gender data}
+			\begin{tabular}{lrrrr}
+				\hline
+				Gene set & Size & FDR(OurMethod) & FDR(Camera) & FDR(GSEA) \\ 
+				\hline
+				chrY & 40 &$<0.0001$ & 0.0015 & $<0.0001$ \\ 
+				chrYp11 & 18 &$<0.0001$ & 0.0278 & $<0.0001$ \\ 
+				chrYp22 & 8 & 0.0364 & 0.7620 & 0.5032 \\ 
+				chrYq11 & 16 & $<0.0001$ & $<0.0001$ & $<0.0001$ \\ 
+				\hline
+			\end{tabular}
+			\label{table:gender}
+		\end{table}
 		
 	\section{Discussion}
 		 
-		 There are many methods developed for gene set tests (see reviews by  \cite{huang2009bioinformatics, khatri2012ten, tarca2013comparison}). Using the terminology of \cite{khatri2012ten}, these methods generally fall into three categories: \textit{over-representation analysis}, \textit{functional class scoring} and \textit{pathway topology}. The over-representation analysis evaluates a fraction of genes among a set of pre-selected interesting genes (e.g., differentially expressed genes between treatment versus control samples). The test is usually conducted in the form of $2\times 2$ table, for example, GOstat of \cite{klebanov2007multivariate} and GO:TermFinder of \cite{tian2005discovering}. However, the over-representation analysis methods have inherent limitations such as information loss by choosing arbitrary threshold (e.g., $p$-value $< 0.05$), or problematic assumption of independence of genes (\cite{goeman2007analyzing, wu2012camera}). The functional class scoring performs three-stage analysis \citep{khatri2012ten}: on the first stage, a \textit{gene-level statistic} that measures the association between the expression profiles and the experimental design variables is calculated for each gene; such gene-level statistics include, among others, signal-to-noise ration \citep{subramanian2005gene}, moderated $t$ statistics \citep{Smyth2004moderated} and  $Z$-score \citep{efron2007correlation}. On the second stage, a \textit{set-level statistic} is calculated by using gene-level statistics and prior information about the test set (i.e., whether the gene belongs to the set) as input. On the last stage, a $p$-value is assigned to the test set by comparing the set-level statistic to its reference distribution.  (Rewrite this part)		 
+		 There are many methods developed for gene set tests (see reviews by \cite{huang2009bioinformatics, khatri2012ten, tarca2013comparison}). Using the terminology of \cite{khatri2012ten}, these methods generally fall into three categories: \textit{over-representation analysis}, \textit{functional class scoring} and \textit{pathway topology}. The over-representation analysis evaluates a fraction of genes among a set of pre-selected interesting genes (e.g., differentially expressed genes between treatment versus control samples). The test is usually conducted in the form of $2\times 2$ table, for example, GOstat of \cite{klebanov2007multivariate} and GO:TermFinder of \cite{tian2005discovering}. However, the over-representation analysis methods have inherent limitations such as information loss by choosing arbitrary threshold (e.g., $p$-value $< 0.05$), or problematic assumption of independence of genes (\cite{goeman2007analyzing, wu2012camera}). The functional class scoring performs three-stage analysis \citep{khatri2012ten}: on the first stage, a \textit{gene-level statistic} that measures the association between the expression profiles and the experimental design variables is calculated for each gene; such gene-level statistics include, among others, signal-to-noise ration \citep{subramanian2005gene}, moderated $t$ statistics \citep{Smyth2004moderated} and  $Z$-score \citep{efron2007correlation}. On the second stage, a \textit{set-level statistic} is calculated by using gene-level statistics and prior information about the test set (i.e., whether the gene belongs to the set) as input. On the last stage, a $p$-value is assigned to the test set by comparing the set-level statistic to its reference distribution.  (Rewrite this part)		 
 		 The pathway topology will not be discussed in this paper (\cite{khatri2012ten, tarca2013comparison})
 		 	
 	\section{Conclusion}\label{section:conclusion}
@@ -425,7 +463,7 @@
 				
 								
 
-
+\newpage
 \bibliographystyle{apalike}
 \bibliography{mybib}
 	
