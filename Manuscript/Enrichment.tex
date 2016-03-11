@@ -1,4 +1,5 @@
 \documentclass[11pt, a4paper]{article}
+%\documentclass[useAMS,referee]{biom}
 \usepackage{graphicx}
 \usepackage{amsmath, bm}
 \usepackage{natbib}
@@ -29,10 +30,39 @@
 	urlcolor=blue
 }
 
+
+
 \begin{document}
 
-	\newpage
+	%  pub the summary here
+	
+	\begin{abstract}
+		The world will little note, nor long remember, what we say here, but
+		can never forget what they did here. It is for us, the living, rather
+		to be dedicated here to the unfinished work which they have, thus far,
+		so nobly carried out. It is rather for us to be here dedicated to the
+		great task remaining before us--that from these honored dead we take
+		increased devotion to that cause for which they here gave the last
+		full measures of devotion--that we here highly resolve that these dead
+		shall not have died in vain; that this nation shall have a new birth
+		of freedom; and that this government of the people, by the people, for
+		the people, shall not perish from the earth. The world will little
+		note.
+	\end{abstract}
+	
+	%
+	%  Please place your key words in alphabetical order, separated
+	%  by semicolons, with the first letter of the first word capitalized,
+	%  and a period at the end of the list.
+	%
+	
+%	\begin{keywords}
+%		Colostrum; Milk; Milk oligosaccharide; Non-human mammal.
+%	\end{keywords}
+	
 	\maketitle
+
+
 	
 	\section*{Abstract}
 	To be filled
@@ -223,22 +253,22 @@
 %		OurTest & 0.012 & 0.066 & 0.124 & 0.241 &  & 0.011 & 0.049 & 0.097 & 0.198 \\ 
 %		geneSetTest-modt & 0.012 & 0.058 & 0.109 & 0.215 &  & 0.006 & 0.052 & 0.099 & 0.219 \\ 
 %		geneSetTest-rank & 0.012 & 0.055 & 0.110 & 0.214 &  & 0.018 & 0.060 & 0.116 & 0.202 \\ 
-%		CAMERA & 0.006 & 0.059 & 0.135 & 0.217 &  & 0.000 & 0.000 & 0.000 & 0.006 \\ 
+%		CAMERA & 0.006 & 0.059 & 0.135 & 0.217 &  & $<0.001$ & $<0.001$ & $<0.001$ & 0.006 \\ 
 %		CAMERA-Rank & 0.003 & 0.054 & 0.112 & 0.229 &  & 0.001 & 0.009 & 0.023 & 0.079 \\ 
 %		GSEA & 0.989 & 0.995 & 0.997 & 0.997 &  & 0.228 & 0.608 & 0.794 & 0.927 \\ 
 %			 & \multicolumn{4}{c}{(c)} &  & \multicolumn{4}{c}{(e)} \\
 %		OurTest & 0.007 & 0.052 & 0.103 & 0.202 &  & 0.008 & 0.056 & 0.093 & 0.207 \\ 
 %		geneSetTest-modt & 0.007 & 0.051 & 0.098 & 0.187 &  & 0.015 & 0.058 & 0.106 & 0.217 \\ 
 %		geneSetTest-rank & 0.006 & 0.050 & 0.106 & 0.190 &  & 0.024 & 0.082 & 0.138 & 0.225 \\ 
-%		CAMERA & 0.000 & 0.000 & 0.000 & 0.000 &  & 0.000 & 0.000 & 0.001 & 0.009 \\ 
-%		CAMERA-Rank & 0.000 & 0.000 & 0.000 & 0.000 &  & 0.000 & 0.020 & 0.054 & 0.127 \\ 
+%		CAMERA & $<0.001$ & $<0.001$ & $<0.001$ & $<0.001$ &  & $<0.001$ & $<0.001$ & 0.001 & 0.009 \\ 
+%		CAMERA-Rank & $<0.001$ & $<0.001$ & $<0.001$ & $<0.001$ &  & $<0.001$ & 0.020 & 0.054 & 0.127 \\ 
 %		GSEA & 0.942 & 0.984 & 0.992 & 0.995 &  & 0.108 & 0.469 & 0.731 & 0.899 \\ 
 %			 & \multicolumn{4}{c}{(f)} & & \multicolumn{4}{c}{(g)} \\
 %		OurTest & 0.012 & 0.050 & 0.098 & 0.226 &  & 0.007 & 0.059 & 0.116 & 0.211 \\ 
 %		geneSetTest-modt & 0.010 & 0.071 & 0.115 & 0.213 &  & 0.010 & 0.061 & 0.104 & 0.218 \\ 
 %		geneSetTest-rank & 0.007 & 0.061 & 0.112 & 0.221 &  & 0.014 & 0.072 & 0.142 & 0.247 \\ 
-%		CAMERA & 0.000 & 0.000 & 0.004 & 0.019 &  & 0.000 & 0.000 & 0.001 & 0.006 \\ 
-%		CAMERA-Rank & 0.006 & 0.041 & 0.096 & 0.210 &  & 0.000 & 0.000 & 0.002 & 0.009 \\ 
+%		CAMERA & $<0.001$ & $<0.001$ & 0.004 & 0.019 &  & $<0.001$ & $<0.001$ & 0.001 & 0.006 \\ 
+%		CAMERA-Rank & 0.006 & 0.041 & 0.096 & 0.210 &  & $<0.001$ & $<0.001$ & 0.002 & 0.009 \\ 
 %		GSEA & 0.015 & 0.188 & 0.434 & 0.770 &  & 0.943 & 0.975 & 0.983 & 0.992 \\ 
 %		\hline
 %	\end{tabular}
@@ -265,11 +295,11 @@
 			\cline{2-5}
 			& 5\% VS 0\% & 10\% VS 0\% & 15\% VS 0\% & 20\% VS 0\% \\ 
 			\hline 
-			OurTest & 0.654(0.005) & 0.956(0.002) & 0.998(0.000) & 1.000(0.000) \\ 
-			MRSGE & 0.186(0.004) & 0.426(0.005) & 0.701(0.005) & 0.889(0.003) \\ 
-			Camera & 0.647(0.005) & 0.953(0.002) & 0.998(0.000) & 1.000(0.000) \\ 
-			GSEA & 0.827(0.004) & 0.991(0.001) & 1.000(0.000) & 1.000(0.000) \\ 
-			QUSAGE & 0.723(0.004) & 0.974(0.002) & 0.999(0.000) & 1.000(0.000) \\ 
+		OurTest & 0.654(0.005) & 0.956(0.002) & 0.998(0.000) & 1.000(0.000) \\ 
+		MRSGE & 0.186(0.004) & 0.426(0.005) & 0.701(0.005) & 0.889(0.003) \\ 
+		Camera & 0.647(0.005) & 0.953(0.002) & 0.998(0.000) & 1.000(0.000) \\ 
+		GSEA & 0.827(0.004) & 0.991(0.001) & 1.000(0.000) & 1.000(0.000) \\ 
+		QUSAGE & 0.723(0.004) & 0.974(0.002) & 0.999(0.000) & 1.000(0.000) \\ 
 			\hline 
 		\end{tabular}
 	\end{table}
@@ -286,14 +316,34 @@
 			\cline{2-5}
 			& 15\% VS 10\% & 20\% VS 10\% & 25\% VS 10\% & 30\% VS 10\% \\ 
 			\hline
-		OurTest & 0.229(0.004) & 0.604(0.005) & 0.871(0.003) & 0.976(0.002) \\ 
-		MRSGE & 0.183(0.004) & 0.423(0.005) & 0.700(0.005) & 0.887(0.003) \\ 
-		Camera & 0.227(0.004) & 0.596(0.005) & 0.864(0.003) & 0.973(0.002) \\ 
-		GSEA & 0.000(0.000) & 0.000(0.000) & 0.000(0.000) & 0.000(0.000) \\ 
-		QUSAGE & 0.244(0.004) & 0.630(0.005) & 0.889(0.003) & 0.981(0.001) \\ 
+	OurTest & 0.229(0.004) & 0.604(0.005) & 0.871(0.003) & 0.976(0.002) \\ 
+	MRSGE & 0.183(0.004) & 0.423(0.005) & 0.700(0.005) & 0.887(0.003) \\ 
+	Camera & 0.227(0.004) & 0.596(0.005) & 0.864(0.003) & 0.973(0.002) \\ 
+	GSEA & 0.000(0.000) & 0.000(0.000) & 0.000(0.000) & 0.000(0.000) \\ 
+	QUSAGE & 0.244(0.004) & 0.630(0.005) & 0.889(0.003) & 0.981(0.001) \\ 
 		\hline
 		\end{tabular}
 	\end{table}
+	
+	
+	\begin{table}
+		\centering
+		 \caption{power simulation results, 10\% DE }\label{table:power}
+		 	\begin{tabular}{rrrr c rrr}
+		 		\hline\hline
+		  & \multicolumn{3}{c}{DE size = 0.1} &  & \multicolumn{3}{c}{DE size = 0.1} \\
+		 	Method & 5\% VS 0\% & 10\% VS 0\% & 15\% VS 0\%	 & & 15\% VS 10\% & 20\% VS 10\% & 25\% VS 10\% \\ 
+		 	 \cline{2-4}   \cline{6-8}
+		 	OurTest & 0.654(0.005) & 0.956(0.002) & 0.998(0.000) & & 0.229(0.004) & 0.604(0.005) & 0.871(0.003)\\ 
+		 	MRSGE & 0.186(0.004) & 0.426(0.005) & 0.701(0.005)& & 0.183(0.004) & 0.423(0.005) & 0.700(0.005) \\ 
+		 	Camera & 0.647(0.005) & 0.953(0.002) & 0.998(0.000)& & 0.227(0.004) & 0.596(0.005) & 0.864(0.003)  \\ 
+		 	GSEA & 0.827(0.004) & 0.991(0.001) & 1.000(0.000) & & 0.000(0.000) & 0.000(0.000) & 0.000(0.000) \\ 
+		 	QUSAGE & 0.723(0.004) & 0.974(0.002) & 0.999(0.000) & &  0.244(0.004) & 0.630(0.005) & 0.889(0.003) \\ 
+		\hline
+	\end{tabular}
+\end{table}
+
+	
 	
 		Figure \ref{fig:power} shows for OurMethod, the variations in power according to different correlation structures across four alternative scenarios. The left part is the power for group $A_3$ with a DE size of 0.05, and the right part is the power for group $A_4$ with a DE size of 0.05. For each correlation structure and each alternative, we simulated 1000 data sets and calibrated the power at a significance level of 0.05. 
 		The powers for case (a0) and (c) are very similar, and are among the highest under each of the four alternatives. It's not surprising because they correspond to the simplest correlation structures: gene expression values in (a0) are simulated to be independent and in (c) are simulated to have the same correlation 0.1. As the correlation structure becomes more complicated, from (a) to (e) then to (f), the power decreases under every alternative scenario. The power under correlation structure (f) is the lowest for both $A_3$ and $A_4$ simulations. We also note that the power decreases when DE genes are present in the background set as compared to the case where there are no DE genes in the background set. (We might need the same DE size to illustrate this point.)
@@ -310,12 +360,12 @@
 		We applied OurMethod to two example data sets, and compare the enriched gene sets to those obtained by GSEA and by CAMERA. In both examples, OurMethod are able to identify more enriched gene sets. Our results lend credence to previous studies in finding potential gene sets correlated with Huntington's disease and those correlated with chromosome Y and Y bands in lymphoblastoid cells.  
 		
 		\subsubsection*{Huntington's Disease Data}
-		 We examined the Huntington's Disease (HD) RNA-Sequencing (RNA-Seq) data 	\citep{labadorf2015rna}  to identify which gene sets are enriched among DE genes in HD. The mRNA expression profiles in human prefrontal cortex were obtained from 20 Huntington's Disease and 49 neurologically normal controls.  Expression values were normalized and filtered as described in the methods section of \citep{labadorf2015rna}.
+		 We examined the Huntington's Disease (HD) RNA-Sequencing (RNA-Seq) data 	\citep{labadorf2015rna}  to identify which gene sets are enriched among DE genes in HD. The mRNA expression profiles in human prefrontal cortex were obtained from 20 Huntington's Disease samples and 49 neurologically normal controls.  Expression values were normalized and filtered as described in the methods section of \citep{labadorf2015rna}.
 		 The data is available as a series GSE64810 in the GEO database (\url{http://www.ncbi.nlm.nih.gov/geo/}). The data set contains $28,087$ genes and the genes were named by their ensembl IDs. We performed enrichment analysis using the MsigDB \citep{subramanian2005gene} C2 Canonical Pathways gene sets (February 5, 2016, data last accessed). The C2 Canonical Pathway gene sets have a collection of 1330 gene sets, with an average set size of 50 (the set sizes range from 3 to 1028, and the median is 29). Since the genes in C2 Canonical Pathway gene sets are named by HGNC symbols, we converted the ensembl IDs in the expression data into HGNC symbols using \textit{BioMart} (\url{http://uswest.ensembl.org/biomart/martview/}). We retained $26,941$ genes that have corresponding HGNC symbols. For OurMethod, we standardized the data in the way as described in Section....
 		 
 		 
-		 We used three test procedures (OurMethod, GSEA and CAMERA) to run enrichment analysis for the entire C2 Canonical Pathway gene sets, and compare the three tests in terms of resulting enriched gene sets. OurMethod found 176 out of 1330 gene sets to be enriched using the Benjamini-Hochberg (BH) procedure at a false discovery rate (FDR) of 0.05 (for multiple hypothesis testing, unless specified otherwise, all $p$-values in Real Data section are adjusted by B-H procedure). GSEA found 9 enriched gene sets---8 of them are also among the 176 gene sets we identified (the one that is not significant according to OurMethod has a $p$-value of 0.008026062 and FDR 0.05739066). CAMERA found no enriched gene sets. In Figure \ref{fig:HDdatap} we present the pairwise $p$-value plots for OurMethod, GSEA and CAMERA. When plotted against $p$-values of GSEA, smaller $p$-values (e.g., less than 0.1) are more likely to cluster---as compared to larger $p$-values for OurMethod; that is, OurMethod produces significantly more small $p$-values than GSEA does while OurMethod and GSEA do not differ much in producing larger $p$-values.
-		 The $p$-values of CAMERA are overwhelmingly larger than their counterparts of OurMethod, even if $p$-values of the two methods are highly correlated (Pearson's correlation is 0.96). This is consistent with our argument earlier (REF before) that CAMERA is too conservative in practice. There is no significant difference in $p$-values of GSEA and those of CAMERA. 
+		 We used three test procedures (OurMethod, GSEA and CAMERA) to run enrichment analysis for the entire C2 Canonical Pathway gene sets, and compare the three tests in terms of resulting enriched gene sets. OurMethod found 176 out of 1330 gene sets to be enriched using the Benjamini-Hochberg (BH) procedure at a false discovery rate (FDR) of 0.05 (for multiple hypothesis testing, unless specified otherwise, all $p$-values in Real Data section are adjusted by BH procedure). GSEA found 9 enriched gene sets---8 of them are also among the 176 gene sets we identified (the one that is not significant according to OurMethod has a $p$-value of 0.008026062 and FDR 0.05739066). CAMERA found no enriched gene sets. In Figure \ref{fig:HDdatap} we present pairwise $p$-value plots for OurMethod, GSEA and CAMERA. When plotted against $p$-values of GSEA, for OurMethod, smaller $p$-values (e.g., less than 0.1) are more likely to cluster---as compared to larger $p$-values; that is, OurMethod produces significantly more small $p$-values than GSEA does while OurMethod and GSEA do not differ much in producing larger $p$-values.
+		 The $p$-values of CAMERA are overwhelmingly larger than their counterparts of OurMethod, even if $p$-values of the two methods are highly correlated (Pearson's correlation is 0.96). This is consistent with our argument earlier (REF before) that CAMERA may be too conservative in practice. There is no systematic difference in $p$-values of GSEA and those of CAMERA. 
 		 		 	\begin{figure}[H]
 		 		 		\caption{raw p value plots for different methods}\label{fig:HDdatap}
 		 		 		\begin{center}
@@ -397,22 +447,25 @@
 
 
 		\subsubsection*{Male vs Female Lymphoblastoid Cells Data}
-		We analyzed the mRNA expression profiles data from lymphoblastoid cell lines derived from 17 females and 15 males. \cite{subramanian2005gene} examined this data set with their GSEA method, testing the enrichment of the  cytogenetic gene sets (C1). C1 includes 24 sets, one for each of the 24 human chromosomes, and 295 sets corresponding to cytogenetic bands. \cite{subramanian2005gene} expected to find gene sets in chromosome Y to be correlated with the comparison "\text{male}$>$\text{female}". We run enrichment analysis with three tests (OurMethod, GSEA and CAMERA). In Table \ref{table:gender}, we summarized all the gene sets called significant by at least one test for the FDR level of 0.05.
-		 Three gene sets, one from chromosome Y and two Y bands, are found to be enriched by all three tests for the "\text{male}$>$\text{female}" comparison. Interestingly, OurMethod identified another Y band chrYp22. In fact, the four gene sets in Table \ref{table:gender} are the only four containing at least 3 genes in C1 and corresponding to chromosome Y and Y bands. 
+		We analyzed the mRNA expression profiles data from lymphoblastoid cell lines derived from 17 females and 15 males. \cite{subramanian2005gene} examined this data set with their GSEA method, testing the enrichment of the  cytogenetic gene sets (C1). C1 includes 24 sets, one for each of the 24 human chromosomes, and 295 sets corresponding to cytogenetic bands. \cite{subramanian2005gene} expected to find gene sets in chromosome Y to be correlated with the comparison "\text{male}$>$\text{female}". We run enrichment analysis with three tests (OurMethod, GSEA and CAMERA). In Table \ref{table:gender}, we summarized all the gene sets called significant by at least one test for the nominal $p$-value of 0.01. Three gene sets, one from chromosome Y and two Y bands, are found to be enriched by all three tests for the "\text{male}$>$\text{female}" comparison. Interestingly, OurMethod identified another Y band, chrYp22, as enriched. In fact, the four gene sets in Table \ref{table:gender} identified as significant by OurMethod are the only four containing at least 3 genes in C1 and corresponding to chromosome Y and Y bands. However, GSEA produced small nominal $p$-values for gene sets ( How to explain this? can we rule out those genes for not being related to Y or Y band?).
 		
 		\begin{table}[ht]
 		%	\label{table:gender} 
 			\centering
-			\caption{enriched gene sets for gender data}
-			\begin{tabular}{lrrrr}
-				\hline
-				Gene set & Size & FDR(OurMethod) & FDR(Camera) & FDR(GSEA) \\ 
-				\hline
-				chrY & 40 &$<0.0001$ & 0.0015 & $<0.0001$ \\ 
-				chrYp11 & 18 &$<0.0001$ & 0.0278 & $<0.0001$ \\ 
-				chrYp22 & 8 & 0.0364 & 0.7620 & 0.5032 \\ 
-				chrYq11 & 16 & $<0.0001$ & $<0.0001$ & $<0.0001$ \\ 
-				\hline
+			\caption{Gene sets for lymphoblastoid cells data.}
+		\begin{tabular}{lrrr c rr c rr} \hline\hline 
+		 & &  \multicolumn{2}{c}{OurMethod} & & \multicolumn{2}{c}{GSEA}	& & \multicolumn{2}{c}{CAMERA} \\	
+		 \cline{3-4}  \cline{6-7} \cline{9-10}
+		Gene set & Size & $p$-value & FDR & & $p$-value & FDR & &$p$-value & FDR \\ 
+		\hline
+		chrY & 40 & $<0.001$ & $<0.001$ & &$<0.001$ & $<0.001$ & & $<0.001$ & 0.002 \\ 
+		chrYq11 & 16 & $<0.001$ & $<0.001$& & $<0.001$ & $<0.001$ & & $<0.001$ & $<0.001$ \\ 
+		chrYp11 & 18 & $<0.001$ & $<0.001$ & & $<0.001$ & $<0.001$& & $<0.001$ & 0.028 \\ 
+		chrYp22 & 8 & $<0.001$ & 0.036& & 0.012 & 0.503 & & 0.010 & 0.762 \\ 
+		chr7p11 & 8 & 0.049 & 0.835 & & 0.006 & 0.352 & & 0.101 & 0.998 \\ 
+		chr11p12 & 5 & 0.065 & 0.835& & 0.008 & 0.388 & & 0.115 & 0.998 \\ 
+		chrXp22 & 76 & 0.072 & 0.835& & 0.004 & 0.295 & & 0.581 & 0.998 \\  
+		\hline\hline
 			\end{tabular}
 			\label{table:gender}
 		\end{table}
