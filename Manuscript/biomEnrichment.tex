@@ -43,7 +43,7 @@
 \usepackage{array,longtable}
 \usepackage{lscape}
 \usepackage{float}  % PUT FIGURE HERE
-\usepackage{array}  % fix column width 
+\usepackage{array}  % fix column width 	
 \usepackage{caption}
 \captionsetup[figure]{labelfont=bf}
 \captionsetup[table]{labelfont=bf}
@@ -55,7 +55,7 @@
 %  If you have a landscape table you need to use the rotating package
 
 %% \raggedbottom % To avoid glue in typesetteing, sbs>>
-\newcommand{\OurMethod}{need\_a\_name}
+\newcommand{\OurMethod}{MEQLEA}
 \newcommand{\HowmanyTest}{six}
 \newcommand{\aaCase}{a}
 \newcommand{\aCase}{b}
@@ -66,11 +66,12 @@
 \newcommand{\CMT}{CAMERA-modt}
 \newcommand{\gent}{geneSetTest-modt}
 \newcommand{\gen}{geneSetTest}
+\newcommand{\thepapertobefinished}{Zhuo and Di, unpublished work}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \setcounter{footnote}{2}
 
-\title[This is an Example of Recto Running Head]{Accounting for correlations in gene set test for improved interpretation of genome-scale data}
+\title[This is an Example of Recto Running Head]{Accounting for correlations in competitive gene set test for improved interpretation of genome-scale data}
 
 %\author{Bin Zhuo$^{*}$\email{zhuob@oregonstate.edu} \\
 %	   Department of Statistics, Oregon State University, Corvallis, OR, 97333
@@ -98,7 +99,7 @@
 %  pub the summary here
 
 \begin{abstract}
-Functional enrichment analysis is a widely used tool for interpreting high-throughput biological data, such as gene expression and proteomics data. It aims at testing categories of genes for enriched association signals in a list of genes inferred from genome-wide data. Most conventional enrichment testing methods ignore or do not properly account for the widespread correlations among genes, which, as we show, can result in severely inflated type 1 error rates and power loss. We propose a new framework for enrichment testing based on a mixed effects quasi-likelihood model, where the data are not required to be Gaussian. Our method effectively adjusts for completely unknown, unstructured correlations among the genes. It uses a score test approach and allows for analytical assessment of p-values, which makes it computationally rapid for massive omics data. Compared to existing methods including GSEA and CAMERA, our method enjoys robust and substantially improved control over type 1 error and maintains good power in a variety of correlation structure and association settings. We also present a real data analysis to illustrate our approach.
+Competitive gene set test is a widely used tool for interpreting high-throughput biological data, such as gene expression and proteomics data. It aims at testing categories of genes for enriched association signals in a list of genes inferred from genome-wide data. Most conventional enrichment testing methods ignore or do not properly account for the widespread correlations among genes, which, as we show, can result in inflated type I error rates and power loss. We propose a new framework, \OurMethod, for gene set test based on a mixed effects quasi-likelihood model, where the data are not required to be Gaussian. Our method effectively adjusts for completely unknown, unstructured correlations among the genes. It uses a score test approach and allows for analytical assessment of $p$-values. Compared to existing methods such as GSEA and CAMERA, our method enjoys robust and substantially improved control over type 1 error and maintains good power in a variety of correlation structure and association settings. We also present two real data analysis to illustrate our approach.
 \end{abstract}
 
 %
@@ -125,27 +126,25 @@ Functional enrichment analysis is a widely used tool for interpreting high-throu
 	%Competitive gene set test \citep{goeman2007analyzing} is a gene expression analysis that compares differential expression (DE) for genes in the test set to that for genes not in the test set. Most competitive gene set tests, as described by \cite{barry2008statistical}, are typically two-stage procedures:  on the second stage, a $p$-value is reported from the The test set may represent biological pathways or network, or some other grouping based on biological knowledge. Incorporating such prior information of the grouping makes it easier for biologists to interpret the results of DE analysis.
 	
 	\textbf{Independent gene set test} \\
-	Many competitive gene set tests rely on independence of gene-level statistics that further depends on independence among genes. Those tests are parametric or rank-based procedures that assume the gene-level statistics to be independent and identically distributed, or gene permutation procedures that generate the same approximate null for the set-level statistics. For example, PAGE  \citep{kim2005page} conducts one-sample $z$-test by comparing the mean of gene-level statistics (i.e., the mean of log fold changes) in the test set to a normal distribution under the null. The $2\times 2$ contingency-table-based tests examine the significance of the test set by dichotomizing the outcomes of DE analysis and cross-classifying the genes according to whether they are indicated as DE and whether they are in the test set (see \cite{huang2009bioinformatics} for a review and references therein). sigPathway \citep{tian2005discovering} and "\gen" in the limma package \citep{Smyth2004moderated} evaluate the set-level $p$-values by permuting gene labels. However, tests assuming independence of genes may result in inflated false discovery rate \citep{efron2007testing,goeman2007analyzing, gatti2010heading,wu2012camera,yaari2013quantitative}, as genes within a gene set are often co-expressed and function together.
+	Many competitive gene set tests rely on independence of gene-level statistics that further depends on independence among genes. Those tests are parametric or rank-based procedures that assume the gene-level statistics to be independent and identically distributed, or gene permutation procedures that generate the same approximate null for the set-level statistics. For example, PAGE  \citep{kim2005page} conducts one-sample $z$-test by comparing the mean of gene-level statistics (i.e., the mean of log fold changes) in the test set to a normal distribution under the null. The $2\times 2$ contingency-table-based tests examine the significance of the test set by dichotomizing the outcomes of DE analysis and cross-classifying the genes according to whether they are indicated as DE and whether they are in the test set (see \cite{huang2009bioinformatics} for a review and references therein). sigPathway \citep{tian2005discovering} and ``\gen" in the limma package \citep{Smyth2004moderated} evaluate the set-level $p$-values by permuting gene labels. However, tests assuming independence of genes may result in inflated false discovery rate \citep{efron2007testing,goeman2007analyzing, gatti2010heading,wu2012camera,yaari2013quantitative}, as genes within a gene set are often co-expressed and function together.
 	
 	\textbf{Tests that account for between-gene correlation}\\
-	A handful of methods have been proposed to account for between-gene correlation in competitive gene set test. One attempt is to evaluate the set-level statistic by permuting the biological sample labels (see, for example, \cite{subramanian2005gene, efron2007testing}). Permuting sample labels does not require an explicit understanding of the underlying correlation structure among genes and thus protects the test against such correlation. Since permuting sample labels is computationally inefficient, \cite{zhou2013empirical} proposed an analytic approximation to permutations for set-level score statistics, which preserves the essence of permutation gene set analysis with greatly reduced computational burden. However, an unavoidable problem arising from sample permutation approach is that it implicitly alters the null hypothesis being tested and it is therefore difficult to characterize the null and the alternative hypotheses \citep{goeman2007analyzing, khatri2012ten, wu2012camera}. Another attempt is to use set-level statistic that directly includes between-gene correlation estimated from the data. For example, CAMERA \citep{wu2012camera} calculates a \textit{variance inflation factor} (VIF) from sample correlation (after the treatment effect removed), and then incorporates it into the two versions (i.e., the parametric and the rank-based) of set-level statistics. \cite{yaari2013quantitative} also used the idea of estimating the VIF to adjust for correlation in their distribution-based gene set test. The VIF is a crucial factor and valid estimation of it relies on the assumption that correlation between any two local statistics are almost the same as correlation between their corresponding expression profiles. This assumption has been demonstrated (??? a better word???) by simulation \citep{barry2008statistical} for several gene-level statistics (e.g., $t$-statistic, Wald-type statistic for regressing expression on censored time-to-event data through a Cox proportional hazards model). However, as shown by (the paper to be finished), this assumption holds only for the case where all the hypotheses are under the null (i.e., no gene is DE), and the correlation among gene-level statistics (e.g., $t$-statistics) can be badly estimated by sample correlation when a fraction of genes are DE. 
+	A handful of methods have been proposed to account for between-gene correlation in competitive gene set test. One attempt is to evaluate the set-level statistic by permuting the biological sample labels (see, for example, \cite{subramanian2005gene, efron2007testing}). Permuting sample labels does not require an explicit understanding of the underlying correlation structure among genes and thus protects the test against such correlation. Since permuting sample labels is computationally inefficient, \cite{zhou2013empirical} proposed an analytic approximation to permutations for set-level score statistics, which preserves the essence of permutation gene set analysis with greatly reduced computational burden. However, an unavoidable problem arising from sample permutation approach is that it implicitly alters the null hypothesis being tested and it is therefore difficult to characterize the null and the alternative hypotheses \citep{goeman2007analyzing, khatri2012ten, wu2012camera}. Another attempt is to use set-level statistic that directly includes between-gene correlation estimated from the data. For example, CAMERA \citep{wu2012camera} calculates a \textit{variance inflation factor} (VIF) from sample correlation (after the treatment effect removed), and then incorporates it into their set-level statistics to account for between-gene correlations. A recent extension to CAMERA,  QuSAGE \citep{yaari2013quantitative}, also used the same VIF to adjust for between-gene correlations but includes the VIF in a different set-level statistic. The VIF is a crucial factor and valid estimation of it relies on the assumption that correlation between any two local statistics are almost the same as correlation between their corresponding expression profiles. This assumption has been demonstrated (??? a better word???) by simulation \citep{barry2008statistical} for several gene-level statistics (e.g., $t$-statistic, Wald-type statistic for regressing expression on censored time-to-event data through a Cox proportional hazards model). However, this assumption holds only for the case where all the hypotheses are under the null (i.e., no gene is DE), and the correlation among gene-level statistics (e.g., $t$-statistics) can be badly estimated by sample correlation when a fraction of genes are DE (\thepapertobefinished). 
 	% The CAMERA procedure thus may be too conservative for controling type I error in the presence of DE genes, as will be demonstrated in our simulation study. 
 	
 	
 	% (This is a self-contained gene set test) \cite{huang2013gene} uses a multivariate linear regression model in which the between-gene correlation are explicitly modeled by a working covariance matrix. 
 	
 	\textbf{What do we propose?} \\
-	
-	We propose a new framework, \OurMethod, for gene set test based on a mixed effects quasi-likelihood model. Our strategy is to avoid the discrepancy between correlations among expression profiles and those among gene-level statistics caused by the presence of DE genes. Instead, we use differences in mean as gene-level statistics for a two group comparison experiment. We model the covariance of gene-level statistics by two variance components, one attributable to correlations among samples after treatment effect removed, and the other attributable to the DE effect associate with the treatment. The benefit of quasi-likelihood is that the data are not required to be Gaussian. Our method effectively adjusts for completely unknown, unstructured correlations among the genes. \OurMethod~uses a score test approach and allows for analytical assessment of p-values. Compared to existing methods including GSEA and CAMERA, \OurMethod~enjoys robust and improved control over type I error and maintains good power in a variety of correlation structure and association settings. 
+	We propose a new framework for enrichment analysis that we will call Mixed Effects Quasi-Likelihood Enrichment Analysis (\OurMethod). Our strategy is to avoid the discrepancy between correlations among expression profiles and those among gene-level statistics caused by the presence of DE genes. Instead, we use differences in mean as gene-level statistics for a two group comparison experiment. We model the covariance of gene-level statistics by two variance components, one attributable to correlations among samples after treatment effect removed, and the other attributable to the DE effect associate with the treatment. The benefit of quasi-likelihood is that the data are not required to be Gaussian. Our method effectively adjusts for completely unknown, unstructured correlations among the genes. \OurMethod~uses a score test approach and allows for analytical assessment of p-values. Compared to existing methods including GSEA and CAMERA, \OurMethod~enjoys robust and improved control over type I error and maintains good power in a variety of correlation structure and association settings. 
 	
 	\textbf{What is the plan of this paper?} \\
-	The rest of the paper is organized as follows: in Section \ref{section:methods} we describe the methodology of \OurMethod; in Section \ref{section:results} we present results from comparison of \OurMethod~to other existing methods by simulation study, and illustrate the application of our method by two real data sets; in Section \ref{section:conclusion} we conclude and also specifies the future work.
-	
-	
+	The rest of the paper is organized as follows: in Section \ref{section:methods} we describe the methodology of \OurMethod~and summarize related existing methods; in Section \ref{section:results} we present results from comparison of \OurMethod~to other existing methods by simulation study, and illustrate the application of our method by two real data sets; in Section \ref{section:conclusion} we conclude and also specifies the future work.
+
 	
 	\section{Methods}\label{section:methods}
 	\textbf{Overview of this section} \\
-	In the first part of this section, we will formulate our model: first, we introduce a DE effect for each gene, based on which we derive the correlation between our gene-level statistics; then we define the null and alternative hypotheses for competitive gene set test under this framework; next we propose our set-level test statistic and conduct hypothesis testing. In the second part, we will briefly summarize four different approaches that we will compare against in the result section.  
+	In the first part of this section, we will formulate our model: first, we introduce a DE effect for each gene, based on which we derive the correlation between our gene-level statistics; then we define the null and alternative hypotheses for competitive gene set test under this framework; next we propose our set-level test statistic and conduct hypothesis testing. In the second part, we describe simulation setup for type I error and power, and give an overview of existing methods that we will compare against in the result section.  
 	
 	\subsection{\OurMethod}
 	\subsubsection{The DE effects}\label{subsection:DEeffect}
@@ -230,133 +229,148 @@ Functional enrichment analysis is a widely used tool for interpreting high-throu
 	Under the null, $T\sim \chi^2(1)$.
 	
 	
-	\subsection{Other competitive gene set tests}
-	We will compare \OurMethod~to~\HowmanyTest~existing gene set tests: Gene set enrichment analysis (GSEA, \cite{subramanian2005gene}), two versions of the CAMERA procedure \citep{wu2012camera}, two versions of the \gen~ procedure, and QuSAGE \citep{yaari2013quantitative}. All tests but \gen~ account for correlation among genes. We will denote the two versions of CAMERA by \CMT~ and \CMR. The first version of \gen, denoted by \textit{\gent}, is similar to sigPathway \citep{tian2005discovering} except it uses moderated $t$-statistics instead of the ordinary $t$-statistics as gene-level statistics. The second version of \gen~ is also known as the mean rank gene set enrichment \citep{michaud2008integrative} and will be referred to herein as MRGSE. GSEA is modified from the original R-GSEA script (\url{http://software.broadinstitute.org/gsea/index.jsp}) to accommodate single gene set test. CAMERA and \gen~ are implemented  in the limma package \citep{smyth2005limma} in the Bioconductor project \citep{gentleman2004bioconductor}, and QuSAGE is available in the Bioconductor package of the same name. Because GSEA and \OurMethod~do not support linear models, the implementations are restricted to two-group comparisons.
+%	\subsection{Connection to current methods}
+%	\OurMethod~...
+%	CAMERA incorporates a VIF in their set-level statistics to account for inflation due to the presence of between-gene correlation. \OurMethod is closely related to their approach in that set-level statistic in (REF)    
 	
-	The \HowmanyTest~tests differ in one or more aspects, although all tests except QuSAGE follow the three-stage paradigm described in Section~\ref{section:introduction}. For GSEA, the gene-level statistics are the rankings of genes according to a ranking metric (we use signal-to-noise ratio, the default metric in R-GSEA throughout this paper), then based on the rankings an enrichment score for the test set is calculated, and the significance of the enrichment score is determined by randomly permuting the sample labels. Both \CMT~and \gent~use the moderated $t$-statistics \citep{Smyth2004moderated} as gene-level statistics, and determine whether the means of the gene-level statistics are significantly different for genes in the test set versus genes in the background set. The difference is how they evaluate the set-level statistics: \CMT~uses a $t$-statistic that allows the gene-level statistics in the test set to be correlated by first estimating a VIF, and then incorporating it into the $t$-statistic to adjust for between-gene correlation (see materials and methods section of \cite{wu2012camera}); \gent~accesses the significance of the test set by comparing the observed set-level statistics to its null distribution generated by permuting gene labels. \CMR~and MRGSE conduct a Wilcoxon-Mann-Whitney rank sum test, and they amount to, respectively,  \CMT~and \gent~in that they compare the rankings instead of the gene-level statistics themselves for genes in the test set to those for genes in the background set. QuSAGE generates from $t$-test a probability density function (PDF) for each gene, combines the individual PDFs using convolution, and quantifies gene-set activity with a complete PDF. The complete PDF can be used to compare a baseline value for self-contained gene set test, or to compare differences in expression profiles between test set and background set in competitive gene set test.  
+%	\subsection{Other competitive gene set tests}
+	\subsection{Simulation Methods}
 	
-	
-	
-	\section{Examples and Numerical Results}\label{section:results}
-	
-	\subsection{Simulations}\label{subsection:simulation}
-	In this section, we present results from type I error and power simulations. Since a standardization procedure is required by \OurMethod~for preprocessing data, we will simulate the standardized expression profiles for illustration purpose. 
-	
-	Let $Y_{i}$ be the expression profile of gene $i$ and $\text{Cov}(Y_{i_1}, Y_{i_2})=\rho_{i_1, i_2}$ for any two genes $i_1$ and $i_2$. We assume that $\text{Cov}(Y_{i_1}, Y_{i_2})= \rho_1$ if genes $i_1$ and $i_2$ are both from the test set (i.e., $i_1, i_2 \in I_t$ where $I_t$ denote the test set),  $\text{Cov}(Y_{i_1}, Y_{i_2}) =\rho_2$ if they are both from the background set (i.e.,  $ i_1, i_2\in I_b$ where $I_b$ denote the background set), and  $\text{Cov}(Y_{i_1}, Y_{i_2})= \rho_3$ if $i_1$ is from the test set and $i_2$ is from the background set (i.e., $i_1\in I_t, i_2\in I_b$). We examine five different correlation structures, listed as follows:
-	
+		\subsubsection{Simulation Setup}\label{subsection:simulation}
+		In this section, we present results from type I error and power simulations. Since a standardization procedure is required by \OurMethod~for preprocessing data, we will simulate the standardized expression profiles for illustration purpose. 
+		
+		Let $Y_{i}$ be the expression profile of gene $i$ and $\text{Cov}(Y_{i_1}, Y_{i_2})=\rho_{i_1, i_2}$ for any two genes $i_1$ and $i_2$. We assume that $\text{Cov}(Y_{i_1}, Y_{i_2})= \rho_1$ if genes $i_1$ and $i_2$ are both from the test set (i.e., $i_1, i_2 \in I_t$ where $I_t$ denote the test set),  $\text{Cov}(Y_{i_1}, Y_{i_2}) =\rho_2$ if they are both from the background set (i.e.,  $ i_1, i_2\in I_b$ where $I_b$ denote the background set), and  $\text{Cov}(Y_{i_1}, Y_{i_2})= \rho_3$ if $i_1$ is from the test set and $i_2$ is from the background set (i.e., $i_1\in I_t, i_2\in I_b$). We examine five different correlation structures, listed as follows:
+		
 		\begin{enumerate}
 			\item[(\aaCase):] $\rho_1 = \rho_2 = \rho_3 = 0$; that is, the genes are independent of each other.
 			\item[(\aCase):] $\rho_1 = 0.1$, $\rho_2 = \rho_3 = 0$; that is, only the genes in the test set are correlated.
 			\item[(\cCase):] $\rho_1 = \rho_2 = \rho_3 = 0.1$; that is, all genes are correlated, with an exchangeable correlation structure. 
 			\item[(\eCase):] $\rho_1 = 0.1$, $\rho_2 = 0.05$, $\rho_3 = 0$; that is, 
-			 genes are correlated within the test set and within the background set, but any two genes, one from the test set and the other from the background set, are independent.
+			genes are correlated within the test set and within the background set, but any two genes, one from the test set and the other from the background set, are independent.
 			\item[(\fCase):] $\rho_1 = 0.1$, $\rho_2 = 0.05$, $\rho_3 = -0.05$; that is, all genes are correlated, but the correlation between two genes depend on whether they belong to the test set or not.
 			%	\item[(g):] genes are correlated in the same way as those from a real data.
 		\end{enumerate}
 		
-		The simulations run as follows: first, we generate an entire gene set containing $m=500$ genes, from which we randomly sample $m_1 = 100$ genes to represent those in the test set, and the remaining $m_2=400$ genes those in the background set; second, for gene $i=1, \ldots, m$, we set the DE size $\delta_i$ to be 0.1 and simulate the DE indicator $Z_i$ from $\text{Binom}(1, p_i)$,  where $p_i= p_t$ if gene $i$ belongs to the test set and $p_i = p_b$  otherwise, and then the DE effect $\Delta_i$ is the product of $Z_i$ and $\delta_i$; third, we set the "true" mean expression values $\bm \mu_1 = \bm 0_m$ and $\bm \mu_2 = \bm \Delta$, respectively,  for the control and treatment groups; fourth, we simulate $n_1$ samples from $\text{MVN}(\bm \mu_1, \bm \Sigma)$ for the control group and $n_2$ samples from $\text{MVN}(\bm \mu_2, \bm \Sigma)$ for the treatment group, where the covariance $\bm \Sigma = \left[\text{Cov}(Y_{i_1}, Y_{i_2})\right]_{m\times m}$ may be one of the correlation structures in (\aaCase)-(\fCase).
+		The simulations run as follows: first, we generate an entire gene set containing $m=500$ genes, from which we randomly sample $m_1 = 100$ genes to represent those in the test set, and the remaining $m_2=400$ genes those in the background set; second, for gene $i=1, \ldots, m$, we set the DE size $\delta_i$ to be 0.1 and simulate the DE indicator $Z_i$ from $\text{Binom}(1, p_i)$,  where $p_i= p_t$ if gene $i$ belongs to the test set and $p_i = p_b$  otherwise, and then the DE effect $\Delta_i$ is the product of $Z_i$ and $\delta_i$; third, we set the ``true" mean expression values $\bm \mu_1 = \bm 0_m$ and $\bm \mu_2 = \bm \Delta$, respectively,  for the control and treatment groups; fourth, we simulate $n_1$ samples from $\text{MVN}(\bm \mu_1, \bm \Sigma)$ for the control group and $n_2$ samples from $\text{MVN}(\bm \mu_2, \bm \Sigma)$ for the treatment group, where the covariance $\bm \Sigma = \left[\text{Cov}(Y_{i_1}, Y_{i_2})\right]_{m\times m}$ may be one of the correlation structures in (\aaCase)-(\fCase).
+		
+		We have mentioned in the Introduction part that the test statistics correlations among genes are not equal to their sample correlations when at least one gene is truly DE (under two sample $t$-test???). Therefore, if there are true DE genes in the entire gene set, approaches assuming almost equality of correlations among gene-level statistics and those among expression values may not perform well. To illustrate this point, we performed two groups of simulations for each of  (\aaCase)-(\fCase) correlation structures. In both type I error and power simulations, we set the DE probability to be $0\%$ in group $A_1$ and $10\%$ in group $A_2$ for genes in the background set. In the type I error simulation, we have $p_t = p_b$ under the null. In the power simulation, we considered four different alternative scenarios $S_1$-$S_4$: for genes in the test set, we set DE probability to be $5\%, 10\%, 15\%$ and $20\%$ in group $A_1$, and $15\%, 20\%, 25\%$ and $30\%$ in group $A_2$. Table \ref{table:simusetup} summarizes the simulation setup for the two groups.
+		
+		% In both groups of simulation, we fixed the DE size $\delta$ for each alternative and the six different correlation structures. 
+		
+		% (summarized in Table \ref{table:simusetup} ): we simulated expression data with no DE genes in group $A_1$, that is, $p_b = 0$; and in group $A_2$, we simulated data sets with the same DE probabilities for all genes---specifically, DE probabilities are the same for genes in the test set and for those in the background set with $p_t= p_b = 0.2$. 
+		
+		
+		\begin{table}[!ht]
+			\centering
+			\caption{Parameter setup for type I error and power simulations. $S_1$-$S_4$ represent the four alternatives regarding power simulation.}
+			\begin{tabular}{rp{1cm}p{1cm}p{1cm}p{1cm}p{1cm}}
+				\hline\hline
+				% 		& \multicolumn{6}{c}{Simulation} \\
+				%		\cline{2-7}
+				Group & $p_b$ &  \multicolumn{4}{c}{$p_t$}  \\ 
+				\cline{3-6}
+				&   & $S_1$ & $S_2$ & $S_3$ & $S_4$\\ 
+				\hline
+				$A_1$ & 0\%   & 5\% & 10\% & 15\% & 20\%\\ 
+				$A_2$ & 10\%  & 15\%& 20\%& 25\% & 30\%\\ 
+				\hline\hline
+				\multicolumn{6}{p{8cm}}{$p_b$: DE probablility for genes in the background set. }	 \\	
+				\multicolumn{6}{p{8cm}}{$p_t$: DE probablility for genes in the test set. }	 \\	
+			\end{tabular}
+			\label{table:simusetup}
+		\end{table}
 	
-	 	 We have mentioned in the Introduction part that the test statistics correlations among genes are not equal to their sample correlations when at least one gene is truly DE (under two sample $t$-test???). Therefore, if there are true DE genes in the entire gene set, approaches assuming almost equality of correlations among gene-level statistics and those among expression values may not perform well. To illustrate this point, we performed two groups of simulations for each of  (\aaCase)-(\fCase) correlation structures. In both type I error and power simulations, we set the DE probability to be $0\%$ in group $A_1$ and $10\%$ in group $A_2$ for genes in the background set. In the type I error simulation, we have $p_t = p_b$ under the null. In the power simulation, we considered four different alternative scenarios $S_1$-$S_4$: for genes in the test set, we set DE probability to be $5\%, 10\%, 15\%$ and $20\%$ in group $A_1$, and $15\%, 20\%, 25\%$ and $30\%$ in group $A_2$. Table \ref{table:simusetup} summarizes the simulation setup for the two groups.
-	 	 
-	 	 % In both groups of simulation, we fixed the DE size $\delta$ for each alternative and the six different correlation structures. 
-	 	 
-	 	 % (summarized in Table \ref{table:simusetup} ): we simulated expression data with no DE genes in group $A_1$, that is, $p_b = 0$; and in group $A_2$, we simulated data sets with the same DE probabilities for all genes---specifically, DE probabilities are the same for genes in the test set and for those in the background set with $p_t= p_b = 0.2$. 
-	 	 
-	 	 
-	 	 \begin{table}[!ht]
-	 	 	\centering
-	 	 		\caption{Parameter setup for type I error and power simulations. $S_1$-$S_4$ represent the four alternatives regarding power simulation.}
-	 	 	\begin{tabular}{rp{1cm}p{1cm}p{1cm}p{1cm}p{1cm}}
-	 	 		\hline\hline
-	 	% 		& \multicolumn{6}{c}{Simulation} \\
-	 	 %		\cline{2-7}
-	 	 		Group & $p_b$ &  \multicolumn{4}{c}{$p_t$}  \\ 
-	 	 		\cline{3-6}
-	 	 		  &   & $S_1$ & $S_2$ & $S_3$ & $S_4$\\ 
-	 	 	\hline
-	 	 		$A_1$ & 0\%   & 5\% & 10\% & 15\% & 20\%\\ 
-	 	 		$A_2$ & 10\%  & 15\%& 20\%& 25\% & 30\%\\ 
-	 	 		\hline\hline
-	 	 			\multicolumn{6}{p{8cm}}{$p_b$: DE probablility for genes in the background set. }	 \\	
-	 	 			\multicolumn{6}{p{8cm}}{$p_t$: DE probablility for genes in the test set. }	 \\	
-	 	 	\end{tabular}
-	 	 	\label{table:simusetup}
-	 	 \end{table}
-	 	 
-	\subsubsection{Type I error simulations}\label{subsection:typeIerror}
+		\subsubsection{Other methods considered}
+		
+		We will compare \OurMethod~to~\HowmanyTest~existing gene set tests: GSEA \citep{subramanian2005gene}, two versions of the CAMERA procedure \citep{wu2012camera}, two versions of the \gen~procedure in the limma package \citep{smyth2005limma}, and QuSAGE \citep{yaari2013quantitative}. All tests but \gen~account for correlation among genes. GSEA calculates an enrichment score the test set by examining the ranking (according to some metric) of its member genes, and determines the significance of the enrichment score by randomly permuting the sample labels. The two versions of CAMERA will be denoted by \CMT~and \CMR. \CMT~uses moderated $t$-statistics \citep{Smyth2004moderated} as gene-level statistics and estimate a VIF to account for between-gene correlations in the set-level statistic, and \CMR~is the rank version of the \CMT. The first version of \gen, denoted by \textit{\gent}, is similar to sigPathway \citep{tian2005discovering} except it uses moderated $t$-statistics instead of the ordinary $t$-statistics as gene-level statistics. The second version of \gen~is also known as the mean rank gene set enrichment \citep{michaud2008integrative} and will be referred to herein as MRGSE. QuSAGE generates from $t$-test a probability density function (PDF) for each gene, combines the individual PDFs using convolution, and quantifies enrichment of the test set with a complete PDF. 
+		
+		
+		For software implementation, GSEA is modified from the original R-GSEA script (\url{http://software.broadinstitute.org/gsea/index.jsp}) to accommodate single gene set test. CAMERA and \gen~ are implemented  in the limma package \citep{smyth2005limma} in the Bioconductor project \citep{gentleman2004bioconductor}, and QuSAGE is available in the Bioconductor package of the same name. Because GSEA and \OurMethod~do not support linear models, the implementations are restricted to two-group comparisons.
+		
+		
+		%The \HowmanyTest~tests differ in one or more aspects, although all tests except QuSAGE follow the three-stage paradigm described in Section~\ref{section:introduction}. For GSEA, the gene-level statistics are the rankings of genes according to a ranking metric (we use signal-to-noise ratio, the default metric in R-GSEA throughout this paper), then based on the rankings an enrichment score for the test set is calculated, and the significance of the enrichment score is determined by randomly permuting the sample labels. Both \CMT~and \gent~use the moderated $t$-statistics \citep{Smyth2004moderated} as gene-level statistics, and determine whether the means of the gene-level statistics are significantly different for genes in the test set versus genes in the background set. The difference is how they evaluate the set-level statistics: \CMT~uses a $t$-statistic that allows the gene-level statistics in the test set to be correlated by first estimating a VIF, and then incorporating it into the $t$-statistic to adjust for between-gene correlation (see materials and methods section of \cite{wu2012camera}); \gent~accesses the significance of the test set by comparing the observed set-level statistics to its null distribution generated by permuting gene labels. \CMR~and MRGSE conduct a Wilcoxon-Mann-Whitney rank sum test, and they amount to, respectively,  \CMT~and \gent~in that they compare the rankings instead of the gene-level statistics themselves for genes in the test set to those for genes in the background set. QuSAGE generates from $t$-test a probability density function (PDF) for each gene, combines the individual PDFs using convolution, and quantifies gene-set activity with a complete PDF. The complete PDF can be used to compare a baseline value for self-contained gene set test, or to compare differences in expression profiles between test set and background set in competitive gene set test.  
+		
+		In terms of type I error control and power, we expect all six tests to have different performances between group $A_1$ and $A_2$ simulations under one or more correlation structures. 
+		 
 	
-	In the above simulation setup, the test set is not enriched if DE probabilities are the same for the genes in the test set and for those in the background set (i.e., $p_t =0\%$ for group $A_1$ and $p_t = 10\%$ for group $A_2$). We expect some tests to have different performances between group $A_1$ and $A_2$ simulations under certain correlation structures. 
+	\section{Results}\label{section:results}
 	
+	According to the simulation setup in Section \ref{subsection:simulation}, the test set is not enriched if DE probabilities are the same for genes in the test set and for those in the background set (i.e., $p_t =0\%$ for group $A_1$ and $p_t = 10\%$ for group $A_2$), in which case we evaluate the type I error. As to power, we set DE probability according to each of alternative scenarios $S_1$-$S_4$ (see Table \ref{table:simusetup}) and calculate the proportion of data sets for which a test would reject at a given level $\alpha$. The results are based on $10,000$ simulated data sets. 
+		
+		
+
+	\subsection{Type I error simulations}\label{subsection:typeIerror}
+
 	We report the type I error simulation results for group $A_1$ and $A_2$ simulations. Figure \ref{fig:typeIerror} shows the uniform quantile-quantile (QQ) plots of $p$-values for the seven~approaches (\OurMethod, \gent, MRSGE, \CMT, \CMR, GSEA and QuSAGE) under each of the five correlation structures. The left column of Figure \ref{fig:typeIerror} shows the $p$-values of group $A_1$ simulations. Each plot, from top to bottom, corresponds accordingly to correlation structures (\aaCase)-(\fCase). GSEA and \OurMethod~hold the size of type I error rate correctly for all five correlation structures, with simulated $p$-values uniformly distributed on $[0, 1]$. The two version of CAMERA and QuSAGE control type I errors correctly for correlation structures (\aaCase) and (\aCase), yet they are too conservative for the case of (\cCase) and anti-conservative for correlation structures (\eCase) and (\fCase). \gent~and MRSGE procedures have well-calibrated type I error for correlation structures (\aaCase) and (\cCase), but are biased towards both smaller and larger $p$-values for the case of (\aCase), (\eCase) and (\fCase). 
 	
 	The right column of Figure \ref{fig:typeIerror} shows type I error rate of group $A_2$ simulations. \OurMethod~continues to hold the size of type I error rate, whereas GSEA is highly skewed towards small $p$-values, under all five correlation structures. The two versions of CAMERA control type I error rate correctly for (\aaCase) where genes are simulated to be independent. \CMT~is too conservative under (\aCase)--(\fCase) , and \CMR~may be liberal (conservative in (\aCase) and (\cCase), and anti-conservative in (\fCase)). QuSAGE is too conservative under all correlation structures and the only exception is that it's anti-conservative in (\cCase). The two versions of \gen~have similar performance as they do in $A_1$ simulations except the resulting $p$-values are less biased.
 	
 	\textbf{Explain why this happens}\\
-	\OurMethod~shows consistent accuracy for type I error control across all simulations, but the accuracy of the other \HowmanyTest~methods may be affected by two factors: the between-gene correlation structures, and DE probability of each gene. \OurMethod~controls the size of type I error well because it uses difference in mean as gene-level statistic, and the correlations among gene-level statistics are fully reflected in sample correlation. GSEA evaluates the enrichment score of a test set by generating its null distribution from sample permutation. When there's no DE genes such as in the case of group $A_1$ simulation, GSEA performs extremely well since permuting sample labels won't change the underlying correlation structure. When DE genes exist, however, sample permutation will destroy the between-gene correlation structure, which explains the complete failure of GSEA in controlling type I error for the case of group $A_2$ simulation. For CAMERA and QuSAGE, according to (the paper to be finished), the VIF of the gene-level statistics (moderated $t$-test in \cite{wu2012camera}) may be over-estimated when a fraction of genes are DE, and therefore the set-level test statistic is under-estimated. The performances of those methods---two versions of CAMERA and QuSAGE---are subject to the underlying correlation structures. Moreover, the performance of CAMERA is complicated by the fact that the set-level statistic takes into account only the between-gene correlation in the test set without addressing that in the background set.
+	\OurMethod~shows consistent accuracy for type I error control across all simulations, but the accuracy of the other \HowmanyTest~methods may be affected by two factors: the between-gene correlation structures, and DE probability of each gene. \OurMethod~controls the size of type I error well because it uses difference in mean as gene-level statistic, and the correlations among gene-level statistics are fully reflected in sample correlation. GSEA evaluates the enrichment score of a test set by generating its null distribution from sample permutation. When there's no DE genes such as in the case of group $A_1$ simulation, GSEA performs extremely well since permuting sample labels won't change the underlying correlation structure. When DE genes exist, however, sample permutation will destroy the between-gene correlation structure, which explains the complete failure of GSEA in controlling type I error for the case of group $A_2$ simulation. For CAMERA and QuSAGE, the VIF of the gene-level statistics (moderated $t$-test in \cite{wu2012camera}) may be over-estimated when a fraction of genes are DE (\thepapertobefinished), and therefore the set-level test statistic is under-estimated. The performances of those methods---two versions of CAMERA and QuSAGE---are subject to the underlying correlation structures. Moreover, the performance of CAMERA is complicated by the fact that the set-level statistic takes into account only the between-gene correlation in the test set without addressing that in the background set.
 	
-	Different from the five methods mentioned above, \gent~and MRSGE rely on independence between genes. It's not surprising that gene permutation method, such as \gent~and MRSGE, controls type I error correctly when genes are "equally-correlated": in (\aaCase) genes are simulated to be independent, and in (\cCase) genes are simulated to have an exchangeable correlation structure. However, both \gent~and MRSGE fail to hold type I error size for the remaining three correlation structures. We note that both methods perform better in group $A_2$ as compared to their counterpart in group $A_1$ simulation under each of (\aCase), (\eCase) and (\fCase) correlation structures. In group $A_2$ where there are DE genes both in the test set and in the background set, the correlation between the gene-level statistics is smaller (in absolute value) than between sample correlation. Since the genes are simulated to be slightly correlated ($\rho_1=0.1, \rho_2 = 0.05, \rho_3 = -0.05$), the correlation between the gene-level statistics are almost negligible for \gen~procedure to work. 
+	Different from the five methods mentioned above, \gent~and MRSGE rely on independence between genes. It's not surprising that gene permutation method, such as \gent~and MRSGE, controls type I error correctly when genes are ``equally-correlated": in (\aaCase) genes are simulated to be independent, and in (\cCase) genes are simulated to have an exchangeable correlation structure. However, both \gent~and MRSGE fail to hold type I error size for the remaining three correlation structures. We note that both methods perform better in group $A_2$ as compared to their counterpart in group $A_1$ simulation under each of (\aCase), (\eCase) and (\fCase) correlation structures. In group $A_2$ where there are DE genes both in the test set and in the background set, the correlation between the gene-level statistics is smaller (in absolute value) than between sample correlation. Since the genes are simulated to be slightly correlated ($\rho_1=0.1, \rho_2 = 0.05, \rho_3 = -0.05$), the correlation between the gene-level statistics are almost negligible for \gen~procedure to work. 
 	
-	
-	\begin{figure*}[!th]
-		\begin{center}
-			\includegraphics[width=20cm,height=0.8cm]{Figures/parallel_legend.eps}
-			\includegraphics[width=15cm,height=4cm]{Figures/parallel_a0.eps}
-			\includegraphics[width=15cm,height=4cm]{Figures/parallel_a.eps}
-			\includegraphics[width=15cm,height=4cm]{Figures/parallel_c.eps}
-			\includegraphics[width=15cm,height=4cm]{Figures/parallel_e.eps}
-			\includegraphics[width=15cm,height=4cm]{Figures/parallel_f.eps}
-		%	\includegraphics[width=8cm,height=4cm]{Figures/c_SizePoint1_10PCT.eps}
-		%	\includegraphics[width=8cm,height=4cm]{Figures/e_SizePoint1_0PCT.eps}
-		%	\includegraphics[width=8cm,height=4cm]{Figures/e_SizePoint1_10PCT.eps}
-		%	\includegraphics[width=8cm,height=4cm]{Figures/f_SizePoint1_0PCT.eps}
-		%	\includegraphics[width=8cm,height=4cm]{Figures/f_SizePoint1_10PCT.eps}
-		\end{center} 
+
+\begin{figure*}[!th]
+	\begin{center}
+	\includegraphics[width=20cm,height=0.8cm]{Figures/parallel_legend.eps}
+	\includegraphics[width=15cm,height=4cm]{Figures/parallel_a0.eps}
+	\includegraphics[width=15cm,height=4cm]{Figures/parallel_a.eps}
+	\includegraphics[width=15cm,height=4cm]{Figures/parallel_c.eps}
+	\includegraphics[width=15cm,height=4cm]{Figures/parallel_e.eps}
+	\includegraphics[width=15cm,height=4cm]{Figures/parallel_f.eps}
+	%	\includegraphics[width=8cm,height=4cm]{Figures/c_SizePoint1_10PCT.eps}
+	%	\includegraphics[width=8cm,height=4cm]{Figures/e_SizePoint1_0PCT.eps}
+	%	\includegraphics[width=8cm,height=4cm]{Figures/e_SizePoint1_10PCT.eps}
+	%	\includegraphics[width=8cm,height=4cm]{Figures/f_SizePoint1_0PCT.eps}
+	%	\includegraphics[width=8cm,height=4cm]{Figures/f_SizePoint1_10PCT.eps}
+	\end{center} 
 	\caption{Uniform quantile-quantile plots for $p$-values by different methods. Each plot from top to bottom corresponds to correlation structures (\aaCase)-(\fCase), respectively. The left column is for group $A_1$ simulation, and the right column for group $A_2$ simulation (see Table \ref{table:simusetup} for detail). Results are based on 10,000 simulations.}\label{fig:typeIerror}
-	\end{figure*} 
+\end{figure*} 
 
 	
-	\subsubsection{Power simulation}\label{subsection:power}		 
+	\subsection{Power simulation}\label{subsection:power}		 
 
-	The power simulation were done by generating $10,000$ data sets under each alternative scenario $S_1$-$S_4$ (see Table \ref{table:simusetup}) and comparing the proportion of data sets for which each test would reject at a given level $\alpha$. 
+
 	
 	We compare the power of \OurMethod~to those of the other \HowmanyTest~methods under different correlation structures. Since some of these tests are not well calibrated at the sample size considered (see results in Section \ref{subsection:typeIerror}), we report calibrated power. For calibrated power, the critical value $c(\alpha)$ is chosen so that when the null hypothesis is true, exactly $100\cdot\alpha\%$ of the resulting $p$-values are less than $c(\alpha)$; that is, $c(\alpha)$ is  the $\alpha$ quantile of null distribution of $p$-values, where the null distribution is generated from simulation. Calibrated power allows a more fair comparison among tests, as tests that are too conservative under the null hypothesis will have greater power due to the tendency to produce small $p$-values, yet this apparent power does not truly distinguish between the null and the alternative.  
 	
-	Table \ref{table:power} summarizes the calibrated power for the two groups of simulations (i.e., $A_1$ and $A_2$ in Table \ref{table:simusetup}). We only report the results for correlation structure (\aaCase) where genes are simulated to be independent (for power comparisons under the other four correlation structures, see online supplementary materials...). %In Table \ref{table:power} we set the DE size $\delta$ to be 0.05 and simulated data in the way that genes in the background set are not DE (i.e., $p_b=0$). 
+	Table \ref{table:power} summarizes the calibrated power for the two groups of simulations (i.e., $A_1$ and $A_2$ in Table \ref{table:simusetup}). We only report the results for correlation structure (\aaCase) where genes are simulated to be independent. %(for power comparisons under the other four correlation structures, see online supplementary materials...). %In Table \ref{table:power} we set the DE size $\delta$ to be 0.05 and simulated data in the way that genes in the background set are not DE (i.e., $p_b=0$). 
 	For $A_1$ simulations, GSEA and \gent~have the highest, and rank based methods MRSGE and \CMR~have the lowest, calibrated power across all four alternative scenarios (the data for $S_4$ not shown). \CMT~and \OurMethod~have virtually no difference in the calibrated power. Furthermore, when the DE probability is $10\%$ or higher (i.e., the case of  $S_2$-$S_4$), both \CMT~and \OurMethod~have comparable calibrated power to that of GSEA and \gent. In group $A_2$, \gent~continues to achieve the highest calibrated power while GSEA shows virtually no power. \CMT~and \OurMethod~still have indistinguishable calibrated power and both are better than MRSGE and \CMR.
 	
 
 	
-	\begin{table*}
-		\centering
-		\caption{Recalibrated power (standard error) for different methods. The powers are summarized under three alternatives $S_1$-$S_3$ in each of the group $A_1$ and $A_2$ simulations (see Table \ref{table:simusetup} for detail). Results are based on 10,000 simulations. }\label{table:power}
-		\begin{tabular}{rccc c ccc}
-			\hline\hline
+\begin{table*}
+	\centering
+	\caption{Recalibrated power (standard error) for different methods. The powers are summarized under three alternatives $S_1$-$S_3$ in each of the group $A_1$ and $A_2$ simulations (see Table \ref{table:simusetup} for detail). Results are based on 10,000 simulations. }\label{table:power}
+	\begin{tabular}{rccc c ccc}
+		\hline\hline
 		Method	& \multicolumn{3}{c}{Group $A_1$} &  & \multicolumn{3}{c}{Group $A_2$} \\
-			\cline{2-4}   \cline{6-8}
-			 & $S_1$ & $S_2$ & $S_3$	 & & $S_1$ & $S_2$ & $S_3$\% \\
-			 \cline{2-4}   \cline{6-8}
-			\OurMethod & 0.654(0.005) & 0.956(0.002) & 0.998(0.000) & & 0.229(0.004) & 0.604(0.005) & 0.871(0.003)\\ 
-			 \gent & 0.825(0.004) & 0.989(0.001) & 1.000(0.000) & &0.322(0.005) & 0.704(0.005) & 0.920(0.003) \\
-			MRSGE & 0.186(0.004) & 0.426(0.005) & 0.701(0.005)& & 0.183(0.004) & 0.423(0.005) & 0.700(0.005) \\ 
-			\CMT & 0.647(0.005) & 0.953(0.002) & 0.998(0.000)& & 0.227(0.004) & 0.596(0.005) & 0.864(0.003)  \\ 
-			\CMR & 0.126(0.003) & 0.324(0.005) & 0.585(0.005) & &0.113(0.003) & 0.310(0.005) & 0.570(0.005) \\
-			GSEA & 0.827(0.004) & 0.991(0.001) & 1.000(0.000) & & 0.000(0.000) & 0.000(0.000) & 0.000(0.000) \\ 
-			QuSAGE & 0.723(0.004) & 0.974(0.002) & 0.999(0.000) & &  0.244(0.004) & 0.630(0.005) & 0.889(0.003) \\ 
-			\hline\hline
-		\end{tabular}
-	\end{table*}
-	
+		\cline{2-4}   \cline{6-8}
+		& $S_1$ & $S_2$ & $S_3$	 & & $S_1$ & $S_2$ & $S_3$\% \\
+		\cline{2-4}   \cline{6-8}
+		\OurMethod & 0.654(0.005) & 0.956(0.002) & 0.998(0.000) & & 0.229(0.004) & 0.604(0.005) & 0.871(0.003)\\ 
+		\gent & 0.825(0.004) & 0.989(0.001) & 1.000(0.000) & &0.322(0.005) & 0.704(0.005) & 0.920(0.003) \\
+		MRSGE & 0.186(0.004) & 0.426(0.005) & 0.701(0.005)& & 0.183(0.004) & 0.423(0.005) & 0.700(0.005) \\ 
+		\CMT & 0.647(0.005) & 0.953(0.002) & 0.998(0.000)& & 0.227(0.004) & 0.596(0.005) & 0.864(0.003)  \\ 
+		\CMR & 0.126(0.003) & 0.324(0.005) & 0.585(0.005) & &0.113(0.003) & 0.310(0.005) & 0.570(0.005) \\
+		GSEA & 0.827(0.004) & 0.991(0.001) & 1.000(0.000) & & 0.000(0.000) & 0.000(0.000) & 0.000(0.000) \\ 
+		QuSAGE & 0.723(0.004) & 0.974(0.002) & 0.999(0.000) & &  0.244(0.004) & 0.630(0.005) & 0.889(0.003) \\ 
+		\hline\hline
+	\end{tabular}
+\end{table*}
+
 	
 	
 	Figure \ref{fig:power} shows for \OurMethod, the variations in power according to different correlation structures across four alternative scenarios $S_1$-$S_4$. For each correlation structure and each alternative, we report the power (without recalibration) at a significance level of 0.05. The top is the power for group $A_1$, and the bottom for group $A_2$.  The powers for case (\aaCase) and (\cCase) are very similar, and are among the highest under each of the four alternatives. It's not surprising because they correspond to the simplest correlation structures: gene expression values in (\aaCase) are simulated to be independent and in (\cCase) are simulated to have the same correlation 0.1. As the correlation structure becomes more complex, from (\aCase) to (\eCase) then to (\fCase), the power decreases under every alternative scenario. The power under correlation structure (\fCase) is the lowest for both $A_1$ and $A_2$ simulations.% We also note that the power decreases when DE genes are present in the background set as compared to the case where there are no DE genes in the background set. (We might need the same DE size to illustrate this point.)
 	
-	\begin{figure}
-		\begin{center}
-			\includegraphics[width=8.5cm,height=5cm]{Figures/powerBack0pct.eps}
-			\includegraphics[width=8.5cm,height=5cm]{Figures/powerBack10pct.eps}
-		\end{center} 
-			\caption{Power for \OurMethod~under correlation structures (\aaCase)-(\fCase) of Section \ref{subsection:simulation}. The top corresponds to group $A_1$ simulations, and the bottom to group $A_2$ simulations (see Table \ref{table:simusetup}). The error bars are the $95\%$ CIs based on 10,000 simulations. }\label{fig:power}
-	\end{figure} 
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=8.5cm,height=5cm]{Figures/powerBack0pct.eps}
+		\includegraphics[width=8.5cm,height=5cm]{Figures/powerBack10pct.eps}
+	\end{center} 
+		\caption{Power for \OurMethod~under correlation structures (\aaCase)-(\fCase) of Section \ref{subsection:simulation}. The top corresponds to group $A_1$ simulations, and the bottom to group $A_2$ simulations (see Table \ref{table:simusetup}). The error bars are the $95\%$ CIs based on 10,000 simulations. }\label{fig:power}
+\end{figure} 
 	
 	\subsection{Real Data}\label{section:realdata}
 	We applied \OurMethod~to two example data sets, and compared the enriched gene sets to those obtained by GSEA and by \CMT. In both examples, \OurMethod~were able to identify more gene sets as enriched. Our results lend credence to previous studies in finding potential gene sets correlated with Huntington's disease and those correlated with chromosome Y and Y bands in lymphoblastoid cells.  
@@ -367,14 +381,14 @@ Functional enrichment analysis is a widely used tool for interpreting high-throu
 	
 	
 	We used three test procedures (\OurMethod, GSEA and \CMT) to run enrichment analysis for the entire C2 Canonical Pathway gene sets, and compared the three tests in terms of resulting enriched gene sets. \OurMethod~found 176 out of 1330 gene sets to be enriched using the Benjamini-Hochberg (BH) procedure at a false discovery rate (FDR) of 0.05 (for multiple hypothesis testing, unless specified otherwise, all $p$-values in Section \ref{section:realdata} were adjusted by BH procedure). GSEA found 9 enriched gene sets---8 of them were also among the 176 gene sets we identified (the one that was not significant according to \OurMethod~had a $p$-value of 0.008 and FDR 0.057). \CMT~found no enriched gene sets. In Figure \ref{fig:HDdatap} we present pairwise $p$-value plots for \OurMethod, GSEA and \CMT. When plotted against $p$-values of GSEA, for \OurMethod, smaller $p$-values (e.g., less than 0.1) are more likely to cluster---as compared to larger $p$-values; that is, \OurMethod~produces more small $p$-values than GSEA does while \OurMethod~and GSEA do not differ much in producing larger $p$-values. The $p$-values of \CMT~are overwhelmingly larger than their counterparts of \OurMethod, even if $p$-values of the two methods are highly correlated (Pearson's correlation is 0.96). This is consistent with our earlier simulation (see results in Section \ref{subsection:typeIerror}) that \CMT~could be too conservative. There is no systematic difference in $p$-values of GSEA and those of \CMT. 
-	\begin{figure}
-		\begin{center}
-			\includegraphics[width=8cm,height=5cm]{Figures/P_GSEA.eps}
-			\includegraphics[width=8cm,height=5cm]{Figures/P_Camera.eps}
-			\includegraphics[width=8cm,height=5cm]{Figures/P_GSEA_CAMERA.eps}
-		\end{center} 
-			\caption{Pairwise comparisons of $p$-values for \OurMethod, GSEA, and \CMT. The $p$-values are reported from enrichment test of each gene set in the C2 Canonical Pathway gene sets. }\label{fig:HDdatap}
-	\end{figure} 
+\begin{figure}
+	\begin{center}
+		\includegraphics[width=8cm,height=5cm]{Figures/P_GSEA.eps}
+		\includegraphics[width=8cm,height=5cm]{Figures/P_Camera.eps}
+		\includegraphics[width=8cm,height=5cm]{Figures/P_GSEA_CAMERA.eps}
+	\end{center} 
+		\caption{Pairwise comparisons of $p$-values for \OurMethod, GSEA, and \CMT. The $p$-values are reported from enrichment test of each gene set in the C2 Canonical Pathway gene sets. }\label{fig:HDdatap}
+\end{figure} 
 	
 %	\begin{figure}
 %		\begin{center}
@@ -385,62 +399,63 @@ Functional enrichment analysis is a widely used tool for interpreting high-throu
 %				\caption{raw p value plots for different methods, -log10(p  + 1e-6)}\label{fig:HDdatalog10p}
 %	\end{figure} 
 	
-	We report the top 30 enriched gene sets in Table \ref{table:top30}. Five enriched gene sets identified by GSEA are also present (noted by "$\ast$" in the table). Originally, \cite{labadorf2015rna} used the same HD data set to conduct enrichment analysis using topGo \citep{alexa2010topgo}. They found that the enriched gene sets they identified show a clear immune response and inflammation-related pattern, including REACTOME INNATE IMMUNE SYSTEM, PID IL4 2PATHWAY, and PID NFKAPPAB CANONICAL PATHWAY. These three gene sets rank 6,10 and 2 respectively in Table \ref{table:top30}.
+	We report the top 30 enriched gene sets in Table \ref{table:top30}. Five enriched gene sets identified by GSEA are also present (noted by ``$\ast$" in the table). Originally, \cite{labadorf2015rna} used the same HD data set to conduct enrichment analysis using topGo \citep{alexa2010topgo}. They found that the enriched gene sets they identified show a clear immune response and inflammation-related pattern, including ``REACTOME INNATE IMMUNE SYSTEM, PID IL4 2PATHWAY", and ``PID NFKAPPAB CANONICAL PATHWAY". These three gene sets rank 6,10 and 2 respectively in Table \ref{table:top30}.
 	
-	Many of our enriched gene sets have been shown to be closely related to HD pathogenesis. For example, the top enriched gene set by \OurMethod, "PID SMAD2 3NUCLEAR PATHWAY" (see Table \ref{table:top30}), is responsible for regulation of nuclear SMAD2/3 signaling. \cite{katsuno2010disrupted} showed that nuclear SMAD2/3 are related to polyglutamine disease, which includes HD. The second enriched gene set, "PID NFKAPPAB CANONICAL PATHWAY", is a canonical NF-kappaB pathway, and its dysregulation causes HD immune dysfunction \citep{trager2014htt}. Also, \cite{marcora2010huntington} found that reduced transport of NF-kappaB out of dendritic spines and its activity in neuronal nuclei may contribute to the etiology of HD. 
+	Many of our enriched gene sets have been shown to be closely related to HD pathogenesis. For example, the top enriched gene set by \OurMethod,``PID SMAD2 3NUCLEAR PATHWAY" (see Table \ref{table:top30}), is responsible for regulation of nuclear SMAD2/3 signaling. \cite{katsuno2010disrupted} showed that nuclear SMAD2/3 are related to polyglutamine disease, which includes HD. The second enriched gene set, ``PID NFKAPPAB CANONICAL PATHWAY", is a canonical NF-kappaB pathway, and its dysregulation causes HD immune dysfunction \citep{trager2014htt}. Also, \cite{marcora2010huntington} found that reduced transport of NF-kappaB out of dendritic spines and its activity in neuronal nuclei may contribute to the etiology of HD. 
 	%HD mutation can reduce the transport of NF-kappaB out of dendritic spines and its activity in neuronal nuclei and this reduction may contribute to the etiology of HD. 
-	Another gene set, "REACTOME INNATE IMMUNE SYSTEM", contributes to HD pathogenesis \citep{trager2014htt, labadorf2015rna}. \cite{diamanti2013whole} showed that "REACTOME TRANSCRIPTIONAL ACTIVITY OF SMAD2 SMAD3 SMAD4 HETEROTRIMER", a gene set involved in transcriptional activity of SMAD2/SMAD3:SMAD4 heterotrimer, is also enriched in their microarray study of HD pathology from blood samples of R6/2 at manifest stage and wild type littermate mice. For AKT signaling pathway, "BIOCARTA AKT PATHWAY", \cite{humbert2002igf} demonstrated that huntingtin is a substrate of AKT and that phosphorylation of huntingtin by AKT is crucial to mediate the neuroprotective effects of IGF-1. They also showed that AKT is altered in Huntington’s disease patients.  
-	\cite{chiang2010modulation} demonstrated that the systematic downregulation of PPAR$\gamma$, related to "BIOCARTA PPARA PATHWAY", seems to play a critical role in the dysregulation of energy homeostasis observed in HD, and that PPAR$\gamma$ is a potential therapeutic target for this disease. For "REACTOME SIGNALING BY TGF BETA RECEPTOR COMPLEX",  \cite{kandasamy2011transforming} demonstrated that TGF-beta1 signaling appears to be a crucial modulator of neurogenesis in HD pathology and it can be a promising target for endogenous cell-based regenerative therapy. 
-	For "PID P53 DOWNSTREAM PATHWAY", \cite{ghose2011regulation} showed the likely involvement of NFkB (RelA), p53 and miRNAs in the regulation of cell death in HD pathogenesis. 
+	Another gene set, ``REACTOME INNATE IMMUNE SYSTEM", contributes to HD pathogenesis \citep{trager2014htt, labadorf2015rna}. %\cite{diamanti2013whole} showed that ``REACTOME TRANSCRIPTIONAL ACTIVITY OF SMAD2 SMAD3 SMAD4 HETEROTRIMER", a gene set involved in transcriptional activity of SMAD2/SMAD3:SMAD4 heterotrimer, is also enriched in their microarray study of HD pathology from blood samples of R6/2 at manifest stage and wild type littermate mice. 
+	For AKT signaling pathway, ``BIOCARTA AKT PATHWAY", \cite{humbert2002igf} demonstrated that huntingtin is a substrate of AKT and that phosphorylation of huntingtin by AKT is crucial to mediate the neuroprotective effects of IGF-1. They also showed that AKT is altered in Huntington’s disease patients.  
+	\cite{chiang2010modulation} demonstrated that the systematic downregulation of PPAR$\gamma$, related to ``BIOCARTA PPARA PATHWAY", seems to play a critical role in the dysregulation of energy homeostasis observed in HD, and that PPAR$\gamma$ is a potential therapeutic target for this disease. For ``REACTOME SIGNALING BY TGF BETA RECEPTOR COMPLEX",  \cite{kandasamy2011transforming} demonstrated that TGF-beta1 signaling appears to be a crucial modulator of neurogenesis in HD pathology and it can be a promising target for endogenous cell-based regenerative therapy. 
+	For ``PID P53 DOWNSTREAM PATHWAY", \cite{ghose2011regulation} showed the likely involvement of NFkB (RelA), p53 and miRNAs in the regulation of cell death in HD pathogenesis. 
 	
 	
-		\begin{table*}[!ht]
-			%	\label{table:gender} 
-			\centering 
-				\caption{Top 30 enriched gene sets using \OurMethod~for HD data. Gene sets are ranked by their associated $p$-values. FDR is the adjusted $p$-value using Benjamini-Hochberg (BH) procedure. }
-			\begin{tabular}{p{3in}rp{0.5in}p{0.5in}rp{0.5in}p{0.5in}rp{0.5in}p{0.5in}lp{0.1in}} 
-			\hline
-			\hline
-			Gene Set & Size & $\rho_1$ & $\rho_2$ & $\rho_3$ & $p$-value & FDR & \\ 
-			\hline
-			PID SMAD2 3NUCLEAR PATHWAY & 79 & 0.071 & 0.011 & 0.017 & 7.5E-07 & 9.9E-04 & $\ast$ \\ 
-			PID NFKAPPAB CANONICAL PATHWAY & 22 & 0.124 & 0.011 & 0.020 & 2.4E-06 & 1.6E-03 &  \\ 
-			REACTOME YAP1 AND WWTR1 TAZ STIMULATED GENE EXPRESSION & 23 & 0.130 & 0.011 & 0.018 & 4.4E-06 & 1.7E-03 &  \\ 
-			REACTOME SIGNALING BY TGF BETA RECEPTOR COMPLEX & 60 & 0.045 & 0.011 & 0.015 & 7.3E-06 & 1.7E-03 &  \\ 
-			BIOCARTA NTHI PATHWAY & 23 & 0.124 & 0.011 & 0.024 & 7.5E-06 & 1.7E-03 &  \\ 
-			REACTOME INNATE IMMUNE SYSTEM & 209 & 0.048 & 0.011 & 0.010 & 7.8E-06 & 1.7E-03 &  \\ 
-			KEGG PATHWAYS IN CANCER & 311 & 0.029 & 0.011 & 0.010 & 8.9E-06 & 1.7E-03 &  \\ 
-			REACTOME DOWNSTREAM TCR SIGNALING & 31 & 0.095 & 0.011 & 0.013 & 1.2E-05 & 1.9E-03 &  \\ 
-			KEGG NOD LIKE RECEPTOR SIGNALING PATHWAY & 55 & 0.054 & 0.011 & 0.010 & 1.3E-05 & 1.9E-03 &  \\ 
-			PID IL4 2PATHWAY & 59 & 0.086 & 0.011 & 0.012 & 1.4E-05 & 1.9E-03 &  \\ 
-			KEGG TGF BETA SIGNALING PATHWAY & 82 & 0.062 & 0.011 & 0.013 & 2.7E-05 & 3.3E-03 &  \\ 
-			BIOCARTA 41BB PATHWAY & 14 & 0.095 & 0.011 & 0.023 & 3.2E-05 & 3.4E-03 &  \\ 
-			PID P53 DOWNSTREAM PATHWAY & 131 & 0.052 & 0.011 & 0.013 & 3.4E-05 & 3.4E-03 &  \\ 
-			REACTOME TCR SIGNALING & 48 & 0.098 & 0.011 & 0.016 & 3.6E-05 & 3.5E-03 &  \\ 
-			REACTOME ACTIVATED TLR4 SIGNALLING & 87 & 0.027 & 0.011 & 0.010 & 4.9E-05 & 4.2E-03 &  \\ 
-			REACTOME TOLL RECEPTOR CASCADES & 110 & 0.038 & 0.011 & 0.010 & 5.2E-05 & 4.2E-03 &  \\ 
-			REACTOME TRANSCRIPTIONAL REGULATION OF WHITE ADIPOCYTE DIFFERENTIATION & 69 & 0.015 & 0.011 & 0.010 & 5.4E-05 & 4.2E-03 &  \\ 
-			BIOCARTA TID PATHWAY & 18 & 0.125 & 0.011 & 0.017 & 5.7E-05 & 4.2E-03 &  \\ 
-			BIOCARTA ALK PATHWAY & 34 & 0.064 & 0.011 & 0.011 & 7.4E-05 & 5.1E-03 & $\ast$ \\ 
-			REACTOME SMAD2 SMAD3 SMAD4 HETEROTRIMER REGULATES TRANSCRIPTION & 25 & 0.102 & 0.011 & 0.021 & 7.6E-05 & 5.1E-03 & $\ast$ \\ 
-			REACTOME TRANSCRIPTIONAL ACTIVITY OF SMAD2 SMAD3 SMAD4 HETEROTRIMER & 36 & 0.079 & 0.011 & 0.021 & 8.3E-05 & 5.1E-03 &  \\ 
-			BIOCARTA AKT PATHWAY & 20 & 0.023 & 0.011 & 0.010 & 8.8E-05 & 5.1E-03 & $\ast$ \\ 
-			ST TUMOR NECROSIS FACTOR PATHWAY & 28 & 0.039 & 0.011 & 0.016 & 9.0E-05 & 5.1E-03 & $\ast$ \\ 
-			PID ANGIOPOIETIN RECEPTOR PATHWAY & 50 & 0.082 & 0.011 & 0.013 & 9.3E-05 & 5.1E-03 &  \\ 
-			KEGG P53 SIGNALING PATHWAY & 65 & 0.037 & 0.011 & 0.007 & 9.7E-05 & 5.1E-03 &  \\ 
-			KEGG APOPTOSIS & 82 & 0.041 & 0.011 & 0.009 & 1.0E-04 & 5.1E-03 &  \\ 
-			BIOCARTA PPARA PATHWAY & 53 & 0.026 & 0.011 & 0.008 & 1.1E-04 & 5.2E-03 &  \\ 
-			REACTOME MYD88 MAL CASCADE INITIATED ON PLASMA MEMBRANE & 78 & 0.026 & 0.011 & 0.010 & 1.1E-04 & 5.2E-03 &  \\ 
-			PID BCR 5PATHWAY & 64 & 0.064 & 0.011 & 0.016 & 1.2E-04 & 5.3E-03 &  \\ 
-			PID HIF1 TFPATHWAY & 64 & 0.067 & 0.011 & 0.011 & 1.2E-04 & 5.3E-03 &  \\ 
-			\hline\hline
-			\multicolumn{7}{l}{$\rho_1$: average sample correlation between genes in the test set. }	 \\	
-			\multicolumn{7}{l}{$\rho_2$: average sample correlation between genes in the background set. }	 \\	
-			\multicolumn{7}{l}{$\rho_3$: average sample correlation between two genes, one from the test set and the other from the background set. }	 \\	
-			\multicolumn{7}{l}{ ~~$\ast$: enriched gene sets identified by GSEA.}	 \\	
-	%	\hline\hline
+\begin{table*}[!ht]
+	%	\label{table:gender} 
+	\centering 
+		\caption{Top 30 enriched gene sets using \OurMethod~for HD data. Gene sets are ranked by their associated $p$-values. FDR is the adjusted $p$-value using Benjamini-Hochberg (BH) procedure. }
+	\begin{tabular}{p{3in}rp{0.5in}p{0.5in}rp{0.5in}p{0.5in}rp{0.5in}p{0.5in}lp{0.1in}} 
+		\hline
+		\hline
+		Gene Set & Size & $\rho_1$ & $\rho_2$ & $\rho_3$ & $p$-value & FDR & \\ 
+		\hline
+		PID SMAD2 3NUCLEAR PATHWAY & 79 & 0.071 & 0.011 & 0.017 & 7.5E-07 & 9.9E-04 & $\ast$ \\ 
+		PID NFKAPPAB CANONICAL PATHWAY & 22 & 0.124 & 0.011 & 0.020 & 2.4E-06 & 1.6E-03 &  \\ 
+		REACTOME YAP1 AND WWTR1 TAZ STIMULATED GENE EXPRESSION & 23 & 0.130 & 0.011 & 0.018 & 4.4E-06 & 1.7E-03 &  \\ 
+		REACTOME SIGNALING BY TGF BETA RECEPTOR COMPLEX & 60 & 0.045 & 0.011 & 0.015 & 7.3E-06 & 1.7E-03 &  \\ 
+		BIOCARTA NTHI PATHWAY & 23 & 0.124 & 0.011 & 0.024 & 7.5E-06 & 1.7E-03 &  \\ 
+		REACTOME INNATE IMMUNE SYSTEM & 209 & 0.048 & 0.011 & 0.010 & 7.8E-06 & 1.7E-03 &  \\ 
+		KEGG PATHWAYS IN CANCER & 311 & 0.029 & 0.011 & 0.010 & 8.9E-06 & 1.7E-03 &  \\ 
+		REACTOME DOWNSTREAM TCR SIGNALING & 31 & 0.095 & 0.011 & 0.013 & 1.2E-05 & 1.9E-03 &  \\ 
+		KEGG NOD LIKE RECEPTOR SIGNALING PATHWAY & 55 & 0.054 & 0.011 & 0.010 & 1.3E-05 & 1.9E-03 &  \\ 
+		PID IL4 2PATHWAY & 59 & 0.086 & 0.011 & 0.012 & 1.4E-05 & 1.9E-03 &  \\ 
+		KEGG TGF BETA SIGNALING PATHWAY & 82 & 0.062 & 0.011 & 0.013 & 2.7E-05 & 3.3E-03 &  \\ 
+		BIOCARTA 41BB PATHWAY & 14 & 0.095 & 0.011 & 0.023 & 3.2E-05 & 3.4E-03 &  \\ 
+		PID P53 DOWNSTREAM PATHWAY & 131 & 0.052 & 0.011 & 0.013 & 3.4E-05 & 3.4E-03 &  \\ 
+		REACTOME TCR SIGNALING & 48 & 0.098 & 0.011 & 0.016 & 3.6E-05 & 3.5E-03 &  \\ 
+		REACTOME ACTIVATED TLR4 SIGNALLING & 87 & 0.027 & 0.011 & 0.010 & 4.9E-05 & 4.2E-03 &  \\ 
+		REACTOME TOLL RECEPTOR CASCADES & 110 & 0.038 & 0.011 & 0.010 & 5.2E-05 & 4.2E-03 &  \\ 
+		REACTOME TRANSCRIPTIONAL REGULATION OF WHITE ADIPOCYTE DIFFERENTIATION & 69 & 0.015 & 0.011 & 0.010 & 5.4E-05 & 4.2E-03 &  \\ 
+		BIOCARTA TID PATHWAY & 18 & 0.125 & 0.011 & 0.017 & 5.7E-05 & 4.2E-03 &  \\ 
+		BIOCARTA ALK PATHWAY & 34 & 0.064 & 0.011 & 0.011 & 7.4E-05 & 5.1E-03 & $\ast$ \\ 
+		REACTOME SMAD2 SMAD3 SMAD4 HETEROTRIMER REGULATES TRANSCRIPTION & 25 & 0.102 & 0.011 & 0.021 & 7.6E-05 & 5.1E-03 & $\ast$ \\ 
+		REACTOME TRANSCRIPTIONAL ACTIVITY OF SMAD2 SMAD3 SMAD4 HETEROTRIMER & 36 & 0.079 & 0.011 & 0.021 & 8.3E-05 & 5.1E-03 &  \\ 
+		BIOCARTA AKT PATHWAY & 20 & 0.023 & 0.011 & 0.010 & 8.8E-05 & 5.1E-03 & $\ast$ \\ 
+		ST TUMOR NECROSIS FACTOR PATHWAY & 28 & 0.039 & 0.011 & 0.016 & 9.0E-05 & 5.1E-03 & $\ast$ \\ 
+		PID ANGIOPOIETIN RECEPTOR PATHWAY & 50 & 0.082 & 0.011 & 0.013 & 9.3E-05 & 5.1E-03 &  \\ 
+		KEGG P53 SIGNALING PATHWAY & 65 & 0.037 & 0.011 & 0.007 & 9.7E-05 & 5.1E-03 &  \\ 
+		KEGG APOPTOSIS & 82 & 0.041 & 0.011 & 0.009 & 1.0E-04 & 5.1E-03 &  \\ 
+		BIOCARTA PPARA PATHWAY & 53 & 0.026 & 0.011 & 0.008 & 1.1E-04 & 5.2E-03 &  \\ 
+		REACTOME MYD88 MAL CASCADE INITIATED ON PLASMA MEMBRANE & 78 & 0.026 & 0.011 & 0.010 & 1.1E-04 & 5.2E-03 &  \\ 
+		PID BCR 5PATHWAY & 64 & 0.064 & 0.011 & 0.016 & 1.2E-04 & 5.3E-03 &  \\ 
+		PID HIF1 TFPATHWAY & 64 & 0.067 & 0.011 & 0.011 & 1.2E-04 & 5.3E-03 &  \\ 
+		\hline\hline
+		\multicolumn{7}{l}{$\rho_1$: average sample correlation between genes in the test set. }	 \\	
+		\multicolumn{7}{l}{$\rho_2$: average sample correlation between genes in the background set. }	 \\	
+		\multicolumn{7}{l}{$\rho_3$: average sample correlation between two genes, one from the test set and the other from the background set. }	 \\	
+		\multicolumn{7}{l}{ ~~$\ast$: enriched gene sets identified by GSEA.}	 \\	
+		%	\hline\hline
 	\end{tabular}
-	\label{table:top30}
+\label{table:top30}
 \end{table*}
 
 	
@@ -450,35 +465,35 @@ Functional enrichment analysis is a widely used tool for interpreting high-throu
 	
 	
 	\subsubsection{Male vs Female Lymphoblastoid Cells Data}
-	We analyzed the mRNA expression profiles from lymphoblastoid cell lines derived from 17 females and 15 males. \cite{subramanian2005gene} examined this data set with their GSEA method, testing the enrichment of the  cytogenetic gene sets (C1). C1 includes 24 sets, one for each of the 24 human chromosomes, and 295 sets corresponding to cytogenetic bands. For the comparison "\text{male} VS \text{female}", they expected to find gene sets on chromosome Y, not on chromosome X. We run enrichment analysis with three tests (\OurMethod, GSEA and \CMT). In Table \ref{table:gender}, we summarized all the gene sets with nominal $p$-value $\leq 0.01$ in at least one test. Three gene sets, one from chromosome Y and two Y bands, were found to be enriched by all three tests at FDR level 0.05. Interestingly, \OurMethod~identified another Y band, chrYp22, as enriched. In fact, the four gene sets called significant by \OurMethod~are the only four containing at least 3 genes in C1 and corresponding to chromosome Y or Y bands. \OurMethod~ did not produce small $p$-value ($\leq 0.01$ ) for the remaining three gene sets in Table \ref{table:gender}, which was just as expected in that study.
+	We analyzed the mRNA expression profiles from lymphoblastoid cell lines derived from 17 females and 15 males. \cite{subramanian2005gene} examined this data set with their GSEA method, testing the enrichment of the  cytogenetic gene sets (C1). C1 includes 24 sets, one for each of the 24 human chromosomes, and 295 sets corresponding to cytogenetic bands. For the comparison ``\text{male} VS \text{female}", they expected to find gene sets on chromosome Y, not on chromosome X. We run enrichment analysis with three tests (\OurMethod, GSEA and \CMT). In Table \ref{table:gender}, we summarized all the gene sets with nominal $p$-value $\leq 0.01$ in at least one test. Three gene sets, one from chromosome Y and two Y bands, were found to be enriched by all three tests at FDR level 0.05. Interestingly, \OurMethod~identified another Y band, chrYp22, as enriched. In fact, the four gene sets called significant by \OurMethod~are the only four containing at least 3 genes in C1 and corresponding to chromosome Y or Y bands. \OurMethod~ did not produce small $p$-value ($\leq 0.01$ ) for the remaining three gene sets in Table \ref{table:gender}, which was just as expected in that study.
 	
-	\begin{table*}[!th]
-		%	\label{table:gender} 
-		\centering
-		\caption{Summary of gene sets for lymphoblastoid cells data. Reported are gene sets with $p$-value $\leq 0.01$ for at least one of the \OurMethod, GSEA, and \CMT~methods. The FDR is the adjusted $p$-value using Benjamini-Hochberg (BH) procedure.}
-		\begin{tabular}{lrrr c rr c rr} \hline\hline 
-			& &  \multicolumn{2}{c}{\OurMethod} & & \multicolumn{2}{c}{GSEA}	& & \multicolumn{2}{c}{\CMT} \\	
-			\cline{3-4}  \cline{6-7} \cline{9-10}
-			Gene set & Size & $p$-value & FDR & & $p$-value & FDR & &$p$-value & FDR \\ 
-			\hline
-			chrY & 40 & $<0.001$ & $<0.001$ & &$<0.001$ & $<0.001$ & & $<0.001$ & 0.002 \\ 
-			chrYq11 & 16 & $<0.001$ & $<0.001$& & $<0.001$ & $<0.001$ & & $<0.001$ & $<0.001$ \\ 
-			chrYp11 & 18 & $<0.001$ & $<0.001$ & & $<0.001$ & $<0.001$& & $<0.001$ & 0.028 \\ 
-			chrYp22 & 8 & $<0.001$ & 0.036& & 0.012 & 0.503 & & 0.010 & 0.762 \\ 
-			chr7p11 & 8 & 0.049 & 0.835 & & 0.006 & 0.352 & & 0.101 & 0.998 \\ 
-			chr11p12 & 5 & 0.065 & 0.835& & 0.008 & 0.388 & & 0.115 & 0.998 \\ 
-			chrXp22 & 76 & 0.072 & 0.835& & 0.004 & 0.295 & & 0.581 & 0.998 \\  
-			\hline\hline
-		\end{tabular}
-		\label{table:gender}
-	\end{table*}
+\begin{table*}[!th]
+	%	\label{table:gender} 
+	\centering
+	\caption{Summary of gene sets for lymphoblastoid cells data. Reported are gene sets with $p$-value $\leq 0.01$ for at least one of the \OurMethod, GSEA, and \CMT~methods. The FDR is the adjusted $p$-value using Benjamini-Hochberg (BH) procedure.}
+	\begin{tabular}{lrrr c rr c rr} \hline\hline 
+		& &  \multicolumn{2}{c}{\OurMethod} & & \multicolumn{2}{c}{GSEA}	& & \multicolumn{2}{c}{\CMT} \\	
+		\cline{3-4}  \cline{6-7} \cline{9-10}
+		Gene set & Size & $p$-value & FDR & & $p$-value & FDR & &$p$-value & FDR \\ 
+		\hline
+		chrY & 40 & $<0.001$ & $<0.001$ & &$<0.001$ & $<0.001$ & & $<0.001$ & 0.002 \\ 
+		chrYq11 & 16 & $<0.001$ & $<0.001$& & $<0.001$ & $<0.001$ & & $<0.001$ & $<0.001$ \\ 
+		chrYp11 & 18 & $<0.001$ & $<0.001$ & & $<0.001$ & $<0.001$& & $<0.001$ & 0.028 \\ 
+		chrYp22 & 8 & $<0.001$ & 0.036& & 0.012 & 0.503 & & 0.010 & 0.762 \\ 
+		chr7p11 & 8 & 0.049 & 0.835 & & 0.006 & 0.352 & & 0.101 & 0.998 \\ 
+		chr11p12 & 5 & 0.065 & 0.835& & 0.008 & 0.388 & & 0.115 & 0.998 \\ 
+		chrXp22 & 76 & 0.072 & 0.835& & 0.004 & 0.295 & & 0.581 & 0.998 \\  
+		\hline\hline
+	\end{tabular}
+	\label{table:gender}
+\end{table*}
 	
 	\section{Conclusion and Discussion}\label{section:conclusion}
 	
 	(Conclusion) \OurMethod~is a mixed effects quasi-likelihood model for competitive gene set test. It effectively adjusts for completely unknown, unstructured correlations among the genes. It uses a score test approach and allows for analytical assessment of $p$-values. Compared to existing approaches, \OurMethod~controls type I error correctly and maintains good power under different correlation structures.  
 	
 	
-	(What we proposed) Under competitive gene set test framework, a number of methods have been proposed to account for correlation among genes. One approach is to evaluate the set-level statistic by permuting sample labels to generate the null distribution, as adopted by the widely used GSEA \citep{subramanian2005gene}. However, sample permutation method has been criticized for  altering the null hypotheses being tested \citep{goeman2007analyzing, khatri2012ten}. Instead, CAMERA \citep{wu2012camera} proposed to correct for the correlation among genes by estimating a VIF directly from the data. This approach has also been used by \cite{yaari2013quantitative} in their QuSAGE procedure. The major shortcoming with this approach is that it tries to estimate correlations among gene-level test statistics directly from sample correlation (is it clear??). In (the paper to be finished), we have argued that the correlations among gene-level statistics are not necessarily equal to those among samples due to the presence of DE genes. The estimated VIF could be biased without taking into account such a discrepancy and thus undermines the performance of CAMERA and QuSAGE. \OurMethod~avoids the discrepancy by using the differences in mean as gene-level statistics for a two group comparison experiment. It models the covariance of gene-level statistics by two variance components, one attributable to correlations among samples after treatment effect removed, and the other attributable to the DE effect associate with the treatment. We note that for \OurMethod, the estimation of covariance among gene-level statistics need not be exact: \OurMethod~uses a score test that involves linear combinations of the entries in the covariance matrix. The denominator in the score test statistic (REF EQ) can usually be accurately approximated given the high dimensionality of the covariance matrix. \OurMethod~is based on quasi-likelihood, therefore it does not require normal assumption of expression data, and could be applied to both microarray and RNA-Seq experiments. 
+	(What we proposed) Under competitive gene set test framework, a number of methods have been proposed to account for correlation among genes. One approach is to evaluate the set-level statistic by permuting sample labels to generate the null distribution, as adopted by the widely used GSEA \citep{subramanian2005gene}. However, sample permutation method has been criticized for  altering the null hypotheses being tested \citep{goeman2007analyzing, khatri2012ten}. Instead, CAMERA \citep{wu2012camera} proposed to correct for the correlation among genes by estimating a VIF directly from the data. This approach has also been used by \cite{yaari2013quantitative} in their QuSAGE procedure. The major shortcoming with this approach is that it tries to estimate correlations among gene-level test statistics directly from sample correlation (is it clear??). Zhuo and Di have argued (unpublished work) that the correlations among gene-level statistics are not necessarily equal to those among samples due to the presence of DE genes. The estimated VIF could be biased without taking into account such a discrepancy and thus undermines the performance of CAMERA and QuSAGE. \OurMethod~avoids the discrepancy by using the differences in mean as gene-level statistics for a two group comparison experiment. It models the covariance of gene-level statistics by two variance components, one attributable to correlations among samples after treatment effect removed, and the other attributable to the DE effect associate with the treatment. We note that for \OurMethod, the estimation of covariance among gene-level statistics need not be exact: \OurMethod~uses a score test that involves linear combinations of the entries in the covariance matrix. The denominator in the score test statistic (REF EQ) can usually be accurately approximated given the high dimensionality of the covariance matrix. \OurMethod~is based on quasi-likelihood, therefore it does not require normal assumption of expression data, and could be applied to both microarray and RNA-Seq experiments. 
 	
 	(Summarize the results) We compared \OurMethod~to other existing approaches in both simulation study and real data analysis. In the simulation study, we examined the performance of \OurMethod~and other six method (\gent, MRSGE, \CMT, \CMR, GSEA and QuSAGE) in terms of type I error control and power. We demonstrated that under a variety of correlation structures, \OurMethod~holds correct type I error size and also maintains good power. In the real data analysis, \OurMethod~was able to identify more gene sets as enriched, some of which, in the corresponding studies, are insightful yet not found by methods such as GSEA or CAMERA.  
 	
@@ -489,9 +504,38 @@ Functional enrichment analysis is a widely used tool for interpreting high-throu
 	
 	%\section{Conclusion}\label{section:conclusion}
 	
-	\section{AcknowledgeMents}\label{section:acknowledgement}
 	
-	\section{Appendix}\label{section:appendix}
+	
+	
+	
+	\section{Acknowledgments}\label{section:acknowledgment}
+	
+	
+	
+	\newpage
+	\bibliographystyle{apalike}
+	\bibliography{mybib}
+	
+		
+	
+	\section*{Appendix}\label{section:appendix}
+	
+		
+		\textbf{Standardization} 
+		Standardization for each gene: first, we obtain the residuals by subtracting off the means within each treatment group;
+		\begin{equation}
+		r_{ijk} = y_{ijk} - \sum_{j=1}^{n_k}{y}_{ijk}/n_k;
+		\end{equation}
+		then we calculate the pooled standard deviation from the residuals,
+		\begin{equation}
+		s_i = \textit{std}(r_{ijk});
+		\end{equation}
+		next we get the standardized expression by dividing the original expression profiles by the standard deviation,
+		\begin{equation}
+		y^{\ast}_{ijk} = y_{ijk}/s_i
+		\end{equation}
+		We perform the standardization procedure to every gene in the data set. 
+		
 	
 	First $E(\Delta_i) = E(Z_i\delta_i) = E(Z_i)E(\delta_i) = p_i\mu_{\delta}$. Next note that  
 	\begin{equation}\notag
@@ -534,12 +578,4 @@ Functional enrichment analysis is a widely used tool for interpreting high-throu
 	
 	
 	
-	
-	\newpage
-	\bibliographystyle{apalike}
-	\bibliography{mybib}
-
-
-
-
 \end{document}
