@@ -130,9 +130,25 @@ MOM_test <- function(microarray, trt, go_term, standardize=T){
    	denom2 <- t(go_term-go_bar) %*% sigma %*% (go_term- go_bar)
 
    	test_stat <- drop(numer/denom2)
-   	pval <- 1 - pchisq(test_stat, 1)
+   	pval <- 1 - pchisq(test_stat, 1)	
+
+	###  March 16:  one sided test modification
+	t_temp <- mean(t_val[go_term == 1]) - mean(t_val[go_term ==0])
+	
+	if (t_temp > 0 ){
+	test_stat2 <- sqrt(test_stat)	
+	pval2 <- 1- pnorm(test_stat2)
+	status <- "up"
+	}
+
+	else {
+	test_stat2 <- sqrt(test_stat)*(-1)
+	pval2 <- pnorm(test_stat2)
+	status  <- "down"
+	}  
+
    
-   return(list(stat = test_stat, p = pval))
+   return(list(stat = test_stat, p.two = pval, status = status, p.one = pval2))
 }
   
 
@@ -147,12 +163,12 @@ BwtGeneCorr <- function(expression, trt, geneset, standardize = T, minSetSize = 
 ## calculate the mean correlation for testset genes, the background set genes and the inter-set correlations
   
 # for GSE64810
- 	microarray <- expression[, -(1:2)]
-  	all_genes <-  expression[, 2]
+# 	microarray <- expression[, -(1:2)]
+#  	all_genes <-  expression[, 2]
   
 # for other typical data, where row names are genes
-#	microarray <- expression
-#	all_genes <- rownames(microarray)
+	microarray <- expression
+	all_genes <- rownames(microarray)
   
   if (standardize == T){             # do the standardization
     	microarray <- standardize.microarray(microarray, trt)
@@ -231,8 +247,9 @@ MOM_test_multiple <- function(expression, trt, geneset, standardize = T, minSetS
     	keep_term <- which(geneset$size >= minSetSize)
     	print(paste("number of sets to be tested:", length(keep_term)))
     
-    	pval <- c()
-    	set_size <- c()      
+#    	pval <- c()
+	pval <- pval2 <- status <- c() 
+   	set_size <- c()      
     	set_name <- c()
 
 	cat("\n this might take a long time...  \n")    
@@ -251,13 +268,36 @@ MOM_test_multiple <- function(expression, trt, geneset, standardize = T, minSetS
       
       	test_stat <- drop(numer/denom2)
       	pval[i] <- 1 - pchisq(test_stat, 1)
+	
+	
+	  ###  March 16:  one sided test modification
+        t_temp <- mean(t_val[go_term == 1]) - mean(t_val[go_term ==0])
+
+	if(! is.finite(t_temp)) { 
+		pval2[i] <- NA
+		status[i] <- "Unknown"
+	}  else {
+		   if (t_temp > 0 ){
+                test_stat2 <- sqrt(test_stat)
+                pval2[i] <- 1- pnorm(test_stat2)
+                status[i] <- "up"
+       		} else {
+
+                test_stat2 <- sqrt(test_stat)*(-1)
+                pval2[i] <- pnorm(test_stat2)
+                status[i]  <- "down"
+           	}
+
+	}
+
 
     }  
 
 	cat("\n")
 	p_fdr <- p.adjust(pval, method = "BH")
 
-	results <- data.frame(set.name = set_name, set.size = set_size, p=pval, p.fdr = p_fdr)
+	results <- data.frame(set.name = set_name, set.size = set_size, p.two=pval,
+			p.one = pval2, status = status, p.fdr = p_fdr)
 	
 	## calculate the between gene correlations
 	btw <- BwtGeneCorr(expression, trt, geneset, minSetSize=2, standardize = T)   
@@ -294,30 +334,75 @@ Camera_multiple <- function(expression, trt, geneset, use.rank = F){
 }
 
 
+MRSGE_multiple <- function(expression, trt, geneset, use.rank = T){
 
+
+# for GSE64810 data
+#        microarray <- expression[, -(1:2)]
+#        all_genes <-  expression[, 2]
+
+# for other typical data, where row names are genes
+        microarray <- expression
+        all_genes <- rownames(microarray)
+
+        gset1 <- list()
+        set.name <- c()
+        for ( i in 1:length(geneset$size)){
+                gset1[[i]] <- geneset$geneSet[[i]][-(1:2)]
+                set.name[i] <- geneset$geneSet[[i]][1]
+        }
+	names(gset1) <- set.name
+        c2.indices <- ids2indices(gset1, all_genes)	 # it contains multiple lists 
+	
+	design <- model.matrix(~trt) 
+  	fit <- lmFit(microarray, design)
+  	fit <- eBayes(fit)								                # Emperical Bayes t test	
+  	stat <- fit$t[, 2]            							      #	use the moderated t statistics to do enrichment
+  	alter <- "mixed"                     
+
+	n_genes <- nrow(microarray)
+	set.name <- names(c2.indices)	
+	set.size <- p.MRGSE <- rep(0, length(set.name))
+	for ( i in 1:length(c2.indices)) {
+		index1 <- c2.indices[[i]]
+	# print(i)
+	 	set.size[i] <- length(index1)
+		p.MRGSE[i] <- geneSetTest(index = index1, stat, alternative = alter, ranks.only= use.rank)  
+	}
+
+	result <- data.frame(set.name, size = set.size, p.MRGSE)
+	return(result)
+}
 
 compare_test <- function(dat){
 ########  a function to incorporate all test procedures
 
-library(limma)
+  library(limma)
 
-    microarray <- dat$data
-  trt <- dat$trt
-  go_term <- dat$go_term
- 
-  pval1 <- MOM_test(microarray, trt, go_term, standardize=F)$p             # our test, NO standardization for the simulation
-  
-  est_sigma <- estimate.sigma(microarray, trt)
-  t_val <- est_sigma$t_val
-  pval2 <- summary(lm(t_val~ go_term))$coe[2, 4]            # linear regression
-  
+   	microarray <- dat$data
+  	trt <- dat$trt
+  	go_term <- dat$go_term
 
-  design <- model.matrix(~trt) 
-  fit <- lmFit(microarray, design)
-  fit <- eBayes(fit)								                # Emperical Bayes t test	
-  stat <- fit$t[, 2]            							      #	use the moderated t statistics to do enrichment
-  alter <- "mixed"                                  # This is the default option, see below for explanation.
-  index1 <- which(go_term==1)                       # which genes are in GOTERM
+ #  	pval1 <- MOM_test(microarray, trt, go_term, standardize=F)$p             # our test, NO standardization for the simulation
+  	
+## modified on March 16  
+  	MEQ <- MOM_test(microarray, trt, go_term, standardize=F)             # our test, NO standardization for the simulation
+#	print(MEQ)
+  	pval1 <- MEQ$p.two							# two sided test
+	pval1.2 <- MEQ$p.one							# one sided test
+	
+  	est_sigma <- estimate.sigma(microarray, trt)
+  	t_val <- est_sigma$t_val
+  	pval2 <- summary(lm(t_val~ go_term))$coe[2, 4]            # linear regression
+  	
+
+  	design <- model.matrix(~trt) 
+  	fit <- lmFit(microarray, design)
+  	fit <- eBayes(fit)								                # Emperical Bayes t test	
+  	stat <- fit$t[, 2]            							      #	use the moderated t statistics to do enrichment
+
+  	alter <- "mixed"                                  # This is the default option, see below for explanation.
+  	index1 <- which(go_term==1)                       # which genes are in GOTERM
   
   # up: positive statistics
   # down: negative stats
@@ -325,25 +410,27 @@ library(limma)
   # mixed: tests whether the genes in the set tend to be DE without regard for direction.
   #        In this case, the test will be significant if the set contains mostly large statistics, negative or positive
   
-  tes1 <- geneSetTest(index = index1, stat, alternative = alter, ranks.only= F)         # moderated t GeneSet
-  tes2 <- geneSetTest(index = index1, stat, alternative = alter, ranks.only= T)         # moderated t GeneSet Rank
-  tes3 <- camera(microarray, index1,  design)$PValue                                    # camera proedure
-  tes4 <- camera(microarray, index1,  design, use.ranks= T)$PValue                      # camera rank 
+  	tes1 <- geneSetTest(index = index1, stat, alternative = alter, ranks.only= F)         # moderated t GeneSet
+  	tes2 <- geneSetTest(index = index1, stat, alternative = alter, ranks.only= T)         # moderated t GeneSet Rank
+  	tes3 <- camera(microarray, index1,  design)$PValue                                    # camera proedure
+  	tes4 <- camera(microarray, index1,  design, use.ranks= T)$PValue                      # camera rank 
 
- tes5 <- GSEA.SingleSet(dat$data, dat$trt, dat$go_term, nperm=1000)$p.vals		# GSEA
+ 	tes5 <- GSEA.SingleSet(dat$data, dat$trt, dat$go_term, nperm=1000)$p.vals		# GSEA
 
 
   ## qusage <Yaari, 2013>
-  geneSets <- list()
-  geneSets[[paste("Set",1)]] <- which(go_term == 1)
-  labels <- rep(NA, length(trt))
-  labels[trt == 1] <- "B"; labels[trt==0] <- "A"
-  qsarray <- qusage(microarray, labels, contrast = "B-A" , geneSets)  			# calculate the probability for all genes
-  tes6 <- pdf.pVal(qsarray, alternative = "two.sided", selfContained = F) 		# competitive test
+  	geneSets <- list()
+  	geneSets[[paste("Set",1)]] <- which(go_term == 1)
+  	labels <- rep(NA, length(trt))
+  	labels[trt == 1] <- "B"; labels[trt==0] <- "A"
+  	qsarray <- qusage(microarray, labels, contrast = "B-A" , geneSets)  			# calculate the probability for all genes
+  	tes6 <- pdf.pVal(qsarray, alternative = "two.sided", selfContained = F) 		# competitive test
   
   
   
-  return(c(pval1, pval2, tes1, tes2, tes3, tes4, tes5, tes6))
+#  	return(c(pval1, pval2, tes1, tes2, tes3, tes4, tes5, tes6))
+
+	return(c(pval1, pval1.2, pval2, tes1, tes2, tes3, tes4, tes5, tes6))
   
 }
 

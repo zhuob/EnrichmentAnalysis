@@ -13,7 +13,7 @@ registerDoParallel(cl)                           # Register cluster
 
 
 case <- "e"
-files <- "Power_e_30VS10PCT.txt"
+files <- "TypeIerror_e_0PCT.txt"
 
 
 
@@ -27,7 +27,7 @@ destination <-  paste("/home/stats/zhuob/data/computing/", files, sep = "")
 	# rho <- c(0.7, 0.5, -0.5)   # extreme case
 	 rho <- c(0.1, 0.05, -0.05) # correlation for case a, e, f, used in simulation	
 	num_gene <- c(500, 100)
-	prop <- c(0.30, 0.10)	
+	prop <- c(0.0, 0.0)	
 	n_gene <- num_gene[1]
 	delta <- rep(0.1, n_gene)
 	# delta <- rnorm(n_gene, 0.2 , 0.1)  # make the delta positive
@@ -57,7 +57,9 @@ fti <- foreach(i = 1:nsim, .combine = rbind) %dopar% {
   }
   
   
-  colnames(fti)[1:8] <- c( "OurTest",  "lm",  "ModeratedT",  "MRSGE", "Camera", "CameraRank", "GSEA", "QUSAGE")
-  
+#  colnames(fti)[1:8] <- c( "OurTest",  "lm",  "ModeratedT",  "MRSGE", "Camera", "CameraRank", "GSEA", "QUSAGE")
+   
+	# modified on March 16 
+ 	colnames(fti)[1:9] <- c( "OurTest", "OurTest.OneSided",  "lm",  "ModeratedT",  "MRSGE", "Camera", "CameraRank", "GSEA", "QUSAGE")
   
   write.table(fti, destination)
