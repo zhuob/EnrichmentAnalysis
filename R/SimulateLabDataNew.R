@@ -67,7 +67,7 @@ go.term <- function(num_gene, prop, delta){
    	z1[go_term] <- 1
     	go_term <- z1                                           # prepare the GO term
   
- 	obj <-  list(go_term = go_term, delta = delta, n_gene = n_gene)
+ 	obj <-  list(go_term = go_term, delta = delta, n_gene1 = n_gene)
     	return(obj)
 }
   
@@ -82,8 +82,10 @@ prepare.simulation <- function(num_gene, prop, delta, case, rho){
   
   
     rho1 <- rho[1]; rho2 <- rho[2]; rho3 <- rho[3]
-    obj <- go.term(num_gene, prop, delta= rnorm(n_gene, 2 , 1))
-    n_gene <- obj$n_gene; 
+    ## a major mistake here !!!! the DE effect is set to be N(2, 1)
+    
+    obj <- go.term(num_gene, prop, delta= delta)
+    n_gene <- obj$n_gene1; 
     go_term <- obj$go_term
     delta <- obj$delta
 

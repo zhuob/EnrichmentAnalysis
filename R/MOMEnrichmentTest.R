@@ -374,6 +374,10 @@ MRSGE_multiple <- function(expression, trt, geneset, use.rank = T){
 	return(result)
 }
 
+
+
+
+
 compare_test <- function(dat){
 ########  a function to incorporate all test procedures
 
@@ -398,9 +402,10 @@ compare_test <- function(dat){
 
   	design <- model.matrix(~trt) 
   	fit <- lmFit(microarray, design)
+  	#stat <- fit$coefficients[, 2]
   	fit <- eBayes(fit)								                # Emperical Bayes t test	
   	stat <- fit$t[, 2]            							      #	use the moderated t statistics to do enrichment
-
+  	
   	alter <- "mixed"                                  # This is the default option, see below for explanation.
   	index1 <- which(go_term==1)                       # which genes are in GOTERM
   
