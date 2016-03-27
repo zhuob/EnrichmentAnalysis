@@ -1,7 +1,7 @@
 library(MEQLEA)
 library(xtable)
 
-setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/Simulation/Simulation20160318/") # the data set
+setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Share/Simulation/Simulation20160318/") # the data set
 source("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/simulation-results.R")
 
 FigurePath <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Manuscript/Figures/"

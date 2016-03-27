@@ -1,4 +1,4 @@
-setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/Share/DataSet/") # the data set
+setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Share/DataSet/") # the data set
 
 
 ### merge the results from GSEA, CAMERA and OurMethod
