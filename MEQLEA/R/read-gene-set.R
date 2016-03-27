@@ -30,13 +30,13 @@ read_gene_set <- function(msigdb){
 
 #' read the gene sets of the MsigDB format.
 #'
-# #' @title Read Cls files for treatment labels.
-# #' @param msigdb gene set ensemble downloaded from broad institute.
-# #' @return a list 
-# #' \item{total} { number of gene sets contained.}
-# #' \item{size} {a numerical vector containing the size of each gene set.}
-# #' \item{gene_set} { a list. The first element is the set name. From the third element each containing members of the gene set.}
-# #' @export
+#' @title Read Cls files for treatment labels.
+#' @param msigdb gene set ensemble downloaded from broad institute.
+#' @return a list 
+#' \item{total} { number of gene sets contained.}
+#' \item{size} {a numerical vector containing the size of each gene set.}
+#' \item{gene_set} { a list. The first element is the set name. From the third element each containing members of the gene set.}
+#' @export
 # #' @examples
 
 
@@ -86,7 +86,7 @@ GSEA.ReadClsFile <- function(file = "NULL") {
 # #' \item{total} { number of gene sets contained.}
 # #' \item{size} {a numerical vector containing the size of each gene set.}
 # #' \item{gene_set} { a list. The first element is the set name. From the third element each containing members of the gene set.}
-# #' @export
+#' @export
 # #' @examples
 
 
