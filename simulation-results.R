@@ -230,8 +230,7 @@ producePower <- function(size, background, coln,  alpha_level= 0.05){
 #' @export
 #' 
 summarizePower<- function(folder, background, coln, case){
-  ## size: the three levels, 0.05, 0.1, 0.2
-  ## background: has two levels, "BACK0", "BACK10"
+   ## background: has two levels, "BACK0", "BACK10"
   
   #  case <- c("a0", "a", "c", "e", "f", "g")
   sim1 <- c("5VS0", "10VS0", "15VS0", "20VS0")
@@ -244,7 +243,7 @@ summarizePower<- function(folder, background, coln, case){
   
   for (j in 1:length(sim)){
     file <- paste(folder, "/Power_", case, "_", sim[j], "PCT.txt", sep ="")
-    print(file)
+   # print(file)
     data <- read.table(file, header=T)[, coln]
     p_mat[, j] <- data
   }

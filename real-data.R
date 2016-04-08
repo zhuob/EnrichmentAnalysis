@@ -60,22 +60,23 @@ plot2 <- ggplot(data = CombinedResults, aes((p + threshold), (GSEA + threshold))
 ggsave(paste(FigurePath,"/P_GSEA.eps", sep =""), plot2, 
        width = 8, height = 5)
 
- plot3 <- ggplot(data = CombinedResults, aes((Camera + threshold), (GSEA + threshold))) + 
+ plot3 <- ggplot(data = CombinedResults, aes((p + threshold), (p.MRGSE + threshold))) + 
    geom_point() + 
    geom_abline(intercept = 0, slope = 1, color = "black", size = 1)  +
-   labs(x = "p values (Camera)", y = "p values (GSEA)") +
+   labs(x = "p values (MEQLEA)", y = "p values (MRGSE)") +
    theme(axis.text=element_text(size=20, face = "bold"), 
          axis.title=element_text(size=20,face="bold"))
  
- ggsave(paste(FigurePath,"/P_GSEA_CAMERA.eps", sep =""), plot3, 
+ ggsave(paste(FigurePath,"/P_MRGSE.eps", sep =""), plot3, 
         width = 8, height = 5)
  
  
  ########### create a table similar to CAMERA, listing top enriched gene sets
- CombinedResults$FDR.OurMethod <- p.adjust(CombinedResults$p, method = "BH")
- CombinedResults$FDR.Camera<- p.adjust(CombinedResults$Camera, method = "BH")
- CombinedResults$FDR.GSEA <- p.adjust(CombinedResults$GSEA, method = "BH")
- CombinedResults$FDR.MRGSE <- p.adjust(CombinedResults$p.MRGSE, method = "BH")
+ adjust.method <-  "BY"# "bonferroni"
+ CombinedResults$FDR.OurMethod <- p.adjust(CombinedResults$p, method = adjust.method)
+ CombinedResults$FDR.Camera<- p.adjust(CombinedResults$Camera, method = adjust.method)
+ CombinedResults$FDR.GSEA <- p.adjust(CombinedResults$GSEA, method = adjust.method)
+ CombinedResults$FDR.MRGSE <- p.adjust(CombinedResults$p.MRGSE, method = adjust.method)
  print(sum(CombinedResults$FDR.OurMethod < 0.05))
  print(sum(CombinedResults$FDR.Camera < 0.05))
  print(sum(CombinedResults$FDR.GSEA < 0.05))
@@ -86,8 +87,12 @@ ggsave(paste(FigurePath,"/P_GSEA.eps", sep =""), plot2,
  length(which(CombinedResults$FDR.OurMethod < 0.05 & CombinedResults$FDR.MRGSE < 0.05))
  
  
-cut_off <- sort(CombinedResults$FDR.OurMethod)[30]
-topEnrichedSets <- CombinedResults[CombinedResults$FDR.OurMethod <= cut_off, ]
+# cut_off <- sort(CombinedResults$FDR.OurMethod)[30]
+# topEnrichedSets <- CombinedResults[CombinedResults$FDR.OurMethod <= cut_off, ]
+ # since there are only 33 gene sets, we list all of them
+ 
+ cut_off <- which(CombinedResults$FDR.OurMethod < 0.05)
+topEnrichedSets <- CombinedResults[cut_off, ]
 enrichByGSEA <- which(topEnrichedSets$FDR.GSEA < 0.05)
 enrichByMRGSE <- which(topEnrichedSets$FDR.MRGSE <0.05)
 topEnrichedSets$indicator <- NA
@@ -96,15 +101,15 @@ topEnrichedSets$indicator2 <- NA
 topEnrichedSets$indicator[enrichByGSEA] = T
 topEnrichedSets$indicator2[enrichByMRGSE] = T
 
-reportEnrichedSets <- topEnrichedSets[order(topEnrichedSets$p), c(1:5,8, 11,14)] # sort the p values
+reportEnrichedSets <- topEnrichedSets[order(topEnrichedSets$p), c(1:5,8, 10,14, 15)] # sort the p values
 # reportEnrichedSets$set.name <- tolower(reportEnrichedSets$set.name)
 reportEnrichedSets <- reportEnrichedSets[order(reportEnrichedSets$FDR.OurMethod, decreasing = F),]
 
  #reportEnrichedSets$set.name <- gsub("_", "\\1", reportEnrichedSets$set.name)
  library(xtable) 
  # the digits, negative number for scientific notation.
-tab <-  xtable(reportEnrichedSets, digits = c(0,0,0, 3, 3, 3, -1, -1, 0))
-align(tab) <- "lp{3in}p{0.5in}p{0.5in}p{0.5in}p{0.5in}p{0.5in}p{0.5in}p{0.5in}"
+tab <-  xtable(reportEnrichedSets, digits = c(0,0,0, 3, 3, 3, -1, -1, 0, 0))
+#align(tab) <- "lp{3in}p{0.5in}p{0.5in}p{0.5in}p{0.5in}p{0.5in}p{0.5in}p{0.5in}{0.5in}"
 print(tab, include.rownames=FALSE)
  
 
@@ -114,20 +119,21 @@ print(tab, include.rownames=FALSE)
 
 
 gender <- read.csv("Gender/Gender.Combined.All.csv")
-gender$FDR.OurMethod <- p.adjust(gender$p, method = "BH")
-gender$FDR.Camera<- p.adjust(gender$Camera, method = "BH")
-gender$FDR.GSEA <- p.adjust(gender$GSEA, method = "BH")
-gender$FDR.MRGSE <- p.adjust(gender$p.MRGSE, method = "BH")
+gender$FDR.OurMethod <- p.adjust(gender$p, method = adjust.method)
+gender$FDR.Camera<- p.adjust(gender$Camera, method = adjust.method)
+gender$FDR.GSEA <- p.adjust(gender$GSEA, method = adjust.method)
+gender$FDR.MRGSE <- p.adjust(gender$p.MRGSE, method = adjust.method)
 
 idex <- gender$p<0.01 | gender$Camera < 0.01 | gender$GSEA < 0.01 | gender$p.MRGSE < 0.01
 # idex <- gender$FDR.OurMethod < 0.05
-reportGender <- gender[idex, c(1, 2, 6:13)]
+reportGender <- gender[idex, c(1, 2, 6:10)]
 reportGender2 <- data.frame(gene.set = reportGender$set.name, size = reportGender$set.size, 
-                            p1 = reportGender$p, FDR.p = reportGender$FDR.OurMethod, 
-                            p2 = reportGender$GSEA, FDR.GSEA = reportGender$FDR.GSEA, 
-                            P3 = reportGender$Camera, FDR.Camera = reportGender$FDR.Camera)
+                            p1 = reportGender$p, # FDR.p = reportGender$FDR.OurMethod, 
+                            p2 = reportGender$GSEA,#  FDR.GSEA = reportGender$FDR.GSEA, 
+                            P3 = reportGender$Camera, #FDR.Camera = reportGender$FDR.Camera
+                            p4 = reportGender$p.MRGSE)
 reportGender2 <- reportGender2[order(reportGender2$p1), ]
-genderTable <- xtable(reportGender2, digits = c(0, 0, 0,  3, 3, 3, 3, 3, 3), label = "table:gender")
+genderTable <- xtable(reportGender2, digits = c(0, 0, 3, 3, 3, 3, 3), label = "table:gender")
 print(genderTable, include.rownames = F)
 
 
