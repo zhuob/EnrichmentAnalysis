@@ -75,9 +75,9 @@ prepare_simulation <- function(num_gene, prop, delta, case, rho){
   ######################## NOTE ######################
   ## reshuffled the labels as follows
   # a0 -> a
-  # a -> b
+  # a -> c
   # b -> f
-  # c -> c
+  # c -> b
   # d -> g
   # e -> d 
   # f -> e
@@ -94,7 +94,7 @@ prepare_simulation <- function(num_gene, prop, delta, case, rho){
     sigma <- diag(n_gene)
   }
   
-  else if (case == "b"){
+  else if (case == "c"){
     
     sigma <- diag(n_gene)
     ids <- which(go_term ==1)
@@ -102,7 +102,7 @@ prepare_simulation <- function(num_gene, prop, delta, case, rho){
     diag(sigma) <- 1
   }
   
-  else if (case == "c") {
+  else if (case == "b") {
     
     sigma <- matrix(rho1, n_gene, n_gene)
     diag(sigma) <- 1
@@ -232,7 +232,4 @@ simulate_expression_data <- function(size, obj){
   return(ls)
   
 }
-
-
-
 

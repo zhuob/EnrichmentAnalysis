@@ -72,7 +72,7 @@ ggsave(paste(FigurePath,"/P_GSEA.eps", sep =""), plot2,
  
  
  ########### create a table similar to CAMERA, listing top enriched gene sets
- adjust.method <-  "BY"# "bonferroni"
+ adjust.method <-  "BH"# "bonferroni"
  CombinedResults$FDR.OurMethod <- p.adjust(CombinedResults$p, method = adjust.method)
  CombinedResults$FDR.Camera<- p.adjust(CombinedResults$Camera, method = adjust.method)
  CombinedResults$FDR.GSEA <- p.adjust(CombinedResults$GSEA, method = adjust.method)
@@ -133,7 +133,7 @@ reportGender2 <- data.frame(gene.set = reportGender$set.name, size = reportGende
                             P3 = reportGender$Camera, #FDR.Camera = reportGender$FDR.Camera
                             p4 = reportGender$p.MRGSE)
 reportGender2 <- reportGender2[order(reportGender2$p1), ]
-genderTable <- xtable(reportGender2, digits = c(0, 0, 3, 3, 3, 3, 3), label = "table:gender")
+genderTable <- xtable(reportGender2, digits = c(0, 0, 3, -1, -1, -1, -1), label = "table:gender")
 print(genderTable, include.rownames = F)
 
 
