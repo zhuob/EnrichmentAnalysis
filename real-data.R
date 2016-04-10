@@ -67,6 +67,7 @@ ggsave(paste(FigurePath,"/P_GSEA.eps", sep =""), plot2,
  
  ########### create a table similar to CAMERA, listing top enriched gene sets
  adjust.method <-  "BH"# "bonferroni"
+ # https://support.bioconductor.org/p/13804/
  CombinedResults$FDR.OurMethod <- p.adjust(CombinedResults$p, method = adjust.method)
  CombinedResults$FDR.Camera<- p.adjust(CombinedResults$Camera, method = adjust.method)
  CombinedResults$FDR.GSEA <- p.adjust(CombinedResults$GSEA, method = adjust.method)

@@ -168,7 +168,7 @@ data_simu <- function(case,
     destination <-  paste(dest, "/", files, sep = "")
     
     fti <- foreach(i = 1:nsim, .combine = rbind, .packages = c("MEQLEA", "MASS", "qusage") ) %dopar% {
-      obj <- prepare_simulation(num_gene, prop, delta, case = case, rho)
+      obj <- prepare_simulation(num_gene, prop, delta, case = case[k], rho)
       
       dat <- simulate_expression_data(size, obj)
       pvals <- compare_test(dat)
@@ -216,7 +216,7 @@ data_simu_MEQLEA <- function(case,
     destination <-  paste(dest, "/", files, sep = "")
     
     fti <- foreach(i = 1:nsim, .combine = rbind, .packages = c("MEQLEA", "MASS", "qusage") ) %dopar% {
-      obj <- prepare_simulation(num_gene, prop, delta, case = case, rho)
+      obj <- prepare_simulation(num_gene, prop, delta, case = case[k], rho)
       
       dat <- simulate_expression_data(size, obj)
       

@@ -1,9 +1,10 @@
 library(MEQLEA)
 library(xtable)
-
-source("simulation-results.R")
-setwd("Share/Simulation/Simulation20160318/") # the data set
-setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/")
+library(reshape2)
+library(ggplot2)
+library(dplyr)
+library(gridExtra)
+library(grid)
 
 FigurePath <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Manuscript/Figures/"
 FigurePath <- getwd()
@@ -13,7 +14,7 @@ textsize = c(15,15,15, 15)
 cases <- c("a","b", "c", "d", "e")
 DEProb1 <- "0PCT"
 DEProb2 <- "10PCT"
-folder <- "Simulation"
+folder <- "Results/Simulation"
 
 for ( i in 1: length(cases)){
   
@@ -54,6 +55,6 @@ ggsave(paste(FigurePath, "powerA2pct.eps", sep = ""), p2, width = 8, height = 5)
 
 ##  power table
 library(xtable)
-createPowerTable(folder = "Normal1", showcol =  showcol, setup = "A1", case = "a")
-createPowerTable(folder = "Normal1", showcol =  showcol, setup = "A2", case = "a")
+createPowerTable(folder = folder, showcol =  showcol, setup = "A1", case = "a")
+createPowerTable(folder = folder, showcol =  showcol, setup = "A2", case = "a")
 
