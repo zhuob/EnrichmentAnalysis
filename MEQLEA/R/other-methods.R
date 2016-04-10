@@ -1,6 +1,12 @@
 
 
-
+#' implement the Sigpathay. 
+#' 
+#' 
+#' @title Sigpathway
+#' @param num_gene  number of genes to be simulated.
+#' @export
+#' @examples
 
 sig_path <- function(index, statistics, nsim = 9999){
   
@@ -144,15 +150,9 @@ data_simu <- function(case,
                       size = 50,                     	# number of samples to be simulated
                       rho = c(0.1, 0.05, -0.05),       # correlations, corresponding to rho1, rho2, rho3 in the paper
                       dest = "/home/stats/zhuob/data/computing/", # where to store the results
-                      nthread = 30,                   # request 30 cores to do the simulation
                       num_gene = c(500, 100)          # number of genes to be simulated
 ){
-  
-  library(doParallel)                             # parallel computing packages
-  library(foreach)
-  cl <- makeCluster(nthread)                           
-  registerDoParallel(cl)                           # Register clusters
-  
+
   n_gene <- num_gene[1];
   delta <- rnorm(n_gene, de[1], de[2])
   
@@ -198,14 +198,8 @@ data_simu_MEQLEA <- function(case,
                       size = 50,                     	# number of samples to be simulated
                       rho = c(0.1, 0.05, -0.05),       # correlations, corresponding to rho1, rho2, rho3 in the paper
                       dest = "/home/stats/zhuob/data/computing/", # where to store the results
-                      nthread = 30,                   # request 30 cores to do the simulation
                       num_gene = c(500, 100)          # number of genes to be simulated
 ){
-  
-  library(doParallel)                             # parallel computing packages
-  library(foreach)
-  cl <- makeCluster(nthread)                           
-  registerDoParallel(cl)                           # Register clusters
   
   n_gene <- num_gene[1];
   delta <- rnorm(n_gene, de[1], de[2])
@@ -250,7 +244,13 @@ data_simu_MEQLEA <- function(case,
 
 
 
-camera_multiple <- function(expression_data, trt, geneset, use.rank = F){
+#'         multiple gene set enrichemnt analysis 
+#' 
+#' 
+#' @title Camera multiple
+# #' @param case   which case to simulate (see simulation setup in the paper)
+#' @export
+Camera_multiple <- function(expression_data, trt, geneset, use.rank = F){
   ##  Use Camera procedure to do a battery of gene set test. 
   
   # for GSE64810 data
@@ -279,7 +279,13 @@ camera_multiple <- function(expression_data, trt, geneset, use.rank = F){
 
 
 
-## 
+#'         multiple gene set enrichemnt analysis 
+#' 
+#' 
+#' @title  MRSGE multiple
+# #' @param case   which case to simulate (see simulation setup in the paper)
+#' @export
+
 MRSGE_multiple <- function(expression, trt, geneset, use.rank = T){
   
   
@@ -308,119 +314,18 @@ MRSGE_multiple <- function(expression, trt, geneset, use.rank = T){
   
   n_genes <- nrow(microarray)
   set.name <- names(c2.indices)
-  set.size <- p.MRGSE <- rep(0, length(set.name))
+  set.size <- p.MRSGE <- rep(0, length(set.name))
   for ( i in 1:length(c2.indices)) {
     index1 <- c2.indices[[i]]
     # print(i)
     set.size[i] <- length(index1)
-    p.MRGSE[i] <- geneSetTest(index = index1, stat, alternative = alter, ranks.only= use.rank)
+    p.MRSGE[i] <- geneSetTest(index = index1, stat, alternative = alter, ranks.only= use.rank)
   }
   
-  result <- data.frame(set.name, size = set.size, p.MRGSE)
+  result <- data.frame(set.name, size = set.size, p.MRSGE)
   return(result)
 }
 
-
-
-
-
-## specific for testing GSE64810
-MRSGE_multiple1 <- function(expression, trt, geneset, use.rank = T){
-  
-  
-  # for GSE64810 data
-         microarray <- expression[, -(1:2)]
-          all_genes <-  expression[, 2]
-  
-  # for other typical data, where row names are genes
-  # microarray <- expression
-  # all_genes <- rownames(microarray)
-  
-  gset1 <- list()
-  set.name <- c()
-  for ( i in 1:length(geneset$size)){
-    gset1[[i]] <- geneset$gene_set[[i]][-(1:2)]
-    set.name[i] <- geneset$gene_set[[i]][1]
-  }
-  names(gset1) <- set.name
-  c2.indices <- ids2indices(gset1, all_genes)	 # it contains multiple lists
-  
-  design <- model.matrix(~trt)
-  fit <- lmFit(microarray, design)
-  fit <- eBayes(fit)                                                                              # Emperical Bayes t test    $
-  stat <- fit$t[, 2]                                                                    # use the moderated t statistics to do$
-  alter <- "either"
-  
-  n_genes <- nrow(microarray)
-  set.name <- names(c2.indices)
-  set.size <- p.MRGSE <- rep(0, length(set.name))
-  for ( i in 1:length(c2.indices)) {
-    index1 <- c2.indices[[i]]
-    # print(i)
-    set.size[i] <- length(index1)
-    p.MRGSE[i] <- geneSetTest(index = index1, stat, alternative = alter, ranks.only= use.rank)
-  }
-  
-  result <- data.frame(set.name, size = set.size, p.MRGSE)
-  return(result)
-}
-
-
-
-Camera_multiple <- function(expression, trt, geneset, use.rank = F){
-  ##  Use Camera procedure to do a battery of gene set test.
-  
-  # for GSE64810 data
-  # microarray <- expression[, -(1:2)]
-  # all_genes <-  expression[, 2]
-  
-  # for other typical data, where row names are genes
-         microarray <- expression
-          all_genes <- rownames(microarray)
-  
-  gset1 <- list()
-  set.name <- c()
-  for ( i in 1:length(geneset$size)){
-    gset1[[i]] <- geneset$geneSet[[i]][-(1:2)]
-    set.name[i] <- geneset$geneSet[[i]][1]
-  }
-  names(gset1) <- set.name
-  c2.indices <- ids2indices(gset1, all_genes)	 # it contains multiple lists
-  
-  design <- model.matrix(~trt)
-  Results <- camera(microarray, c2.indices,  design, use.ranks = use.rank, sort = F)
-  return(Results)
-  
-}
-
-
-
-## specific for GSE64810
-Camera_multiple1 <- function(expression, trt, geneset, use.rank = F){
-  ##  Use Camera procedure to do a battery of gene set test.
-  
-  # for GSE64810 data
-  microarray <- expression[, -(1:2)]
-  all_genes <-  expression[, 2]
-  
-  # for other typical data, where row names are genes
-  #        microarray <- expression
-  #        all_genes <- rownames(microarray)
-  
-  gset1 <- list()
-  set.name <- c()
-  for ( i in 1:length(geneset$size)){
-    gset1[[i]] <- geneset$gene_set[[i]][-(1:2)]
-    set.name[i] <- geneset$gene_set[[i]][1]
-  }
-  names(gset1) <- set.name
-  c2.indices <- ids2indices(gset1, all_genes)	 # it contains multiple lists
-  
-  design <- model.matrix(~trt)
-  Results <- camera(microarray, c2.indices,  design, use.ranks = use.rank, sort = F)
-  return(Results)
-  
-}
 
 
 

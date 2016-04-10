@@ -4,32 +4,26 @@ setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Share
 ### merge the results from GSEA, CAMERA and OurMethod
 
 ## the HD data
-d1 <- read.csv("HuntingtonDisease/C2.CAMERA.csv")
-d2 <- read.csv("HuntingtonDisease/C2.GSEA.csv")
-d3 <- read.csv("HuntingtonDisease/C2.OurMethod.csv")
-colnames(d2)[1] <- "set.name"
-d4 <- merge(d3, merge(d1, d2, by = "set.name"), by = "set.name")
-d5 <- data.frame(set.name = d4$set.name, set.size = d4$set.size, testsetCor = d4$testSetCor,
-                 backSetCor = d4$backSetCor, interCor = d4$interCor,  Camera = d4$PValue, GSEA = d4$NOM.p.val, p = d4$p)
-write.csv(d5, "HuntingtonDisease/C2.combinedNew.csv", row.names = F)
-
-# the gender data
-d1 <- read.csv("Gender/Gender.CAMERA.csv")
-d2 <- read.csv("Gender/Gender.GSEA.csv")
-d3 <- read.csv("Gender/Gender.OurMethod.csv")
-colnames(d2)[1] <- "set.name"
-d4 <- merge(d3, merge(d1, d2, by = "set.name"), by = "set.name")
-d5 <- data.frame(set.name = d4$set.name, set.size = d4$set.size, testsetCor = d4$testSetCor,
-                 backSetCor = d4$backSetCor, interCor = d4$interCor,  Camera = d4$PValue, GSEA = d4$NOM.p.val, p = d4$p)
-write.csv(d5, "Gender/Gender.combinedNew.csv", row.names = F)
-
+d1 <- read.csv("Results/RealData/HD/C2.MEQLEA.csv")
+d2 <- read.csv("Results/RealData/HD/C2.GSEA.csv")
+d3 <- read.csv("Results/RealData/HD/C2.CAMERA.csv")
+d4 <- read.csv("Results/RealData/HD/C2.MRSGE.csv")
+colnames(d1)[1] <- colnames(d2)[1]<- "set.name"
+d5 <- merge(merge(merge(d1, d2, by = "set.name"), d3, by = "set.name"), d4, by = "set.name")
+d6 <- data.frame(set.name = d5$set.name, set.size = d5$set.size, 
+                 testsetCor = d5$testSetCor, backSetCor = d5$backSetCor, 
+                 interCor = d5$interCor,  Camera = d5$PValue, GSEA = d5$NOM.p.val, 
+                 MEQLEA = d5$p, MRSGE = d5$p.MRSGE)
+write.csv(d6, "Results/RealData/HD/C2.combined.csv", row.names = F)
 
 
 ########  draw some conclusions ------------------------------------------------------
 
 
 
-CombinedResults <- read.csv("HuntingtonDisease/C2.Combined.All.csv", row.names = NULL)
+
+
+CombinedResults <- read.csv("Results/RealData/HD/C2.combined.csv", row.names = NULL)
 #CombinedResults <- read.csv("Gender/combined.2.csv")
 FigurePath <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Manuscript/Figures/"
 threshold <- 1e-6
@@ -39,7 +33,7 @@ ht <- 5
 library(ggplot2)
 
 
-plot1 <- ggplot(data = CombinedResults, aes((p + threshold), (Camera + threshold))) + 
+plot1 <- ggplot(data = CombinedResults, aes((MEQLEA + threshold), (Camera + threshold))) + 
   geom_point() + 
   geom_abline(intercept = 0, slope = 1, color= "black", size =1) +
   labs(x = "p values (MEQLEA)", y = "p values (CAMERA)") + 
@@ -50,7 +44,7 @@ plot1 <- ggplot(data = CombinedResults, aes((p + threshold), (Camera + threshold
 ggsave(paste(FigurePath,"/P_Camera.eps", sep =""), plot1, 
        width = 8, height = 5)
 
-plot2 <- ggplot(data = CombinedResults, aes((p + threshold), (GSEA + threshold))) + 
+plot2 <- ggplot(data = CombinedResults, aes((MEQLEA + threshold), (GSEA + threshold))) + 
   geom_point() + 
   geom_abline(intercept = 0, slope = 1, color = "black", size = 1)  +
   labs(x = "p values (MEQLEA)", y = "p values (GSEA)") +
@@ -60,7 +54,7 @@ plot2 <- ggplot(data = CombinedResults, aes((p + threshold), (GSEA + threshold))
 ggsave(paste(FigurePath,"/P_GSEA.eps", sep =""), plot2, 
        width = 8, height = 5)
 
- plot3 <- ggplot(data = CombinedResults, aes((p + threshold), (p.MRGSE + threshold))) + 
+ plot3 <- ggplot(data = CombinedResults, aes((MEQLEA + threshold), (MRSGE + threshold))) + 
    geom_point() + 
    geom_abline(intercept = 0, slope = 1, color = "black", size = 1)  +
    labs(x = "p values (MEQLEA)", y = "p values (MRGSE)") +
@@ -118,22 +112,40 @@ print(tab, include.rownames=FALSE)
 ###  the gender data ####---------------------------
 
 
-gender <- read.csv("Gender/Gender.Combined.All.csv")
-gender$FDR.OurMethod <- p.adjust(gender$p, method = adjust.method)
+# the gender data
+d1 <- read.csv("Results/RealData/Gender/Gender.meqlea.csv")
+d2 <- read.csv("Results/RealData/Gender/Gender.CAMERA.csv")
+d3 <- read.csv("Results/RealData/Gender/Gender.GSEA.csv")
+d4 <- read.csv("Results/RealData/Gender/Gender.MRSGE.csv")
+colnames(d3)[1] <- colnames(d1)[1] <- "set.name"
+d5 <- merge(merge(merge(d1, d2, by = "set.name"), d3, by = "set.name"), d4, by = "set.name")
+d6 <- data.frame(set.name = d5$set.name, set.size = d5$set_size, 
+                 testsetCor = d5$testSetCor, backSetCor = d5$backSetCor, 
+                 interCor = d5$interCor,  Camera = d5$PValue, GSEA = d5$NOM.p.val, 
+                 MEQLEA = d5$p1, MRSGE = d5$p.MRSGE)
+write.csv(d6, "Results/RealData/Gender/Gender.combined.csv", row.names = F)
+
+
+
+
+adjust.method  <- "BH"
+
+gender <- read.csv("Results/RealData/Gender/Gender.combined.csv")
+gender$FDR.MEQLEA <- p.adjust(gender$MEQLEA, method = adjust.method)
 gender$FDR.Camera<- p.adjust(gender$Camera, method = adjust.method)
 gender$FDR.GSEA <- p.adjust(gender$GSEA, method = adjust.method)
-gender$FDR.MRGSE <- p.adjust(gender$p.MRGSE, method = adjust.method)
+gender$FDR.MRGSE <- p.adjust(gender$MRSGE, method = adjust.method)
 
-idex <- gender$p<0.01 | gender$Camera < 0.01 | gender$GSEA < 0.01 | gender$p.MRGSE < 0.01
+idex <- gender$MEQLEA<0.01 | gender$Camera < 0.01 | gender$GSEA < 0.01 | gender$MRSGE < 0.01
 # idex <- gender$FDR.OurMethod < 0.05
 reportGender <- gender[idex, c(1, 2, 6:10)]
 reportGender2 <- data.frame(gene.set = reportGender$set.name, size = reportGender$set.size, 
-                            p1 = reportGender$p, # FDR.p = reportGender$FDR.OurMethod, 
+                            p1 = reportGender$MEQLEA, # FDR.p = reportGender$FDR.OurMethod, 
                             p2 = reportGender$GSEA,#  FDR.GSEA = reportGender$FDR.GSEA, 
                             P3 = reportGender$Camera, #FDR.Camera = reportGender$FDR.Camera
-                            p4 = reportGender$p.MRGSE)
+                            p4 = reportGender$MRSGE)
 reportGender2 <- reportGender2[order(reportGender2$p1), ]
-genderTable <- xtable(reportGender2, digits = c(0, 0, 3, -1, -1, -1, -1), label = "table:gender")
+genderTable <- xtable(reportGender2, digits = c(0, 0, 3, 3, 3, 3, 3), label = "table:gender")
 print(genderTable, include.rownames = F)
 
 

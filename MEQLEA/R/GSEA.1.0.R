@@ -916,6 +916,15 @@ GSEA.Gct2Frame <- function(filename = "NULL") {
    return(ds)
 }
 
+
+
+#' readling sample labels (from GSEA.1.0.R)
+#'
+#' @title readling sample lables. 
+#' @export
+#' 
+
+
 GSEA.Gct2Frame2 <- function(filename = "NULL") { 
 #
 # Reads a gene expression dataset in GCT format and converts it into an R data frame
@@ -957,6 +966,13 @@ GSEA.Gct2Frame2 <- function(filename = "NULL") {
       row.names(ds) <- row.nam
       return(ds)
 }
+
+
+#' readling Cls file (from GSEA.1.0.R)
+#'
+#' @title readling Cls files. 
+#' @export
+#' 
 
 GSEA.ReadClsFile <- function(file = "NULL") { 
 #
@@ -1116,6 +1132,14 @@ GSEA.NormalizeCols <- function(V) {
 
 # ----------------------------------------------------------------------------------------
 # Main GSEA Analysis Function that implements the entire methodology
+
+
+
+#' GSEA for testing multiple gene sets.
+#'
+#' @title GSEA. 
+#' @export
+
 
 GSEA <- function(
 input.ds, 
@@ -1319,18 +1343,18 @@ write(paste("replace =", replace, sep=" "), file=filename, append=T)
   time1 <- proc.time()
 
   if (is.data.frame(input.ds)) {
-#@@@@@@     dataset <- input.ds
-	   dataset <- input.ds[, -(1:2)]     ### to accommandate the GSE64810 data
+     dataset <- input.ds
+#@@@@@	   dataset <- input.ds[, -(1:2)]     ### to accommandate the GSE64810 data
   } else {
      if (regexpr(pattern=".gct", input.ds) == -1) {
          dataset <- GSEA.Res2Frame(filename = input.ds)
      } else {
-#         dataset <- GSEA.Gct2Frame(filename = input.ds)
-         dataset <- GSEA.Gct2Frame2(filename = input.ds)
+#         dataset <- 2Frame(filename = input.ds)
+       dataset <- GSEA.Gct2Frame2(filename = input.ds)
      }
   }
-#@@@@@@  gene.labels <- row.names(dataset)
- gene.labels <- input.ds[, 2] 
+  gene.labels <- row.names(dataset)
+#@@@@@@ gene.labels <- input.ds[, 2] 
  sample.names <- names(dataset)
   A <- data.matrix(dataset)
   dim(A) 
