@@ -10,10 +10,10 @@ d3 <- read.csv("Results/RealData/HD/C2.CAMERA.csv")
 d4 <- read.csv("Results/RealData/HD/C2.MRSGE.csv")
 colnames(d1)[1] <- colnames(d2)[1]<- "set.name"
 d5 <- merge(merge(merge(d1, d2, by = "set.name"), d3, by = "set.name"), d4, by = "set.name")
-d6 <- data.frame(set.name = d5$set.name, set.size = d5$set.size, 
+d6 <- data.frame(set.name = d5$set.name, set.size = d5$set_size, 
                  testsetCor = d5$testSetCor, backSetCor = d5$backSetCor, 
                  interCor = d5$interCor,  Camera = d5$PValue, GSEA = d5$NOM.p.val, 
-                 MEQLEA = d5$p, MRSGE = d5$p.MRSGE)
+                 MEQLEA = d5$p1, MRSGE = d5$p.MRSGE)
 write.csv(d6, "Results/RealData/HD/C2.combined.csv", row.names = F)
 
 
@@ -41,7 +41,7 @@ plot1 <- ggplot(data = CombinedResults, aes((MEQLEA + threshold), (Camera + thre
         axis.title=element_text(size=20,face="bold")) +
   scale_y_continuous(limits=c(0, 1))
 
-ggsave(paste(FigurePath,"/P_Camera.eps", sep =""), plot1, 
+ggsave(paste(FigurePath,"/MEQLEA_Camera.eps", sep =""), plot1, 
        width = 8, height = 5)
 
 plot2 <- ggplot(data = CombinedResults, aes((MEQLEA + threshold), (GSEA + threshold))) + 
@@ -51,7 +51,7 @@ plot2 <- ggplot(data = CombinedResults, aes((MEQLEA + threshold), (GSEA + thresh
   theme(axis.text=element_text(size=20, face = "bold"), 
         axis.title=element_text(size=20,face="bold"))
 
-ggsave(paste(FigurePath,"/P_GSEA.eps", sep =""), plot2, 
+ggsave(paste(FigurePath,"/MEQLEA_GSEA.eps", sep =""), plot2, 
        width = 8, height = 5)
 
  plot3 <- ggplot(data = CombinedResults, aes((MEQLEA + threshold), (MRSGE + threshold))) + 
@@ -61,33 +61,32 @@ ggsave(paste(FigurePath,"/P_GSEA.eps", sep =""), plot2,
    theme(axis.text=element_text(size=20, face = "bold"), 
          axis.title=element_text(size=20,face="bold"))
  
- ggsave(paste(FigurePath,"/P_MRGSE.eps", sep =""), plot3, 
+ ggsave(paste(FigurePath,"/MEQLEA_MRGSE.eps", sep =""), plot3, 
         width = 8, height = 5)
  
  
  ########### create a table similar to CAMERA, listing top enriched gene sets
  adjust.method <-  "BH"# "bonferroni"
  # https://support.bioconductor.org/p/13804/
- CombinedResults$FDR.OurMethod <- p.adjust(CombinedResults$p, method = adjust.method)
+ CombinedResults$FDR.OurMethod <- p.adjust(CombinedResults$MEQLEA, method = adjust.method)
  CombinedResults$FDR.Camera<- p.adjust(CombinedResults$Camera, method = adjust.method)
  CombinedResults$FDR.GSEA <- p.adjust(CombinedResults$GSEA, method = adjust.method)
- CombinedResults$FDR.MRGSE <- p.adjust(CombinedResults$p.MRGSE, method = adjust.method)
+ CombinedResults$FDR.MRSGE <- p.adjust(CombinedResults$MRSGE, method = adjust.method)
  print(sum(CombinedResults$FDR.OurMethod < 0.05))
  print(sum(CombinedResults$FDR.Camera < 0.05))
  print(sum(CombinedResults$FDR.GSEA < 0.05))
- print(sum(CombinedResults$FDR.MRGSE < 0.05))
+ print(sum(CombinedResults$FDR.MRSGE < 0.05))
  # how many sets are overlapped.
  length(which(CombinedResults$FDR.OurMethod < 0.05 & CombinedResults$FDR.GSEA < 0.05))
  length(which(CombinedResults$FDR.OurMethod < 0.05 & CombinedResults$FDR.Camera < 0.05))
- length(which(CombinedResults$FDR.OurMethod < 0.05 & CombinedResults$FDR.MRGSE < 0.05))
+ length(which(CombinedResults$FDR.OurMethod < 0.05 & CombinedResults$FDR.MRSGE < 0.05))
  
  
-# cut_off <- sort(CombinedResults$FDR.OurMethod)[30]
-# topEnrichedSets <- CombinedResults[CombinedResults$FDR.OurMethod <= cut_off, ]
+cut_off <- sort(CombinedResults$FDR.OurMethod)[30]
+topEnrichedSets <- CombinedResults[CombinedResults$FDR.OurMethod <= cut_off, ]
  # since there are only 33 gene sets, we list all of them
- 
- cut_off <- which(CombinedResults$FDR.OurMethod < 0.05)
-topEnrichedSets <- CombinedResults[cut_off, ]
+# cut_off <- which(CombinedResults$FDR.OurMethod < 0.05)
+# topEnrichedSets <- CombinedResults[cut_off, ]
 enrichByGSEA <- which(topEnrichedSets$FDR.GSEA < 0.05)
 enrichByMRGSE <- which(topEnrichedSets$FDR.MRGSE <0.05)
 topEnrichedSets$indicator <- NA
@@ -96,7 +95,7 @@ topEnrichedSets$indicator2 <- NA
 topEnrichedSets$indicator[enrichByGSEA] = T
 topEnrichedSets$indicator2[enrichByMRGSE] = T
 
-reportEnrichedSets <- topEnrichedSets[order(topEnrichedSets$p), c(1:5,8, 10,14, 15)] # sort the p values
+reportEnrichedSets <- topEnrichedSets[order(topEnrichedSets$MEQLEA), c(1:5,8, 10, 14, 15)] # sort the p values
 # reportEnrichedSets$set.name <- tolower(reportEnrichedSets$set.name)
 reportEnrichedSets <- reportEnrichedSets[order(reportEnrichedSets$FDR.OurMethod, decreasing = F),]
 
@@ -135,9 +134,13 @@ gender <- read.csv("Results/RealData/Gender/Gender.combined.csv")
 gender$FDR.MEQLEA <- p.adjust(gender$MEQLEA, method = adjust.method)
 gender$FDR.Camera<- p.adjust(gender$Camera, method = adjust.method)
 gender$FDR.GSEA <- p.adjust(gender$GSEA, method = adjust.method)
-gender$FDR.MRGSE <- p.adjust(gender$MRSGE, method = adjust.method)
+gender$FDR.MRSGE <- p.adjust(gender$MRSGE, method = adjust.method)
 
 idex <- gender$MEQLEA<0.01 | gender$Camera < 0.01 | gender$GSEA < 0.01 | gender$MRSGE < 0.01
+fdr <- 0.05
+idex <- gender$FDR.MEQLEA < fdr | gender$FDR.Camera < fdr | gender$FDR.GSEA < fdr | gender$FDR.MRSGE < fdr
+
+print(gender[idex,c(1:5, 10:13)])
 # idex <- gender$FDR.OurMethod < 0.05
 reportGender <- gender[idex, c(1, 2, 6:10)]
 reportGender2 <- data.frame(gene.set = reportGender$set.name, size = reportGender$set.size, 
@@ -146,15 +149,15 @@ reportGender2 <- data.frame(gene.set = reportGender$set.name, size = reportGende
                             P3 = reportGender$Camera, #FDR.Camera = reportGender$FDR.Camera
                             p4 = reportGender$MRSGE)
 reportGender2 <- reportGender2[order(reportGender2$p1), ]
-genderTable <- xtable(reportGender2, digits = c(0, 0, 3, 3, 3, 3, 3), label = "table:gender")
+genderTable <- xtable(reportGender2, digits = c(0, 0, 0, -1, -1, -1, -1), label = "table:gender")
 print(genderTable, include.rownames = F)
 
 
-## overlapped gene sets with Diamanti 2013 ###
-Diamanti <- read.csv("HuntingtonDisease/Diamanti2013.csv", header= T)
-Diamanti$set.name <- paste(Diamanti$Path, "_", Diamanti$Gene_set_name, sep ="")
-Diamanti_Overlap <- merge(Diamanti, CombinedResults, by = "set.name")
-print(Diamanti_Overlap$set.name[Diamanti_Overlap$FDR.OurMethod < 0.05])
+# ## overlapped gene sets with Diamanti 2013 ###
+# Diamanti <- read.csv("HuntingtonDisease/Diamanti2013.csv", header= T)
+# Diamanti$set.name <- paste(Diamanti$Path, "_", Diamanti$Gene_set_name, sep ="")
+# Diamanti_Overlap <- merge(Diamanti, CombinedResults, by = "set.name")
+# print(Diamanti_Overlap$set.name[Diamanti_Overlap$FDR.OurMethod < 0.05])
 
 
 

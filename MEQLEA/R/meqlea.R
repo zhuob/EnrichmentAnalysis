@@ -265,8 +265,8 @@ estimate_sigma <- function(expression_data, trt){
   expression_data <- as.matrix(expression_data)
   group_mean <- as.matrix(trt_mean(expression_data, trt))     # calculate correlation matrix
   resid_mat <- expression_data - group_mean                     # the trt effects are removed from matrix
-  samp_rho <- cov(t(resid_mat))
-  # samp_rho <- cor(t(resid_mat))                 
+  # samp_rho <- cov(t(resid_mat))
+  samp_rho <- cor(t(resid_mat))      # because of the way we do standardization           
   
   # two lines correction for inflated type I error.	  
   #   nsamp <- ncol(expression_data)
