@@ -150,7 +150,8 @@ data_simu <- function(case,
                       size = 50,                     	# number of samples to be simulated
                       rho = c(0.1, 0.05, -0.05),       # correlations, corresponding to rho1, rho2, rho3 in the paper
                       dest = "/home/stats/zhuob/data/computing/", # where to store the results
-                      num_gene = c(500, 100)          # number of genes to be simulated
+                      num_gene = c(500, 100),         # number of genes to be simulated
+                      post_txt = "PCT.txt"            # format of output files
 ){
 
   n_gene <- num_gene[1];
@@ -159,9 +160,9 @@ data_simu <- function(case,
   for (k in 1:length(case)){                          # iterating over the correlation structures
     
     if (prop[1] == prop[2]){                            # this corresponds to type I error simulation
-      files <- paste("TypeIerror_", case[k], "_", as.integer(prop[1]*100), "PCT.txt", sep= "")
+      files <- paste("TypeIerror_", case[k], "_", as.integer(prop[1]*100), post_txt, sep= "")
     } else {
-      files <- paste("Power_", case[k], "_", as.integer(prop[1]*100), "VS", as.integer(prop[2]*100), "PCT.txt", sep = "")
+      files <- paste("Power_", case[k], "_", as.integer(prop[1]*100), "VS", as.integer(prop[2]*100), post_txt, sep = "")
     }
     
     

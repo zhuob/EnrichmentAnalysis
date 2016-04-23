@@ -42,7 +42,7 @@ for ( i in 1: length(cases)){
 
 ### type I error table
 
-alpha <- 0.01
+alpha <- 0.05
 table_typeIerror <- data.frame(matrix(NA, nrow = 1000, ncol = length(showcol)+1))
 for ( i in 1: length(cases)){
   
@@ -60,6 +60,7 @@ for ( i in 1: length(cases)){
 
 table_typeIerror <- table_typeIerror[complete.cases(table_typeIerror), ]
 table_typeIerror
+print(xtable(table_typeIerror,digits =c(0, 0, rep(3, 7))), include.rownames =F)
 
 test_sig <- function(prop, alpha, n){
   sd <- sqrt((alpha)*(1-alpha)/n)

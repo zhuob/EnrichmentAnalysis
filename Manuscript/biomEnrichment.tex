@@ -366,7 +366,7 @@
 	(\ref{eq:U}) and (\ref{eq:Ymodel}) yields
 	\begin{equation} 
 	U_j = \Delta_j + \eta_j, \text{where } \eta_j = \dfrac{1}{n_1}\sum_{i: X_i=1}\epsilon_{ij}-
-	\dfrac{1}{n_1}\sum_{i: X_i=0}\epsilon_{ij}.
+	\dfrac{1}{n_2}\sum_{i: X_i=0}\epsilon_{ij}.
 	\end{equation}
 	It can be shown based on Equations (\ref{eq:gene_indep}), (\ref{eq:gene_cor}) and (\ref{eq:Delta})
 	that
@@ -513,26 +513,45 @@
 	%and for those in the background set with $p_t= p_b = 0.2$. 
 	
 	
-	\begin{table}[!ht]
+	%\begin{table}[!ht]
+		%\centering
+		%\caption{DE proportions in type I error and power simulations. $S_0$ repersents scenario for
+			%type I error simulation. $S_1$-$S_4$ represent the four alternatives regarding power simulation. The
+			%$p_b$ and $p_t$ are, respectively, the DE probablility for genes in the background set and for those
+			%in the test set.}
+		%\begin{tabular}{rp{0.8cm}p{0.8cm}p{0.1cm} p{0.5cm}p{0.5cm}p{0.5cm}p{0.5cm}p{0.5cm}}
+			%\hline\hline
+		%&\multicolumn{2}{c}{type I error} & & \multicolumn{5}{c}{power}  \\ 
+			 %\cline{2-3}         \cline{5-9}
+			  %& $S_0$ &$S_0$ & &$S_0$ &$S_1$ &$S_2$ &$S_3$ &$S_4$ \\
+			%Group 	& $p_t$ & $p_t$ &  & $p_b$ & $p_t$ & $p_t$ & $p_t$ &$p_t$\\ \hline
+			%$A_1$ & 0\% & 0\%  &  & 0\%    & 5\% & 10\% & 15\% & 20\%\\ 
+			%$A_2$ & 10\% & 10\% &  & 10\%  & 15\%& 20\%& 25\% & 30\%\\ 
+			%\hline\hline
+			%%		\multicolumn{6}{p{8cm}}{}	 \\	
+			%%		\multicolumn{6}{p{8cm}}{$p_t$: DE probablility for genes  }	 \\	
+		%\end{tabular}
+		%\label{table:simusetup}
+	%\end{table}
+	
+		\begin{table}[!ht]
 		\centering
-		\caption{DE proportions in type I error and power simulations. $S_0$ repersents scenario for
-			type I error simulation. $S_1$-$S_4$ represent the four alternatives regarding power simulation. The
-			$p_b$ and $p_t$ are, respectively, the DE probablility for genes in the background set and for those
-			in the test set.}
-		\begin{tabular}{rp{0.8cm}p{0.8cm}p{0.1cm} p{0.5cm}p{0.5cm}p{0.5cm}p{0.5cm}p{0.5cm}}
+		\caption{DE probability configurations in type I error and power simulations. $S_0$ is for
+			type I error simulation. $S_1$-$S_4$ represent the four scenarios considered in power simulations. $p_b$ and $p_t$ are the DE probability for genes in the background set and that in the test set, respectively.}
+			
+		\begin{tabular}{ccccccc}
 			\hline\hline
-		&\multicolumn{2}{c}{type I error} & & \multicolumn{5}{c}{power}  \\ 
-			 \cline{2-3}         \cline{5-9}
-			  & $S_0$ &$S_0$ & &$S_0$ &$S_1$ &$S_2$ &$S_3$ &$S_4$ \\
-			Group 	& $p_t$ & $p_t$ &  & $p_b$ & $p_t$ & $p_t$ & $p_t$ &$p_t$\\ \hline
-			$A_1$ & 0\% & 0\%  &  & 0\%    & 5\% & 10\% & 15\% & 20\%\\ 
-			$A_2$ & 10\% & 10\% &  & 10\%  & 15\%& 20\%& 25\% & 30\%\\ 
+			\multirow{2}{*}{Group} & 	Background & \multicolumn{5}{c}{DE prob. in test set ($p_t$)}\\
+			&DE prob. ($p_b$)&$S_0$ &$S_1$ &$S_2$ &$S_3$ &$S_4$\\
+			\hline
+			$A_1$ & 0\% & 0\%  & 5\% & 10\% & 15\% & 20\%\\ 
+			$A_2$ & 10\% & 10\% & 15\%& 20\%& 25\% & 30\%\\  
 			\hline\hline
-			%		\multicolumn{6}{p{8cm}}{}	 \\	
-			%		\multicolumn{6}{p{8cm}}{$p_t$: DE probablility for genes  }	 \\	
 		\end{tabular}
+		
 		\label{table:simusetup}
 	\end{table}
+	
 	
 	\subsubsection{Other methods considered}
 	
@@ -587,7 +606,7 @@
 	According to the simulation setup in Section \ref{subsection:simulation}, the test set is not
 	enriched if DE probabilities are the same for genes in the test set and for those in the background
 	set (i.e., $p_t =0\%$ for group $A_1$ and $p_t = 10\%$ for group $A_2$), in which case we evaluate
-	the type I error. As to power, we set DE probability according to each of alternative scenarios
+	the type I error. As to power, we set DE probability according to each of the alternative scenarios
 	$S_1$-$S_4$ (see Table \ref{table:simusetup}) and calculate the proportion of data sets for which a
 	test would reject at a given level $\alpha$. The results are based on \HowmanySimu~simulated data
 	sets. 
@@ -595,6 +614,8 @@
 	
 	
 	\subsection{Type I error simulations}\label{subsection:typeIerror}
+	
+\textbf{	Messages: 1. Our method is well calibrated for all scenarios. 2. All of these others methods have poor calibration in at least some of the scenarios. 3. The way type I error is deviates for the nominal level aligns with our expectations for GSEA (permutation-based), CAMERA (rank-based or parametric T-test), and methods assuming independence (GRSGE and SigPath)}
 	
 	We report the type I error simulation results for group $A_1$ and $A_2$ simulations. Figure
 	\ref{fig:typeIerror} shows the uniform quantile-quantile (QQ) plots of $p$-values for the
@@ -683,6 +704,8 @@
 	
 	\subsection{Power simulation}\label{subsection:power}		 
 	
+\textbf{	Messages: 1. Correlation structure among genes does impact power (Fig. 2). 2. If the genes are independent (not likely...), our method has better or similar power than independence-assuming methods. GSEA is more powerful when there is no background DE, but fails miserably otherwise. \\
+	What puzzles us: In Fig. 2, structure b (rho=0.1 for all genes) yields higher power than structure a (uncorrelated genes).}
 	
 	
 	We compare the power of \OurMethod~to those of the other \HowmanyTest~methods under different
@@ -776,6 +799,8 @@
 	Huntington's disease and those correlated with chromosome Y and Y bands in lymphoblastoid cells.  
 	
 	\subsubsection{Huntington's Disease Data}
+	\textbf{Summary: 1. Our method yields more signals than CAMERA and GSEA, but fewer than MRGSE. 2. P-values by our method are generally less conservative than those by CAMERA. For genes with small p-values, our method tends to be conservative than MRGSE, and less so than GSEA. 3. The top 30 gene sets identified by our method contain some plausible biologically functions linked to Huntington's disease.}\\
+	
 	We examined the Huntington's Disease (HD) RNA-Sequencing (RNA-Seq) data \citep{labadorf2015rna}  to
 	identify which gene sets are enriched among DE genes in HD. The mRNA expression profiles in human
 	prefrontal cortex were obtained from 20 Huntington's Disease samples and 49 neurologically normal
@@ -1131,7 +1156,27 @@
 	p_i(1-p_i)\mu_{\delta}^2$ as its $i$th diagonal element, and $\sigma_2^2 = \left(\frac{1}{n_1} +
 	\frac{1}{n_2}\right)$.
 	
-	
+	% latex table generated in R 3.2.3 by xtable 1.8-0 package
+	% Fri Apr 22 13:30:45 2016
+	\begin{table*}[ht]
+		\centering
+		\begin{tabular}{lrrrrrrr}
+			\hline
+			case & MEQLEA & MRSGE & SigPathway & CAMERA\_ModT & CAMERA\_Rank & GSEA & QuSAGE \\ 
+			\hline
+			a0PCT & 0.056 & 0.049 & 0.051 & 0.049 & 0.047 & 0.049 & 0.078 \\ 
+			a10PCT & 0.050 & 0.052 & 0.051 & 0.048 & 0.050 & 0.946 & 0.491 \\ 
+			b0PCT & 0.059 & 0.050 & 0.051 & 0.000 & 0.000 & 0.048 & 0.000 \\ 
+			b10PCT & 0.052 & 0.051 & 0.051 & 0.000 & 0.000 & 0.837 & 0.027 \\ 
+			c0PCT & 0.056 & 0.513 & 0.517 & 0.051 & 0.044 & 0.051 & 0.052 \\ 
+			c10PCT & 0.054 & 0.442 & 0.188 & 0.000 & 0.021 & 0.290 & 0.131 \\ 
+			d0PCT & 0.059 & 0.586 & 0.594 & 0.114 & 0.104 & 0.051 & 0.106 \\ 
+			d10PCT & 0.052 & 0.522 & 0.235 & 0.001 & 0.049 & 0.220 & 0.175 \\ 
+			e0PCT & 0.058 & 0.674 & 0.679 & 0.213 & 0.197 & 0.053 & 0.203 \\ 
+			e10PCT & 0.054 & 0.614 & 0.334 & 0.004 & 0.116 & 0.113 & 0.267 \\ 
+			\hline
+		\end{tabular}
+	\end{table*}
 	
 	
 	
