@@ -1,20 +1,20 @@
-setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Share/DataSet/") # the data set
+setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/RealData/HDresid/") # the data set
 
 
 ### merge the results from GSEA, CAMERA and OurMethod
 
 ## the HD data
-d1 <- read.csv("Results/RealData/HD/C2.MEQLEA.csv")
-d2 <- read.csv("Results/RealData/HD/C2.GSEA.csv")
-d3 <- read.csv("Results/RealData/HD/C2.CAMERA.csv")
-d4 <- read.csv("Results/RealData/HD/C2.MRSGE.csv")
+d1 <- read.csv("C2.MEQLEA.csv")
+d2 <- read.csv("C2.GSEA.csv")
+d3 <- read.csv("C2.CAMERA.csv")
+d4 <- read.csv("C2.MRSGE.csv")
 colnames(d1)[1] <- colnames(d2)[1]<- "set.name"
 d5 <- merge(merge(merge(d1, d2, by = "set.name"), d3, by = "set.name"), d4, by = "set.name")
 d6 <- data.frame(set.name = d5$set.name, set.size = d5$set_size, 
                  testsetCor = d5$testSetCor, backSetCor = d5$backSetCor, 
                  interCor = d5$interCor,  Camera = d5$PValue, GSEA = d5$NOM.p.val, 
                  MEQLEA = d5$p1, MRSGE = d5$p.MRSGE)
-write.csv(d6, "Results/RealData/HD/C2.combined.csv", row.names = F)
+write.csv(d6, "C2.combined.csv", row.names = F)
 
 
 ########  draw some conclusions ------------------------------------------------------
@@ -23,7 +23,7 @@ write.csv(d6, "Results/RealData/HD/C2.combined.csv", row.names = F)
 
 
 
-CombinedResults <- read.csv("Results/RealData/HD/C2.combined.csv", row.names = NULL)
+CombinedResults <- read.csv("C2.combined.csv", row.names = NULL)
 #CombinedResults <- read.csv("Gender/combined.2.csv")
 FigurePath <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Manuscript/Figures/"
 threshold <- 1e-6
@@ -33,7 +33,7 @@ ht <- 5
 library(ggplot2)
 
 
-plot1 <- ggplot(data = CombinedResults, aes((MEQLEA + threshold), (Camera + threshold))) + 
+plot1 <- ggplot(data = CombinedResults, aes(log(MEQLEA + threshold, 10), log(Camera + threshold, 10))) + 
   geom_point() + 
   geom_abline(intercept = 0, slope = 1, color= "black", size =1) +
   labs(x = "p values (MEQLEA)", y = "p values (CAMERA)") + 
@@ -44,7 +44,7 @@ plot1 <- ggplot(data = CombinedResults, aes((MEQLEA + threshold), (Camera + thre
 ggsave(paste(FigurePath,"/MEQLEA_Camera.eps", sep =""), plot1, 
        width = 8, height = 5)
 
-plot2 <- ggplot(data = CombinedResults, aes((MEQLEA + threshold), (GSEA + threshold))) + 
+plot2 <- ggplot(data = CombinedResults, aes(log(MEQLEA + threshold, 10), log(GSEA + threshold, 10))) + 
   geom_point() + 
   geom_abline(intercept = 0, slope = 1, color = "black", size = 1)  +
   labs(x = "p values (MEQLEA)", y = "p values (GSEA)") +
@@ -113,17 +113,17 @@ print(tab, include.rownames=FALSE)
 
 
 # the gender data
-d1 <- read.csv("Results/RealData/Gender/Gender.meqlea.csv")
-d2 <- read.csv("Results/RealData/Gender/Gender.CAMERA.csv")
-d3 <- read.csv("Results/RealData/Gender/Gender.GSEA.csv")
-d4 <- read.csv("Results/RealData/Gender/Gender.MRSGE.csv")
+d1 <- read.csv("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/RealData/Gender/Gender.meqlea.csv")
+d2 <- read.csv("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/RealData/Gender/Gender.CAMERA.csv")
+d3 <- read.csv("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/RealData/Gender/Gender.GSEA.csv")
+d4 <- read.csv("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/RealData/Gender/Gender.MRSGE.csv")
 colnames(d3)[1] <- colnames(d1)[1] <- "set.name"
 d5 <- merge(merge(merge(d1, d2, by = "set.name"), d3, by = "set.name"), d4, by = "set.name")
 d6 <- data.frame(set.name = d5$set.name, set.size = d5$set_size, 
                  testsetCor = d5$testSetCor, backSetCor = d5$backSetCor, 
                  interCor = d5$interCor,  Camera = d5$PValue, GSEA = d5$NOM.p.val, 
                  MEQLEA = d5$p1, MRSGE = d5$p.MRSGE)
-write.csv(d6, "Results/RealData/Gender/Gender.combined.csv", row.names = F)
+write.csv(d6, "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/RealData/Gender/Gender.combined.csv", row.names = F)
 
 
 
