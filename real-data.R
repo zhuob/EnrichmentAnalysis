@@ -1,11 +1,11 @@
-setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/RealData/HDresid/") # the data set
+setwd("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/RealData/HDresidCorrected/") # the data set
 
 
 ### merge the results from GSEA, CAMERA and OurMethod
 
 ## the HD data
 d1 <- read.csv("C2.MEQLEA.csv")
-d2 <- read.csv("C2.GSEA.csv")
+d2 <- read.csv("C2.GSEA.10000.csv")
 d3 <- read.csv("C2.CAMERA.csv")
 d4 <- read.csv("C2.MRSGE.csv")
 colnames(d1)[1] <- colnames(d2)[1]<- "set.name"
@@ -25,41 +25,46 @@ write.csv(d6, "C2.combined.csv", row.names = F)
 
 CombinedResults <- read.csv("C2.combined.csv", row.names = NULL)
 #CombinedResults <- read.csv("Gender/combined.2.csv")
-FigurePath <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Manuscript/Figures/"
-threshold <- 1e-6
+FigurePath <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/nar-latex2010/Figures/"
+threshold <- 1e-5
 wd <- 5
 ht <- 5
 
 library(ggplot2)
 
-
-plot1 <- ggplot(data = CombinedResults, aes(log(MEQLEA + threshold, 10), log(Camera + threshold, 10))) + 
+plot1 <- ggplot(data= CombinedResults, aes(-log(CombinedResults$MEQLEA + threshold, 10), -log(CombinedResults$Camera + threshold, 10))) + 
   geom_point() + 
   geom_abline(intercept = 0, slope = 1, color= "black", size =1) +
-  labs(x = "p values (MEQLEA)", y = "p values (CAMERA)") + 
+  labs(x = "-log10 p values (MEQLEA)", y = "-log10 p values (CAMERA)") + 
   theme(axis.text=element_text(size=20, face = "bold"), 
-        axis.title=element_text(size=20,face="bold")) +
-  scale_y_continuous(limits=c(0, 1))
+        axis.title=element_text(size=20,face="bold")) + 
+  scale_y_continuous(limits=c(0, 5)) + 
+  scale_x_continuous(limits=c(0, 6))
+
 
 ggsave(paste(FigurePath,"/MEQLEA_Camera.eps", sep =""), plot1, 
        width = 8, height = 5)
 
-plot2 <- ggplot(data = CombinedResults, aes(log(MEQLEA + threshold, 10), log(GSEA + threshold, 10))) + 
+plot2 <- ggplot(data = CombinedResults, aes(-log(MEQLEA + threshold, 10), -log(GSEA + threshold, 10))) + 
   geom_point() + 
   geom_abline(intercept = 0, slope = 1, color = "black", size = 1)  +
-  labs(x = "p values (MEQLEA)", y = "p values (GSEA)") +
+  labs(x = "-log10 p values (MEQLEA)", y = "-log10 p values (GSEA)") +
   theme(axis.text=element_text(size=20, face = "bold"), 
-        axis.title=element_text(size=20,face="bold"))
+        axis.title=element_text(size=20,face="bold")) + 
+  scale_y_continuous(limits=c(0, 5)) + 
+  scale_x_continuous(limits=c(0, 6))
 
 ggsave(paste(FigurePath,"/MEQLEA_GSEA.eps", sep =""), plot2, 
        width = 8, height = 5)
 
- plot3 <- ggplot(data = CombinedResults, aes((MEQLEA + threshold), (MRSGE + threshold))) + 
+ plot3 <- ggplot(data = CombinedResults, aes(-log(MEQLEA + threshold, 10), -log(MRSGE + threshold, 10))) + 
    geom_point() + 
    geom_abline(intercept = 0, slope = 1, color = "black", size = 1)  +
-   labs(x = "p values (MEQLEA)", y = "p values (MRGSE)") +
+   labs(x = "-log10 p values (MEQLEA)", y = "-log10 p values (MRGSE)") +
    theme(axis.text=element_text(size=20, face = "bold"), 
-         axis.title=element_text(size=20,face="bold"))
+         axis.title=element_text(size=20,face="bold")) + 
+   scale_y_continuous(limits=c(0, 5)) + 
+   scale_x_continuous(limits=c(0, 6))
  
  ggsave(paste(FigurePath,"/MEQLEA_MRGSE.eps", sep =""), plot3, 
         width = 8, height = 5)
@@ -88,26 +93,28 @@ topEnrichedSets <- CombinedResults[CombinedResults$FDR.OurMethod <= cut_off, ]
 # cut_off <- which(CombinedResults$FDR.OurMethod < 0.05)
 # topEnrichedSets <- CombinedResults[cut_off, ]
 enrichByGSEA <- which(topEnrichedSets$FDR.GSEA < 0.05)
-enrichByMRGSE <- which(topEnrichedSets$FDR.MRGSE <0.05)
+enrichByMRGSE <- which(topEnrichedSets$FDR.MRSGE <0.05)
 topEnrichedSets$indicator <- NA
 topEnrichedSets$indicator2 <- NA
 
 topEnrichedSets$indicator[enrichByGSEA] = T
 topEnrichedSets$indicator2[enrichByMRGSE] = T
 
-reportEnrichedSets <- topEnrichedSets[order(topEnrichedSets$MEQLEA), c(1:5,8, 10, 14, 15)] # sort the p values
+reportEnrichedSets <- topEnrichedSets[order(topEnrichedSets$MEQLEA), c(1:5,8, 10, 14)] # sort the p values
 # reportEnrichedSets$set.name <- tolower(reportEnrichedSets$set.name)
 reportEnrichedSets <- reportEnrichedSets[order(reportEnrichedSets$FDR.OurMethod, decreasing = F),]
 
  #reportEnrichedSets$set.name <- gsub("_", "\\1", reportEnrichedSets$set.name)
  library(xtable) 
  # the digits, negative number for scientific notation.
-tab <-  xtable(reportEnrichedSets, digits = c(0,0,0, 3, 3, 3, -1, -1, 0, 0))
+tab <-  xtable(reportEnrichedSets, digits = c(0,0,0, 3, 3, 3, -1, -1, 0))
 #align(tab) <- "lp{3in}p{0.5in}p{0.5in}p{0.5in}p{0.5in}p{0.5in}p{0.5in}p{0.5in}{0.5in}"
 print(tab, include.rownames=FALSE)
  
-
-
+x1 <- read.csv("/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/RealData/HD/C2.MEQLEA.csv", header=T)
+x2 <- x1[x1$p1_fdr<= sort(x1$p1_fdr)[30],]
+dim(x2)
+intersect(x2$set_name, topEnrichedSets$set.name)
 
 ###  the gender data ####---------------------------
 

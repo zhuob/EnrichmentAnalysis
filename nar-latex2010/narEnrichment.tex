@@ -76,7 +76,7 @@
 \newcommand{\CMT}{CAMERA-modt}
 \newcommand{\gent}{SigPathway}
 \newcommand{\gen}{geneSetTest}
-\newcommand{\genr}{MRSGE}
+\newcommand{\genr}{MRGSE}
 \newcommand{\thepapertobefinished}{Zhuo and Di, unpublished work}
 \newcommand{\HowmanySimu}{$10,000$}
 \newcommand{\FDR}{Benjamini-Hochberg}
@@ -120,9 +120,9 @@
 	% state, Zip or postal code, country
 	
 	\history{%
-		Received January 1, 2009;
-		Revised February 1, 2009;
-		Accepted March 1, 2009}
+		Received January 1, 20XX;
+		Revised February 1, 20XX;
+		Accepted March 1, 20XX}
 	
 	\maketitle
 	
@@ -187,10 +187,7 @@
 	Depending on the definition of the null hypothesis, there are two types of gene set test
 	\citep{goeman2007analyzing}: the \textit{self-contained} test and the \textit{competitive} test . A
 	self-contained test examines a set of genes by a fixed standard without reference to other genes in
-	the genome (see, for example, \cite{goeman2004global,goeman2005testing, tsai2009multivariate,
-		wu2010roast, huang2013gene}). A competitive test compares DE
-	genes in the test set to those not in the test set \citep{tian2005discovering, wu2012camera,
-		yaari2013quantitative}. Many methods, regardless of the type of test, perform a three-stage analysis
+	the genome \citep{goeman2004global,goeman2005testing,tsai2009multivariate,wu2010roast,huang2013gene}. A competitive test compares DE genes in the test set to those not in the test set \citep{tian2005discovering,wu2012camera,yaari2013quantitative}. Many methods, regardless of the type of test, perform a three-stage analysis
 	\citep{khatri2012ten}: on the first stage, a \textit{gene-level statistic} is calculated for each
 	gene in the whole genome to measure the association between the expression profiles and the
 	experimental design variables; such gene-level statistic includes, among others,
@@ -216,7 +213,7 @@
 	
 	\textbf{Independent gene set test} \\
 	Many competitive gene set tests rely on independence of gene-level statistics which further depends
-	on independence among gene expression profiles. Those tests are parametric or rank-based procedures
+	on independence among gene expression levels. Those tests are parametric or rank-based procedures
 	that assume the gene-level statistics to be independent and identically distributed, or gene
 	permutation procedures that generate the same approximate null for the set-level statistics. For
 	example, PAGE  \citep{kim2005page} conducts one-sample $z$-test by comparing the mean of gene-level
@@ -233,7 +230,7 @@
 	\textbf{Tests that account for inter-gene correlation}\\
 	A handful of methods have been proposed to account for inter-gene correlation in competitive gene
 	set test. One attempt is to evaluate the set-level statistic by permuting the biological sample
-	labels (see, for example, \cite{subramanian2005gene, efron2007testing}). Permuting sample labels
+	labels \citep{subramanian2005gene, efron2007testing}. Permuting sample labels
 	does not require an explicit understanding of the underlying correlation structure among genes and
 	thus protects the test against such correlation. Since permuting sample labels is computationally
 	inefficient, \cite{zhou2013empirical} proposed an analytic approximation to permutations for
@@ -249,13 +246,12 @@
 	extension to CAMERA, also used the same VIF to adjust for inter-gene correlations but includes the
 	VIF in a different set-level statistic. The VIF is a crucial factor and valid estimation of it
 	relies on the assumption that correlation between any two gene-level statistics are almost the same as
-	correlation between their corresponding expression profiles. This assumption has been demonstrated
-	(??? a better word???) by simulation \citep{barry2008statistical} for several gene-level statistics
+	correlation between their corresponding expression levels. \citet{barry2008statistical} showed by simulation
+	that this assumption holds for several gene-level statistics
 	(e.g., $t$-statistic, Wald-type statistic for regressing expression on censored time-to-event data
-	through a Cox proportional hazards model). However, this assumption holds only for the case where
-	all the hypotheses are under the null (i.e., no gene is DE), and the correlation among gene-level
-	statistics (e.g., $t$-statistics) can be badly estimated by sample correlation when a fraction of
-	genes are DE (\thepapertobefinished). 
+	through a Cox proportional hazards model). However, this assumption is likely to be problematic when a fraction of genes are 
+	truly DE, in which case the correlation among gene-level
+	statistics (e.g., $t$-statistics) can be badly estimated by sample correlation (\thepapertobefinished). 
 	% The CAMERA procedure thus may be too conservative for controling type I error in the presence of
 	%DE genes, as will be demonstrated in our simulation study. 
 	
@@ -267,7 +263,7 @@
 	\textbf{What do we propose?} \\
 	We propose a new framework for enrichment analysis that we will call Mixed Effects Quasi-Likelihood
 	Enrichment Analysis (\OurMethod). Our idea is motivated by the discrepancy between correlations
-	among expression profiles and those among gene-level statistics caused by the presence of DE genes.
+	among expression levels and those among gene-level statistics caused by the presence of DE genes.
 	To tackle such discrepancy, we use differences in mean as gene-level statistics for a two group
 	comparison experiment. We model the covariance of gene-level statistics by two variance components,
 	one attributable to correlations among samples after treatment effect removed, and the other
@@ -289,11 +285,11 @@
 	
 	\section{Methods}\label{section:methods}
 	We consider a gene expression (e.g. RNA-Seq or microarray) experiment, in which we compare the gene
-	expression profiles of samples from two groups: a treatment group with $n_1$ samples referred to as
+	expression levels of samples from two groups: a treatment group with $n_1$ samples referred to as
 	``cases" and a control group with $n_2$ samples referred to as ``controls" ($n_1,n_2\ge 3$). Suppose
-	the expression profiles of a set of $m$ genes are observed for each sample. An unknown subset of
+	the expression levels of a set of $m$ genes are observed for each sample. An unknown subset of
 	these genes are DE between cases and controls, with varying sign and magnitude of DE effects. The
-	genes are also allowed to have (negatively or positively) correlated expression profiles. In
+	genes are also allowed to have (negatively or positively) correlated expression levels. In
 	enrichment analysis, we are interested in a pre-defined set of genes, for example, from a known
 	pathway or given by a functional annotation term from a database such as KEGG
 	\citep{kanehisa2000kegg} or GO \citep{ashburner2000gene}. Our goal is to test whether this known
@@ -312,9 +308,9 @@
 	\subsubsection{A hierarchical model for the gene expression data}\label{subsection:YModel}
 	We will start by presenting the hierarchical model for the observed gene expression data, which
 	will incorporate the following features. 
-	Firstly, for a given sample, the expression profiles of different genes are allowed to be
+	Firstly, for a given sample, the expression levels of different genes are allowed to be
 	correlated. We further assume that the correlation structure is the same across samples. Secondly,
-	different genes may have different baseline expression profiles, where ``baseline" refers to the
+	different genes may have different baseline expression levels, where ``baseline" refers to the
 	average among controls. Thirdly, for any given gene, its mean expression profile in the treatment
 	group can be either higher, lower or the same compared to the control group, depending on whether
 	the gene is up-regulated, down-regulated, or not DE. For the genes that are differentially
@@ -461,7 +457,7 @@
 	
 	In practice, the inter-gene covariance matrix $\bm C$ is usually unknown. So we substitute $\bm C$
 	with $\hat {\bm C}$, the empirical covariance matrix of the expression data after controlling for
-	possible DE effects by centering the expression profiles of cases and controls separately around
+	possible DE effects by centering the expression levels of cases and controls separately around
 	zero. Formally, $\hat {\bm C}$ is given by $\hat
 	C_{jk}=\dfrac{1}{n}\sum_{i=1}^n(Y_{ij}-\alpha_{ij})(Y_{ik}-\alpha_{ik})$ where
 	$\alpha_{ij}=\sum_{i':X_{i'}=X_{i}}Y_{i'j}/\sum_{i'=1}^n1\{X_{i'}=X_{i}\}$ is the average expression
@@ -492,7 +488,7 @@
 	\subsubsection{Simulation Setup}\label{subsection:simulation}
 	In this section, we will specify the parameter setup for type I error and power simulations. %Since a
 	%standardization procedure is required by \OurMethod~for preprocessing data, we will simulate the
-	%standardized expression profiles for method illustration purpose. 
+	%standardized expression levels for method illustration purpose. 
 	
 	Let $\bm Y_{j}$ be a vector denoting the expression profile of sample $j$ and $\text{Cov}(Y_{i_1, j}, Y_{i_2, j})=\rho_{i_1,i_2}$ for any two genes $i_1$ and $i_2$. 
 	We assume that genes have the same correlation if they are from the same category (whether the test set or the background set): $\text{Cov}(Y_{i_1}, Y_{i_2})= \rho_1$ if
@@ -594,12 +590,12 @@
 	
 	We will compare \OurMethod~to~\HowmanyTest~previously proposed gene set tests: GSEA
 	\citep{subramanian2005gene}, two versions of the CAMERA procedure ---\CMT~and
-	\CMR~\citep{wu2012camera}, \gent~\citep{tian2005discovering}, MRSGE \citep{michaud2008integrative},
-	and QuSAGE \citep{yaari2013quantitative}. Except \gent~and MRSGE, all methods incorporate features intended for inter-gene correlation correction. GSEA calculates an enrichment score for the test set by examining the ranking (according to some metric, for example, signal-to-noise ratio) of its member genes, and determines the significance of the enrichment score by randomly permuting sample labels. \CMT~uses moderated $t$-statistics \citep{Smyth2004moderated} as gene-level statistics and estimate a VIF to account for inter-gene correlations in the set-level statistic, and \CMR~is the rank version of the \CMT.
+	\CMR~\citep{wu2012camera}, \gent~\citep{tian2005discovering}, \genr~\citep{michaud2008integrative},
+	and QuSAGE \citep{yaari2013quantitative}. Except \gent~and \genr, all methods incorporate features intended for inter-gene correlation correction. GSEA calculates an enrichment score for the test set by examining the ranking (according to some metric, for example, signal-to-noise ratio) of its member genes, and determines the significance of the enrichment score by randomly permuting sample labels. \CMT~uses moderated $t$-statistics \citep{Smyth2004moderated} as gene-level statistics and estimate a VIF to account for inter-gene correlations in the set-level statistic, and \CMR~is the rank version of the \CMT.
 	\genr~is rank-based method assuming inter-gene independence, which is recommended by \cite{tarca2013comparison} over a class of independence-assuming methods. \gent~is a parametric version of \genr, and in this simulation we use the moderated $t$-statistics as the gene level statistics. 
 %	 The \gent~is slightly different from its original version of \cite{tian2005discovering} in
 %	that it uses moderated $t$-statistics rather than the ordinary $t$-statistics as gene-level
-%	statistics. MRSGE is also known as the rank version of \gent~\citep{wu2012camera}. 
+%	statistics. \genr is also known as the rank version of \gent~\citep{wu2012camera}. 
 	QuSAGE generates
 	from $t$-test a probability density function (PDF) for each gene, combines the individual PDFs using
 	convolution, and quantifies enrichment of the test set with a complete PDF. 
@@ -631,7 +627,7 @@
 	%background set. QuSAGE generates from $t$-test a probability density function (PDF) for each gene,
 	%combines the individual PDFs using convolution, and quantifies gene-set activity with a complete
 	%PDF. The complete PDF can be used to compare a baseline value for self-contained gene set test, or
-	%to compare differences in expression profiles between test set and background set in competitive
+	%to compare differences in expression levels between test set and background set in competitive
 	%gene set test.  
 	
 	In terms of type I error control and power, we expect some of the six tests to have different
@@ -652,14 +648,13 @@
 	
 	\subsection{Type I error simulations}\label{subsection:typeIerror}
 	
-\textbf{	Messages: 1. Our method is well calibrated for all scenarios. 2. All of these others methods have poor calibration in at least some of the scenarios. 3. The way type I error is deviates for the nominal level aligns with our expectations for GSEA (permutation-based), CAMERA (rank-based or parametric T-test), and methods assuming independence (GRSGE and SigPath)}
+\textbf{Messages: 1. Our method is well calibrated for all scenarios. 2. All of these others methods have poor calibration in at least some of the scenarios. 3. The way type I error is deviates for the nominal level aligns with our expectations for GSEA (permutation-based), CAMERA (rank-based or parametric T-test), and methods assuming independence (GRSGE and SigPath)}
 	
 	We report the type I error simulation results for group $A_1$ and $A_2$ simulations. Figure
 	\ref{fig:typeIerror} shows the uniform quantile-quantile (QQ) plots of $p$-values for the
 	seven~approaches (\OurMethod, \gent, \genr, \CMT, \CMR, GSEA and QuSAGE) under each of the five
-	correlation structures. In Figure \ref{fig:typeIerror}, the left column shows the QQ plot of
-	$p$-values for group $A_1$ simulations, and the right for $A_2$ simulations. Each plot, from top to
-	bottom, corresponds accordingly to correlation structures (\aaCase)-(\fCase). 
+	correlation structures (each row of plots, from top to
+	bottom, corresponds accordingly to correlation structures (\aaCase)-(\fCase)). 
 	
 	In group $A_1$ simulations (the left column of Figure \ref{fig:typeIerror}),  GSEA and
 	\OurMethod~hold the size of type I error rate correctly for all five correlation structures, with
@@ -677,7 +672,7 @@
 	(\aaCase) where genes are simulated to be independent, but may be liberal in other situations
 	%(\CMT~is conservative in (\cCase)-(\fCase), while \CMR~is conservative in (\cCase) and (\aCase),
 	%but anti-conservative in (\fCase)).
-	\gent and \genr~have similar trends for $p$-values as they do, respectively, in group $A_1$
+	\gent~and \genr~have similar trends for $p$-values as they do, respectively, in group $A_1$
 	simulations. QuSAGE is conservative in (\cCase) but anti-conservative in the remaining four
 	correlation structures.
 	
@@ -685,8 +680,9 @@
 	\OurMethod~shows consistent accuracy for type I error control across all simulations, but the
 	accuracy of the other \HowmanyTest~methods may be affected by two factors: the inter-gene
 	correlation structures, and DE probability of each gene. \OurMethod~controls the size of type I
-	error well because it uses difference in mean as gene-level statistic, and the correlations among
-	gene-level statistics are fully reflected in sample correlation. GSEA evaluates the enrichment score
+	error well because it uses difference in mean as gene-level statistic, and the correlations between
+	such statistics are exactly the same as correlations between the samples (\thepapertobefinished).
+	 GSEA evaluates the enrichment score
 	of a test set by generating its null distribution from sample permutation. When there's no DE genes
 	such as in the case of group $A_1$ simulations, GSEA performs extremely well since permuting sample
 	labels won't change the underlying correlation structure. When DE genes exist, however, sample
@@ -701,12 +697,12 @@
 	background set.
 	
 	Different from the five methods mentioned above, \gent~and \genr~rely on independence between
-	genes. It's not surprising that gene permutation method, such as \gent~and \genr, controls type I
+	genes. It's not surprising that such gene permutation based methods control type I
 	error correctly when genes are ``equally-correlated": in (\aaCase) genes are simulated to be
 	independent, and in (\cCase) genes are simulated to have an exchangeable correlation structure.
 	However, both \gent~and \genr~fail to hold type I error size for the remaining three correlation
 	structures. These simulations show that even small inter-gene correlations will result in inflated
-	false discovery rate when the test does not account for inter-gene correlations.  
+	type I error rate when the test does not account for inter-gene correlations.  
 	
 	%We note that both methods perform better in group $A_2$ as compared to their counterpart in group
 	%$A_1$ simulation under each of (\aCase), (\eCase) and (\fCase) correlation structures. In group
@@ -745,8 +741,9 @@
 	What puzzles us: In Fig. 2, structure b (rho=0.1 for all genes) yields higher power than structure a (uncorrelated genes).}
 	
 	
-	We compare the power of \OurMethod~to those of the other \HowmanyTest~methods under different
-	correlation structures. Since some of these tests are not well calibrated at the sample size
+	We compare the power of \OurMethod~to those of the other \HowmanyTest~methods under correlation structure (\aaCase)
+	in which genes are simulated to be independent. 
+	Since some of these tests are not well calibrated at the sample size
 	considered (see results in Section \ref{subsection:typeIerror}), we report calibrated power. For
 	calibrated power, the critical value $c(\alpha)$ is chosen so that when the null hypothesis is true,
 	exactly $100\cdot\alpha\%$ of the resulting $p$-values are less than $c(\alpha)$; that is,
@@ -757,8 +754,8 @@
 	the null and the alternative.  
 	
 	Table \ref{table:power} summarizes the calibrated power for the two groups of simulations (i.e.,
-	$A_1$ and $A_2$ in Table \ref{table:simusetup}). We only report the results for correlation
-	structure (\aaCase) where genes are simulated to be independent. %(for power comparisons under the
+	$A_1$ and $A_2$ in Table \ref{table:simusetup}).% We only report the results for correlation
+	%structure (\aaCase) where genes are simulated to be independent. %(for power comparisons under the
 	%other four correlation structures, see online supplementary materials...). %In Table
 	%\ref{table:power} we set the DE size $\delta$ to be 0.05 and simulated data in the way that genes
 	%in the background set are not DE (i.e., $p_b=0$). 
@@ -768,7 +765,7 @@
 	%higher (i.e., the case of  $S_2$-$S_4$), both \CMT~and \OurMethod~have comparable calibrated power
 	%to that of GSEA and \gent. In group $A_2$, \gent~continues to achieve the highest calibrated power
 	%while GSEA shows virtually no power. \CMT~and \OurMethod~still have indistinguishable calibrated
-	%power and both are better than MRSGE and \CMR.
+	%power and both are better than \genr and \CMR.
 	In group $A_2$ simulations, GSEA shows virtually no power. \OurMethod, \CMT, and \gent~ have
 	indistinguishable calibrated power and are among the best.
 	%though it is slightly inferior to the best calibrated power from QuSAGE. 	
@@ -808,7 +805,7 @@
 	Figure \ref{fig:power} shows for \OurMethod, the variations in power according to different
 	correlation structures across four alternative scenarios $S_1$-$S_4$. For each correlation structure
 	and each alternative, we report the power (without recalibration) at a significance level of 0.05.
-	The top is the power for group $A_1$, and the bottom for group $A_2$.  The powers for case (\aaCase)
+	The top is the power for group $A_1$, and the bottom for group $A_2$.  The powers under correlation structures (\aaCase)
 	and (\cCase) are very similar, and are among the highest under each of the four alternatives. It's
 	not surprising because they correspond to the simplest correlation structures: gene expression
 	values in (\aaCase) are simulated to be independent and in (\cCase) are simulated to have the same
@@ -1062,7 +1059,7 @@
 	
 	(Summarize the results) We compared \OurMethod~to other existing approaches in both simulation
 	study and real data analysis. In the simulation study, we examined the performance of \OurMethod~and
-	other six method (\gent, MRSGE, \CMT, \CMR, GSEA and QuSAGE) in terms of type I error control and
+	other six method (\gent, \genr, \CMT, \CMR, GSEA and QuSAGE) in terms of type I error control and
 	power. We demonstrated that under a variety of correlation structures, \OurMethod~holds correct type
 	I error size and also maintains good power. In the real data analysis, \OurMethod~was able to
 	identify more gene sets as enriched, some of which, in the corresponding studies, are insightful yet
@@ -1085,7 +1082,7 @@
 	%choosing arbitrary threshold (e.g., $p$-value $< 0.05$), or problematic assumption of independence
 	%of genes \citep{goeman2007analyzing, wu2012camera}. The functional class scoring performs
 	%three-stage analysis \citep{khatri2012ten}: on the first stage, a \textit{gene-level statistic}
-	%that measures the association between the expression profiles and the experimental design variables
+	%that measures the association between the expression levels and the experimental design variables
 	%is calculated for each gene; such gene-level statistics include, among others, signal-to-noise
 	%ration \citep{subramanian2005gene}, moderated $t$ statistics \citep{Smyth2004moderated} and 
 	%$Z$-score \citep{efron2007correlation}. On the second stage, a \textit{set-level statistic} is
@@ -1108,107 +1105,108 @@
 	\subsubsection{Conflict of interest statement.} None declared.
 	
 	\newpage
-%	\bibliographystyle{nar}
+	
+		\section*{Appendix}\label{section:appendix}
+		
+		
+		\textbf{Standardization} 
+		Standardization for each gene: first, we obtain the residuals by subtracting off the means within
+		each treatment group;
+		\begin{equation}
+			r_{ijk} = y_{ijk} - \sum_{j=1}^{n_k}{y}_{ijk}/n_k;
+		\end{equation}
+		then we calculate the pooled standard deviation from the residuals,
+		\begin{equation}
+			s_i = \textit{std}(r_{ijk});
+		\end{equation}
+		next we get the standardized expression by dividing the original expression levels by the
+		standard deviation,
+		\begin{equation}
+			y^{\ast}_{ijk} = y_{ijk}/s_i
+		\end{equation}
+		We perform the standardization procedure to every gene in the data set. 
+		
+		
+		First $E(\Delta_i) = E(Z_i\delta_i) = E(Z_i)E(\delta_i) = p_i\mu_{\delta}$. Next note that  
+		\begin{equation}\notag
+			\begin{aligned}
+				\text{Var}(\Delta_i) & = E[(Z_i\delta_i)^2]- [E(Z_i\delta_i)]^2 \\
+				& = \text{Var}(Z_i)[E(\delta_i)]^2 + \left[(EZ_i)^2 + \text{Var}(Z_i)\right]\text{Var}(\delta_i) \\
+				& =p_i\sigma_{\delta}^2 + p_i(1-p_i)\mu_{\delta}^2
+			\end{aligned}
+		\end{equation}
+		
+		Let $T_i=\bar{Y}_{i,2}-\bar{Y}_{i,1}$ be the difference in mean expression levels between the
+		treatment group and the control group. We have 
+		\[E(T_i) = E(\bar{Y}_{i,2})-E(\bar{Y}_{i,1}) = E(\Delta_i) = E(Z_i\delta_i) = p_i\mu_{\delta}\]
+		The covariance between two genes $i_1$ and $i_2$ is given by (I HAVE CONCERNS HERE, IS IT VALID TO
+		ASSUME THAT DE EFFECTS ARE INDEPENDENT BETWEEN GENES?  WE SEE CO-EXPRESSION!! OR WE'VE ALREADY TAKEN
+		THAT INTO ACCOUNT BY CORRELATION BETWEEN GENES"), 
+		
+		\begin{equation}
+			\begin{aligned}
+				\text{Cov}(T_{i_1}, T_{i_2}) & = E\left[\text{Cov}(T_{i_1}, T_{i_2}|\Delta_{i_1}, \Delta_{i_2})
+				\right] \\
+				&  + \text{Cov}\left[E(T_{i_1}|\Delta_{i_1}), E(T_{i_2}|\Delta_{i_2})\right] \\
+				& = E\left(\frac{1}{n_1}\rho_{i_1,i_2} + \frac{1}{n_2}\rho_{i_1,i_2}\right) +
+				\text{Cov}(\Delta_{i_1}, \Delta_{i_2})\\
+				& = \left(\frac{1}{n_1} + \frac{1}{n_2}\right)\rho_{i_1,i_2}
+			\end{aligned}
+		\end{equation}
+		For gene $i$, the variance $\text{Var}(T_i) = \text{Var}(\bar{Y}_{i, 1}) + \text{Var}(\bar{Y}_{i,
+			2})$, with
+		\[\text{Var}(\bar{Y}_{i, 1}) = \frac{1}{n_1}\] 
+		\begin{equation}
+			\begin{aligned}
+				\text{Var}(\bar{Y}_{i, 2}) & = \frac{1}{n_2^2}\left[\sum_{j=1}^{n_2}\text{Var}(Y_{ij2}) +
+				2\sum_{1\leq j_1<j_2 \leq n_2} \text{Cov}(Y_{ij_12}, Y_{ij_22})\right] \\
+				& = \frac{1}{n_2}\text{Var}(Y_{ij2}) + \frac{n_2-1}{n_2} \text{Cov}(Y_{ij_12}, Y_{ij_22})\\
+				& = \frac{1}{n_2}\left[E\left(\text{Var}(Y_{ij2}|\Delta_i)\right) +
+				\text{Var}\left(E(Y_{ij2}|\Delta_i)\right)\right] \\ \text{~~~}
+				&+\frac{n_2-1}{n_2}E\left(\text{Cov}(Y_{ij_12}, Y_{ij_22}|\Delta_i)\right) \\
+				&+\frac{n_2-1}{n_2}\text{Cov}\left(E(Y_{ij_12}|\Delta_i), E(Y_{ij_22}|\Delta_i)\right) \\
+				& = \frac{1}{n_2} + \text{Var}(\Delta_i)
+			\end{aligned}
+		\end{equation}
+		Therefore $\text{Var}(T_i)  = \frac{1}{n_1} + \frac{1}{n_2} + \text{Var}(\Delta_i)$, and it follows
+		that
+		\begin{equation}\label{eq:tvar}
+			\text{Cov}(\bm T) =  \bm D + \sigma_2^2\bm C 
+		\end{equation}
+		where $\bm D$ is a diagonal matrix with $\text{Var}(\Delta_i) =p_i\sigma_{\delta}^2 +
+		p_i(1-p_i)\mu_{\delta}^2$ as its $i$th diagonal element, and $\sigma_2^2 = \left(\frac{1}{n_1} +
+		\frac{1}{n_2}\right)$.
+		
+		% latex table generated in R 3.2.3 by xtable 1.8-0 package
+		% Fri Apr 22 13:30:45 2016
+		\begin{table*}[ht]
+			\centering
+			\begin{tabular}{lrrrrrrr}
+				\toprule
+				case & \OurMethod & \genr & \gent & \CMT & \CMR & GSEA & QuSAGE \\ 
+				\colrule
+				a0PCT & 0.056 & 0.049 & 0.051 & 0.049 & 0.047 & 0.049 & 0.078 \\ 
+				a10PCT & 0.050 & 0.052 & 0.051 & 0.048 & 0.050 & 0.946 & 0.491 \\ 
+				b0PCT & 0.059 & 0.050 & 0.051 & 0.000 & 0.000 & 0.048 & 0.000 \\ 
+				b10PCT & 0.052 & 0.051 & 0.051 & 0.000 & 0.000 & 0.837 & 0.027 \\ 
+				c0PCT & 0.056 & 0.513 & 0.517 & 0.051 & 0.044 & 0.051 & 0.052 \\ 
+				c10PCT & 0.054 & 0.442 & 0.188 & 0.000 & 0.021 & 0.290 & 0.131 \\ 
+				d0PCT & 0.059 & 0.586 & 0.594 & 0.114 & 0.104 & 0.051 & 0.106 \\ 
+				d10PCT & 0.052 & 0.522 & 0.235 & 0.001 & 0.049 & 0.220 & 0.175 \\ 
+				e0PCT & 0.058 & 0.674 & 0.679 & 0.213 & 0.197 & 0.053 & 0.203 \\ 
+				e10PCT & 0.054 & 0.614 & 0.334 & 0.004 & 0.116 & 0.113 & 0.267 \\ 
+				\botrule
+			\end{tabular}
+		\end{table*}
+		
+	
+	\newpage
+	\bibliographystyle{apalike}
 	\bibliography{mybib}
 	
 	
 	
-	\newpage
-	\newpage
-	
-	\section*{Appendix}\label{section:appendix}
-	
-	
-	\textbf{Standardization} 
-	Standardization for each gene: first, we obtain the residuals by subtracting off the means within
-	each treatment group;
-	\begin{equation}
-	r_{ijk} = y_{ijk} - \sum_{j=1}^{n_k}{y}_{ijk}/n_k;
-	\end{equation}
-	then we calculate the pooled standard deviation from the residuals,
-	\begin{equation}
-	s_i = \textit{std}(r_{ijk});
-	\end{equation}
-	next we get the standardized expression by dividing the original expression profiles by the
-	standard deviation,
-	\begin{equation}
-	y^{\ast}_{ijk} = y_{ijk}/s_i
-	\end{equation}
-	We perform the standardization procedure to every gene in the data set. 
-	
-	
-	First $E(\Delta_i) = E(Z_i\delta_i) = E(Z_i)E(\delta_i) = p_i\mu_{\delta}$. Next note that  
-	\begin{equation}\notag
-	\begin{aligned}
-	\text{Var}(\Delta_i) & = E[(Z_i\delta_i)^2]- [E(Z_i\delta_i)]^2 \\
-	& = \text{Var}(Z_i)[E(\delta_i)]^2 + \left[(EZ_i)^2 + \text{Var}(Z_i)\right]\text{Var}(\delta_i) \\
-	& =p_i\sigma_{\delta}^2 + p_i(1-p_i)\mu_{\delta}^2
-	\end{aligned}
-	\end{equation}
-	
-	Let $T_i=\bar{Y}_{i,2}-\bar{Y}_{i,1}$ be the difference in mean expression profiles between the
-	treatment group and the control group. We have 
-	\[E(T_i) = E(\bar{Y}_{i,2})-E(\bar{Y}_{i,1}) = E(\Delta_i) = E(Z_i\delta_i) = p_i\mu_{\delta}\]
-	The covariance between two genes $i_1$ and $i_2$ is given by (I HAVE CONCERNS HERE, IS IT VALID TO
-	ASSUME THAT DE EFFECTS ARE INDEPENDENT BETWEEN GENES?  WE SEE CO-EXPRESSION!! OR WE'VE ALREADY TAKEN
-	THAT INTO ACCOUNT BY CORRELATION BETWEEN GENES"), 
-	
-	\begin{equation}
-	\begin{aligned}
-	\text{Cov}(T_{i_1}, T_{i_2}) & = E\left[\text{Cov}(T_{i_1}, T_{i_2}|\Delta_{i_1}, \Delta_{i_2})
-	\right] \\
-	&  + \text{Cov}\left[E(T_{i_1}|\Delta_{i_1}), E(T_{i_2}|\Delta_{i_2})\right] \\
-	& = E\left(\frac{1}{n_1}\rho_{i_1,i_2} + \frac{1}{n_2}\rho_{i_1,i_2}\right) +
-	\text{Cov}(\Delta_{i_1}, \Delta_{i_2})\\
-	& = \left(\frac{1}{n_1} + \frac{1}{n_2}\right)\rho_{i_1,i_2}
-	\end{aligned}
-	\end{equation}
-	For gene $i$, the variance $\text{Var}(T_i) = \text{Var}(\bar{Y}_{i, 1}) + \text{Var}(\bar{Y}_{i,
-		2})$, with
-	\[\text{Var}(\bar{Y}_{i, 1}) = \frac{1}{n_1}\] 
-	\begin{equation}
-	\begin{aligned}
-	\text{Var}(\bar{Y}_{i, 2}) & = \frac{1}{n_2^2}\left[\sum_{j=1}^{n_2}\text{Var}(Y_{ij2}) +
-	2\sum_{1\leq j_1<j_2 \leq n_2} \text{Cov}(Y_{ij_12}, Y_{ij_22})\right] \\
-	& = \frac{1}{n_2}\text{Var}(Y_{ij2}) + \frac{n_2-1}{n_2} \text{Cov}(Y_{ij_12}, Y_{ij_22})\\
-	& = \frac{1}{n_2}\left[E\left(\text{Var}(Y_{ij2}|\Delta_i)\right) +
-	\text{Var}\left(E(Y_{ij2}|\Delta_i)\right)\right] \\ \text{~~~}
-	&+\frac{n_2-1}{n_2}E\left(\text{Cov}(Y_{ij_12}, Y_{ij_22}|\Delta_i)\right) \\
-	&+\frac{n_2-1}{n_2}\text{Cov}\left(E(Y_{ij_12}|\Delta_i), E(Y_{ij_22}|\Delta_i)\right) \\
-	& = \frac{1}{n_2} + \text{Var}(\Delta_i)
-	\end{aligned}
-	\end{equation}
-	Therefore $\text{Var}(T_i)  = \frac{1}{n_1} + \frac{1}{n_2} + \text{Var}(\Delta_i)$, and it follows
-	that
-	\begin{equation}\label{eq:tvar}
-	\text{Cov}(\bm T) =  \bm D + \sigma_2^2\bm C 
-	\end{equation}
-	where $\bm D$ is a diagonal matrix with $\text{Var}(\Delta_i) =p_i\sigma_{\delta}^2 +
-	p_i(1-p_i)\mu_{\delta}^2$ as its $i$th diagonal element, and $\sigma_2^2 = \left(\frac{1}{n_1} +
-	\frac{1}{n_2}\right)$.
-	
-	% latex table generated in R 3.2.3 by xtable 1.8-0 package
-	% Fri Apr 22 13:30:45 2016
-	\begin{table*}[ht]
-		\centering
-		\begin{tabular}{lrrrrrrr}
-			 \toprule
-			case & MEQLEA & MRSGE & SigPathway & CAMERA ModT & CAMERA Rank & GSEA & QuSAGE \\ 
-			\colrule
-			a0PCT & 0.056 & 0.049 & 0.051 & 0.049 & 0.047 & 0.049 & 0.078 \\ 
-			a10PCT & 0.050 & 0.052 & 0.051 & 0.048 & 0.050 & 0.946 & 0.491 \\ 
-			b0PCT & 0.059 & 0.050 & 0.051 & 0.000 & 0.000 & 0.048 & 0.000 \\ 
-			b10PCT & 0.052 & 0.051 & 0.051 & 0.000 & 0.000 & 0.837 & 0.027 \\ 
-			c0PCT & 0.056 & 0.513 & 0.517 & 0.051 & 0.044 & 0.051 & 0.052 \\ 
-			c10PCT & 0.054 & 0.442 & 0.188 & 0.000 & 0.021 & 0.290 & 0.131 \\ 
-			d0PCT & 0.059 & 0.586 & 0.594 & 0.114 & 0.104 & 0.051 & 0.106 \\ 
-			d10PCT & 0.052 & 0.522 & 0.235 & 0.001 & 0.049 & 0.220 & 0.175 \\ 
-			e0PCT & 0.058 & 0.674 & 0.679 & 0.213 & 0.197 & 0.053 & 0.203 \\ 
-			e10PCT & 0.054 & 0.614 & 0.334 & 0.004 & 0.116 & 0.113 & 0.267 \\ 
-			\botrule
-		\end{tabular}
-	\end{table*}
-	
+
 	
 	
 \end{document}
