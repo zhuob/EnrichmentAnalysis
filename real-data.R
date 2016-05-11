@@ -29,6 +29,8 @@ FigurePath <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalys
 threshold <- 1e-5
 wd <- 5
 ht <- 5
+cor(CombinedResults[, 6:9])[3, ]
+cor(log(CombinedResults[, 6:9] + threshold))[3,]
 
 library(ggplot2)
 
@@ -39,7 +41,7 @@ plot1 <- ggplot(data= CombinedResults, aes(-log(CombinedResults$MEQLEA + thresho
   theme(axis.text=element_text(size=20, face = "bold"), 
         axis.title=element_text(size=20,face="bold")) + 
   scale_y_continuous(limits=c(0, 5)) + 
-  scale_x_continuous(limits=c(0, 6))
+  scale_x_continuous(limits=c(0, 5))
 
 
 ggsave(paste(FigurePath,"/MEQLEA_Camera.eps", sep =""), plot1, 
@@ -52,7 +54,7 @@ plot2 <- ggplot(data = CombinedResults, aes(-log(MEQLEA + threshold, 10), -log(G
   theme(axis.text=element_text(size=20, face = "bold"), 
         axis.title=element_text(size=20,face="bold")) + 
   scale_y_continuous(limits=c(0, 5)) + 
-  scale_x_continuous(limits=c(0, 6))
+  scale_x_continuous(limits=c(0, 5))
 
 ggsave(paste(FigurePath,"/MEQLEA_GSEA.eps", sep =""), plot2, 
        width = 8, height = 5)
@@ -64,7 +66,7 @@ ggsave(paste(FigurePath,"/MEQLEA_GSEA.eps", sep =""), plot2,
    theme(axis.text=element_text(size=20, face = "bold"), 
          axis.title=element_text(size=20,face="bold")) + 
    scale_y_continuous(limits=c(0, 5)) + 
-   scale_x_continuous(limits=c(0, 6))
+   scale_x_continuous(limits=c(0, 5))
  
  ggsave(paste(FigurePath,"/MEQLEA_MRGSE.eps", sep =""), plot3, 
         width = 8, height = 5)

@@ -754,7 +754,7 @@
 	the null and the alternative.  
 	
 	Table \ref{table:power} summarizes the calibrated power for the two groups of simulations (i.e.,
-	$A_1$ and $A_2$ in Table \ref{table:simusetup}).% We only report the results for correlation
+	$A_1$ and $A_2$ in Table \ref{table:simusetup}). % We only report the results for correlation
 	%structure (\aaCase) where genes are simulated to be independent. %(for power comparisons under the
 	%other four correlation structures, see online supplementary materials...). %In Table
 	%\ref{table:power} we set the DE size $\delta$ to be 0.05 and simulated data in the way that genes
@@ -827,7 +827,7 @@
 	\end{figure} 
 	
 	\subsection{Real Data}\label{section:realdata}
-	We applied \OurMethod~to two example data sets, and compared the enriched gene sets to those
+	We applied \OurMethod~to two example data sets, and compared the lists of enriched gene sets to those
 	obtained by other three methods (GSEA, \CMT~and \genr). %In both examples, \OurMethod~were able to
 	%identify more gene sets as enriched. 
 	Our results lend credence to previous studies in finding potential gene sets correlated with
@@ -840,18 +840,22 @@
 	identify which gene sets are enriched among DE genes in HD. The mRNA expression profiles in human
 	prefrontal cortex were obtained from 20 Huntington's Disease samples and 49 neurologically normal
 	controls.  Expression values were normalized and filtered as described in the methods section of
-	\cite{labadorf2015rna}.
-	The data, containing $28,087$ genes, is available as a series GSE64810 in the GEO database
-	(\url{http://www.ncbi.nlm.nih.gov/geo/}). We performed enrichment analysis using the MsigDB
+	\cite{labadorf2015rna}.	The data, containing $28,087$ genes, is available as a series GSE64810 in the GEO database (\url{http://www.ncbi.nlm.nih.gov/geo/}). 
+	For each gene, we adjusted for two covariates--age at death (DeathAge) and RNA Integrity Number (RIN), as also done by \citet{labadorf2015rna}. We followed their strategy of treating the two
+	covariates as categorical. Briefly, DeathAge was binned into intervals 0-45, 46-60, 61-75, 76-90 and
+	90+,  and RIN was dichotomized as  $>$ or $\leq$ 7. We regressed the normalized expression levels on 
+	AgeDeath and RIN and use the resulting residuals as the \textit{covariate-adjusted expression levels}.
+	
+	We performed enrichment analysis on the covariate-adjusted data using the MsigDB
 	\citep{subramanian2005gene} C2 Canonical Pathways gene sets (February 5, 2016, data last accessed).
 	The C2 Canonical Pathway gene sets have a collection of 1330 gene sets, with an average set size of
 	50 (the set sizes range from 3 to 1028, and the median is 29). Since the genes in C2 are named by
 	HGNC symbols and by ensembl IDs in the HD expression data set, we converted the ensembl IDs in the
 	expression data into HGNC symbols using \textit{BioMart}
 	(\url{http://uswest.ensembl.org/biomart/martview/}). We retained $26,941$ genes that have
-	corresponding HGNC symbols. For \OurMethod, we standardized the data in the way as described in
-	Section....
+	corresponding HGNC symbols. 
 	
+
 	
 	We applied four test procedures (\OurMethod, GSEA, \CMT~and \genr) to run enrichment analysis for
 	the entire C2 Canonical Pathway gene sets, and compared the four tests in terms of resulting
@@ -864,13 +868,16 @@
 	We note that since many pathways have overlapped genes, the \FDRabb~procedure should be appropriate
 	in our study.
 	
-	In Figure \ref{fig:HDdatap} we plot $p$-values for \OurMethod~against GSEA, \CMT~and \genr.
-	Compared to GSEA, smaller $p$-values (e.g., less than 0.1) resulting from \OurMethod~are more likely
-	to cluster---in contrast to larger $p$-values; that is, \OurMethod~produces more small $p$-values
-	than GSEA does while \OurMethod~and GSEA do not differ much in producing larger $p$-values. The
-	$p$-values of \CMT~are overwhelmingly larger than their counterparts of \OurMethod, even if
-	$p$-values of the two methods are highly correlated (Pearson's correlation is 0.96). This is
-	consistent with our earlier simulation (see results in Section \ref{subsection:typeIerror}) that
+	In Figure \ref{fig:HDdatap} we plot $\log 10~p$-values for \OurMethod~against GSEA, \CMT~and \genr.
+	%Compared to GSEA, smaller $p$-values (e.g., less than 0.1) resulting from \OurMethod~are more likely
+	%to cluster---in contrast to larger $p$-values; that is, \OurMethod~produces more small $p$-values
+	%than GSEA does while \OurMethod~and GSEA do not differ much in producing larger $p$-values. 
+	The $p$-values of \CMT~are overwhelmingly larger than their counterparts of GSEA or of \OurMethod, yet 
+	smaller than those of \genr, even 
+	if $p$-values between \OurMethod and other three methods are highly correlated (Pearson's correlation 
+	of $\log 10 ~p$ between \OurMethod~and GSEA, \CMT~and \genr~are 0.90, 0.96, and 0.87 respectively). 
+	(Can we say this? we don't know the truth) This is consistent with our earlier simulation (see results in simulation 
+	section\ref{subsection:typeIerror}) that
 	\CMT~could be too conservative. The $p$-values of \genr~are in general larger than the corresponding
 	$p$-values of \OurMethod. 
 	\begin{figure}[!ht]
@@ -897,7 +904,7 @@
 	of 0.05. GSEA found 3 enriched gene sets---2 of them were also among those 89 gene sets (the one
 	that was not significant according to \OurMethod~had a $p$-value of 0.013 and FDR 0.100).
 	\genr~found 387 gene sets which include all the 89 sets \OurMethod~identified, and \CMT~found none.
-	Originally, \cite{labadorf2015rna} used the same HD data set to conduct enrichment analysis using
+	Originally, \citet{labadorf2015rna} used the same HD data set to conduct enrichment analysis using
 	topGo \citep{alexa2010topgo}. They found that the enriched gene sets they identified show a clear
 	immune response and inflammation-related pattern, including ``REACTOME INNATE IMMUNE SYSTEM, PID IL4
 	2PATHWAY", and ``PID NFKAPPAB CANONICAL PATHWAY". These three gene sets rank 18,10 and 3 (by nominal
@@ -907,10 +914,10 @@
 	identified using \OurMethod. We also labeled the enriched gene sets from GSEA by ``$\ast$" in the
 	table. Many of our enriched gene sets have been shown to be closely related to HD pathogenesis. For
 	example, the top enriched gene set by \OurMethod,``PID SMAD2 3NUCLEAR PATHWAY", is responsible for
-	regulation of nuclear SMAD2/3 signaling. \cite{katsuno2010disrupted} showed that nuclear SMAD2/3 are
+	regulation of nuclear SMAD2/3 signaling. \citet{katsuno2010disrupted} showed that nuclear SMAD2/3 are
 	related to polyglutamine disease, which includes HD. The third enriched gene set, ``PID NFKAPPAB
 	CANONICAL PATHWAY", is a canonical NF-kappaB pathway, and its dysregulation causes HD immune
-	dysfunction \citep{trager2014htt}. Also, \cite{marcora2010huntington} found that reduced transport
+	dysfunction \citep{trager2014htt}. Also, \citet{marcora2010huntington} found that reduced transport
 	of NF-kappaB out of dendritic spines and its activity in neuronal nuclei may contribute to the
 	etiology of HD. 
 	%HD mutation can reduce the transport of NF-kappaB out of dendritic spines and its activity in
@@ -923,13 +930,13 @@
 	%For AKT signaling pathway, ``BIOCARTA AKT PATHWAY", \cite{humbert2002igf} demonstrated that
 	%huntingtin is a substrate of AKT and that phosphorylation of huntingtin by AKT is crucial to mediate
 	%the neuroprotective effects of IGF-1. They also showed that AKT is altered in Huntington’s disease patients.  
-	\cite{chiang2010modulation} demonstrated that the systematic downregulation of PPAR$\gamma$,
+	\citet{chiang2010modulation} demonstrated that the systematic downregulation of PPAR$\gamma$,
 	related to ``BIOCARTA PPARA PATHWAY", seems to play a critical role in the dysregulation of energy
 	homeostasis observed in HD, and that PPAR$\gamma$ is a potential therapeutic target for this
 	disease. %For ``REACTOME SIGNALING BY TGF BETA RECEPTOR COMPLEX",  \cite{kandasamy2011transforming}
 	%demonstrated that TGF-beta1 signaling appears to be a crucial modulator of neurogenesis in HD
 	%pathology and it can be a promising target for endogenous cell-based regenerative therapy. 
-	For ``PID P53 DOWNSTREAM PATHWAY", \cite{ghose2011regulation} showed the likely involvement of NFkB
+	For ``PID P53 DOWNSTREAM PATHWAY", \citet{ghose2011regulation} showed the likely involvement of NFkB
 	(RelA), p53 and miRNAs in the regulation of cell death in HD pathogenesis. 
 	
 	
@@ -1201,7 +1208,7 @@
 		
 	
 	\newpage
-	\bibliographystyle{apalike}
+%	\bibliographystyle{nar}
 	\bibliography{mybib}
 	
 	
