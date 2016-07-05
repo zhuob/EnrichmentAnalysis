@@ -37,7 +37,7 @@ library(ggplot2)
 plot1 <- ggplot(data= CombinedResults, aes(-log(CombinedResults$MEQLEA + threshold, 10), -log(CombinedResults$Camera + threshold, 10))) + 
   geom_point() + 
   geom_abline(intercept = 0, slope = 1, color= "black", size =1) +
-  labs(x = "-log10 p values (MEQLEA)", y = "-log10 p values (CAMERA)") + 
+  labs(x = "-log10 p values (MEACA)", y = "-log10 p values (CAMERA)") + 
   theme(axis.text=element_text(size=20, face = "bold"), 
         axis.title=element_text(size=20,face="bold")) + 
   scale_y_continuous(limits=c(0, 5)) + 
@@ -50,7 +50,7 @@ ggsave(paste(FigurePath,"/MEQLEA_Camera.eps", sep =""), plot1,
 plot2 <- ggplot(data = CombinedResults, aes(-log(MEQLEA + threshold, 10), -log(GSEA + threshold, 10))) + 
   geom_point() + 
   geom_abline(intercept = 0, slope = 1, color = "black", size = 1)  +
-  labs(x = "-log10 p values (MEQLEA)", y = "-log10 p values (GSEA)") +
+  labs(x = "-log10 p values (MEACA)", y = "-log10 p values (GSEA)") +
   theme(axis.text=element_text(size=20, face = "bold"), 
         axis.title=element_text(size=20,face="bold")) + 
   scale_y_continuous(limits=c(0, 5)) + 
@@ -62,7 +62,7 @@ ggsave(paste(FigurePath,"/MEQLEA_GSEA.eps", sep =""), plot2,
  plot3 <- ggplot(data = CombinedResults, aes(-log(MEQLEA + threshold, 10), -log(MRSGE + threshold, 10))) + 
    geom_point() + 
    geom_abline(intercept = 0, slope = 1, color = "black", size = 1)  +
-   labs(x = "-log10 p values (MEQLEA)", y = "-log10 p values (MRGSE)") +
+   labs(x = "-log10 p values (MEACA)", y = "-log10 p values (MRGSE)") +
    theme(axis.text=element_text(size=20, face = "bold"), 
          axis.title=element_text(size=20,face="bold")) + 
    scale_y_continuous(limits=c(0, 5)) + 

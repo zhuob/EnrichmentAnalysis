@@ -294,8 +294,8 @@
 	enrichment analysis, we are interested in a pre-defined set of genes, for example, from a known
 	pathway or given by a functional annotation term from a database such as KEGG
 	\citep{kanehisa2000kegg} or GO \citep{ashburner2000gene}. Our goal is to test whether this known
-	gene set is enriched with differential expression signals. Let $\bm G$ be an $m$-dimensional vector
-	defining the gene set of interest, where $G_i=1$ if and only if the $i^{th}$ gene is in the set and
+	gene set is enriched with differential expression signals. We will refer to the pre-defined gene set as ``the tested set," and genes not in this set ``the backgroup genes" which make up the ``the background set." Let $\bm G$ be an $m$-dimensional vector
+	defining the gene set of interest, where $G_i=1$ if and only if the $i^{th}$ gene is in the tested set and
 	$G_i=0$ otherwise. Our analysis will condition on $\bm G$ and test if $\bm G$ is associated with
 	enhanced DE effects. In the following sections, we will first construct a hierarchical model for the
 	gene expression data incorporating possible correlations among the $m$ genes, from which we will
@@ -458,7 +458,7 @@
 	that $\mbox{Var}_{0}(U_i)=\sigma_0^2+\sigma_1^2$ and use
 	$\hat\sigma_1^2=\sum_{i=1}^m(U_i-\overline{U})^2/(m-1)-\sigma_0^2$. Therefore, assuming $\bm C$ is
 	known, we can obtain the \OurMethod~test statistic given by
-	\begin{equation}
+	\begin{equation}\label{eq:T}
 	T = \dfrac{S^2}{\widehat{\mbox{Var}}_{0}(S|\bm G)} = \dfrac{[\bm G^T(\bm U-\hat\beta_0\bm
 		1_m)]^2}{\bm G^T(\bm I-\bm H)\hat{\bm\Sigma}(\bm I-\bm H)\bm G}, 
 	\end{equation}
@@ -478,13 +478,19 @@
 	which case $\bm C$ is a high-dimensional parameter that cannot be efficiently estimated by $\hat
 	{\bm C}$. Interestingly, however, we find that the the test statistic $T$ relies not on
 	the accurate estimation of the entire $\bm C$, but only on three parameters involving $\bm C$, which
-	can be much more realistically estimated by a moderate sample size. To demonstrate this, we
-	re-arrange the order of the rows and columns of $\bm C$ to allow the partition $\bm
-	C=\left[\begin{array}{cc}
-	\bm C_{11} & \bm C_{12} \\       \bm C_{12}^T & \bm C_{22} \\      \end{array}\right] $,
-	where $\bm C_{11}$ is the correlation matrix for genes in the test set, $\bm C_{22}$ is that for
-	gene in the background set (i.e., the complement of the test set), and $\bm C_{12}$ is the
-	cross-correlation matrix between the two classes of genes. (To be continued....)
+	can be much more realistically estimated by a moderate sample size. To demonstrate this, let $m_1$ and $m_2$ be the size of the tested set and the background set, respectively ($m_1+m_2=m$). Let $\rho_1$ be the average correlation between two genes in the tested set, $\rho_2$ be the average correlation between two background genes, and $\rho_3$ be the average correlation between a tested gene and a background gene. Then, $\rho_1$ is the mean of the off-diagonal entries in the $m_1\times m_1$ sub-matrix of $C$ made up of rows and columns corresponding to the test set, $\rho_2$ is that in the $m_2\times m_2$ sub-matrix corresponding to the background set, and $\rho_3$ is the mean of the entries in the $m_1\times m_2$ sub-matrix of $C$ corresponding to the cross-covariance between the tested and the background sets. It can be shown that the denominator of the \OurMethod~test statistic given in equation (\ref{eq:T}) can be written as
+		\begin{equation}\label{eq:T_denom}
+	 C_1\sigma_0^2[(1-\dfrac{1}{m_1})\rho_1 + (1-\dfrac{1}{m_2})\rho_2 - 2\rho_3 + (\dfrac{1}{m_1}+\dfrac{1}{m_2})]+C_2\sigma_1^2,
+	\end{equation}
+	where $C_1>0$ and $C_2>0$ are constants that do not depend on $\sigma_0^2,\sigma_1^2, \rho_1, \rho_2$ or $\rho_3$ (see details in Appendix ?).
+	
+	%To demonstrate this, we
+	%re-arrange the order of the rows and columns of $\bm C$ to allow the partition $\bm
+	%C=\left[\begin{array}{cc}
+	%\bm C_{11} & \bm C_{12} \\       \bm C_{12}^T & \bm C_{22} \\      \end{array}\right] $,
+	%where $\bm C_{11}$ is the correlation matrix for genes in the test set, $\bm C_{22}$ is that for
+	%gene in the background set (i.e., the complement of the test set), and $\bm C_{12}$ is the
+	%cross-correlation matrix between the two classes of genes. (To be continued....)
 	
 	
 	

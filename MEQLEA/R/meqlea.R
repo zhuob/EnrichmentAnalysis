@@ -163,7 +163,7 @@ meqlea_multiple <- function(expression_data, trt, geneset, standardize = T, minS
                         p1=pval,p1_fdr = p1_fdr, p2 = pval2, p2_fdr = p2_fdr)
   
   ## calculate the between gene correlations
-  btw <-bwt_gene_corr(expression_data, trt, geneset, minSetSize=2, standardize = T)   
+  btw <-btw_gene_corr(expression_data, trt, geneset, minSetSize=2, standardize = T)   
   result_comb <- merge(results, btw, by = "set_name")	
   
   return(result_comb)
@@ -316,7 +316,7 @@ estimate_sigma <- function(expression_data, trt){
 #' @examples
 
 
-bwt_gene_corr <- function(expression_data, trt, geneset, standardize = T, minSetSize = 5){
+btw_gene_corr <- function(expression_data, trt, geneset, standardize = T, minSetSize = 5){
   ## calculate the mean correlation for testset genes, the background set genes and the inter-set correlations
   
   # for GSE64810

@@ -27,7 +27,7 @@ for ( i in 1: length(cases)){
  
   dat1 <- read.table(d1, header=T)
   dat2 <- read.table(d2, header=T)
-  colnames(dat1) <- colnames(dat2) <- c("MEQLEA", "MEQLEA-N", "LM", "MRSGE", "SigPath", "CAMERA-modt",
+  colnames(dat1) <- colnames(dat2) <- c("MEACA", "MEACA-N", "LM", "MRSGE", "SigPath", "CAMERA-modt",
                                         "CAMERA-rank", "GSEA", "QuSAGE")
 
   fig.obj <- ArrangeTypeIerror(dat1[, showcol], dat2[,showcol],case = case1, legend=F)
@@ -59,8 +59,11 @@ for ( i in 1: length(cases)){
   }
 
 table_typeIerror <- table_typeIerror[complete.cases(table_typeIerror), ]
-table_typeIerror
-print(xtable(table_typeIerror,digits =c(0, 0, rep(3, 7))), include.rownames =F)
+table_typeIerror$struct <- rep(c("(a)", "(b)","(c)", "(d)", "(e)"), each = 2)
+table_typeIerror$group <- rep(c("A1", "A2"), 5)
+table_typeIerror <- table_typeIerror[order(table_typeIerror[, 10], table_typeIerror[, 9]),]
+table_typeIerror <- table_typeIerror[, c(10, 9, 2:8)]
+print(xtable(table_typeIerror,digits =c(0, 0, rep(3, 8))), include.rownames =F)
 
 test_sig <- function(prop, alpha, n){
   sd <- sqrt((alpha)*(1-alpha)/n)
