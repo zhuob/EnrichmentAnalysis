@@ -1,8 +1,9 @@
 Package: meaca
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Title: Mixed-effects Enrichment Analysis with Correlation Adjusted.
+Version: 0.0.0.0009
+Author: Bin Zhuo
+Maintainer: Bin Zhuo <zhuob@oregonstate.edu>, Duo Jiang <jiangd@stat.oregonstate.edu>.
+Description: This package produces all results needed in the paper.
 Depends:
     R (>= 3.2.1)
 License: What license is it under?
