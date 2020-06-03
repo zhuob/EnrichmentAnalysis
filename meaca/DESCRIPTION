@@ -1,11 +1,17 @@
 Package: meaca
-Title: Mixed-effects Enrichment Analysis with Correlation Adjusted.
-Version: 0.0.0.0009
+Type: Package
+Title: Mixed-effects Enrichment Analysis with Correlation Adjusted
+Version: 0.1.1
 Author: Bin Zhuo
-Maintainer: Bin Zhuo <zhuob@oregonstate.edu>, Duo Jiang <jiangd@stat.oregonstate.edu>.
-Description: This package produces all results needed in the paper.
+Maintainer: Bin Zhuo <rickyb.zh@gmail.com>, Duo Jiang
+    <jiangd@stat.oregonstate.edu>
+Description: This package produces all results needed in the paper
+    Use four spaces when indenting paragraphs within the Description.
 Depends:
     R (>= 3.2.1)
-License: What license is it under?
+License: MIT + file LICENSE
+imports: dplyr,
+    ggplot2
 LazyData: true
+Encoding: UTF-8
 RoxygenNote: 5.0.1
