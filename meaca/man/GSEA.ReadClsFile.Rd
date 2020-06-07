@@ -15,11 +15,13 @@ GSEA.ReadClsFile(file = "NULL")
 a list 
 \item{total} { number of gene sets contained.}
 \item{size} {a numerical vector containing the size of each gene set.}
-\item{gene_set} { a list. The first element is the set name. From the third element each containing members of the gene set.}
+\item{gene_set} { a list. The first element is the set name. From the third
+element each containing members of the gene set.}
 }
 \description{
 readling Cls file (from GSEA.1.0.R)
 
 read the gene sets of the MsigDB format.
 }
+\keyword{internal}
 

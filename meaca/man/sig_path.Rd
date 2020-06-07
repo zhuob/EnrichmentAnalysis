@@ -15,4 +15,5 @@ p   the p-values.
 \description{
 implement the Sigpathay.
 }
+\keyword{internal}
 

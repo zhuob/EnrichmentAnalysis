@@ -919,6 +919,7 @@ GSEA.Gct2Frame <- function(filename = "NULL") {
 
 
 #' readling sample labels (from GSEA.1.0.R)
+#' @keywords internal
 #'
 #' @title readling sample lables. 
 #' @export
@@ -970,6 +971,7 @@ GSEA.Gct2Frame2 <- function(filename = "NULL") {
 
 #' readling Cls file (from GSEA.1.0.R)
 #'
+#' @keywords internal
 #' @title readling Cls files. 
 #' @export
 #' 
@@ -1136,6 +1138,7 @@ GSEA.NormalizeCols <- function(V) {
 
 
 #' GSEA for testing multiple gene sets.
+#' @keywords internal
 #'
 #' @title GSEA. 
 #' @export

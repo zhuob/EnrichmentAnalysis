@@ -11,14 +11,18 @@ Camera_multiple(expression_data, trt, geneset, use.rank = F)
 
 \item{trt}{the treatment lables for each column of \code{expression_data}}
 
-\item{geneset}{a list containing all the gene sets to be tested for enrichment status}
+\item{geneset}{a list containing all the gene sets to be tested for
+enrichment status}
 
-\item{use.rank}{If \code{TRUE} then it corresponds to "Camara-Rank", otherwise "Camara"}
+\item{use.rank}{If \code{TRUE} then it corresponds to "Camara-Rank",
+otherwise "Camara"}
 }
 \value{
-a list that has exactly the same elements as that in \code{camara} of "limma" package (see user manual for more details)
+a list that has exactly the same elements as that in \code{camara} of
+  "limma" package (see user manual for more details)
 }
 \description{
 multiple gene set enrichemnt analysis
 }
+\keyword{internal}
 

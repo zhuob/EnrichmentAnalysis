@@ -16,9 +16,11 @@ meaca_multiple(expression_data, trt, geneset, standardize = T,
 
 \item{standardize}{whether the data should be standaridzed.}
 
-\item{minSetSize}{the minimum number of genes contained for a gene set to be considered.}
+\item{minSetSize}{the minimum number of genes contained for a gene set to be
+considered.}
 
-\item{fdr_method}{which method is ued to adjust the p values. see arguments in function \code{p.adjust}.}
+\item{fdr_method}{which method is ued to adjust the p values. see arguments
+in function \code{p.adjust}.}
 }
 \value{
 a data frame

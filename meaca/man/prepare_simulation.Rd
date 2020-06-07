@@ -4,26 +4,26 @@
 \alias{prepare_simulation}
 \title{Simulate expression data}
 \usage{
-prepare_simulation(num_gene, prop, delta, case, rho)
+prepare_simulation(rho1, rho2, rho3, ...)
 }
 \arguments{
-\item{num_gene}{number of genes to be simulated.}
+\item{rho1}{a scalar, correlation between two test genes (i.e., \eqn{\rho_1} in the paper)}
 
-\item{prop}{a vector of length 2, corresponding to $p_t$ and $p_b$.}
+\item{rho2}{a scalar, correlation between two background genes (i.e., \eqn{\rho_2} in the paper)}
 
-\item{delta}{a vector of length num_gene, representing DE effect for each gene}
+\item{rho3}{correlation between a test gene and a background gene (i.e., \eqn{\rho_3} in the paper)}
 
-\item{case}{which correlation structure to simulate data from (see simulation setup in the paper)}
-
-\item{rho}{a vector of length 3. Corresponds \eqn{\rho_1}, \eqn{\rho_2} and \eqn{\rho_3}.}
+\item{...}{other parameters inherited from \code{prepare_go_term}}
 }
 \value{
 a list 
-\item{go_term}{ DE indicator for each simulated gene. 1 is for genes in the test set, and 0 othwerwise}
+\item{go_term}{ DE indicator for each simulated gene. 1 is for genes in the
+test set, and 0 othwerwise}
 \item{delta}{DE effect for each simulated gene}
 \item{sigma}{the true correlation, used to simulate  the expression data}
 }
 \description{
 Prepare simulation parameters.
 }
+\keyword{internal}
 

@@ -12,11 +12,12 @@ btw_gene_corr(expression_data, trt, geneset, standardize = T,
 
 \item{trt}{treatment labels}
 
-\item{geneset}{an object from \code{read_gene_set()}}
+\item{geneset}{an object from \code{read_gene_set}}
 
-\item{standardize}{whether the data should be standaridzed}
+\item{standardize}{`TRUE` or `FALSE`, whether the data should be standaridzed}
 
-\item{minSetSize}{the minimum number of genes contained for a gene set to be considered.}
+\item{minSetSize}{the minimum number of genes contained for a gene set to be
+considered.}
 }
 \value{
 a list 

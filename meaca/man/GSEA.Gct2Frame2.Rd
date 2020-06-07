@@ -11,9 +11,17 @@ GSEA.Gct2Frame2(filename = "NULL")
 \arguments{
 \item{file}{the expression data files.}
 }
+\value{
+a list
+\item{total} { number of gene sets contained.}
+\item{size} {a numerical vector containing the size of each gene set.}
+\item{gene_set} { a list. The first element is the set name. From the third
+element each containing members of the gene set.}
+}
 \description{
 readling sample labels (from GSEA.1.0.R)
 
 read the expression data of Gct format.
 }
+\keyword{internal}
 

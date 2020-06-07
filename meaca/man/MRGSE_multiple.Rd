@@ -21,4 +21,5 @@ a matrix
 \description{
 multiple gene set enrichemnt analysis
 }
+\keyword{internal}
 

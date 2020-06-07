@@ -18,4 +18,5 @@ GSEA(input.ds, input.cls, gene.ann = "", gs.db, gs.ann = "",
 \description{
 GSEA for testing multiple gene sets.
 }
+\keyword{internal}
 

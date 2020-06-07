@@ -4,22 +4,26 @@
 \alias{prepare_go_term}
 \title{Simulate gene labels.}
 \usage{
-prepare_go_term(num_gene, prop, delta)
+prepare_go_term(n_gene, n_test, prop, de_mu, de_sd, seed = 123)
 }
 \arguments{
-\item{num_gene}{a vector of length 2, total number of genes to be simulated and number of genes in the test set.}
+\item{n_gene}{total number of genes to be simulated}
 
-\item{prop}{a vector of length 2, proportion of DE genes within go term and outside go_term, corresponding to $p_t$ and $p_b$.}
+\item{n_test}{number of genes in the test set.}
 
-\item{delta}{a vector of length num_gene, representing DE effect for each gene}
+\item{prop}{a vector of length 2, proportion of DE genes within go term and
+outside go_term, corresponding to $p_t$ and $p_b$.}
+
+\item{de_mu, de_sd}{if the gene is DE, delta ~ N(de_mu, de_sd)}
 }
 \value{
-a list
-\item{go_term}{ DE indicator for each simulated gene. 1 is for genes in the test set, and 0 othwerwise.}
+a tibble with two columns
+\item{go_term}{ DE indicator for each simulated gene. 1 is for genes in the
+test set, and 0 othwerwise.}
 \item{delta}{DE effect for each simulated gene.}
-\item{n_gene}{ number of genes to be simulated.}
 }
 \description{
 Simulate test set gene labels
 }
+\keyword{internal}
 

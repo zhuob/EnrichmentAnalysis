@@ -17,12 +17,19 @@ meaca_single(expression_data, trt, go_term, standardize = F)
 }
 \value{
 a list 
-\item{set_name}{The name of the gene set}
-\item{testSetCor}{Average correlation for genes in the test set}
-\item{interCor}{Average correlation between genes in the test set and those not in the test set}
-\item{backSetCor}{Average correlations for genes not in the test set.}
+\item{stat}{the test statistic}
+\item{p1}{chi-square test p value}
+\item{status}{"up" or "down", the direction of differential expression}
+\item{p2}{two-sided test p-value using normal distribution}
 }
 \description{
 meaca for single gene set test.
+}
+\examples{
+t1 <- simulate_expression_data(size = 50, n_gene = 500, n_test = 100, 
+                               prop = c(0.1, 0.1), de_mu = 2, de_sd = 1, 
+                               rho1 = 0.1, rho2 = 0.05, rho3 = -0.05, 
+                               data_gen_method = "chol", seed = 123)
+meaca_single(t1$data, trt = t1$trt, go_term = t1$go_term)
 }
 

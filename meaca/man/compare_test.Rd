@@ -18,4 +18,5 @@ a matrix of p values
 \description{
 Compare meaca to other existing methods.
 }
+\keyword{internal}
 

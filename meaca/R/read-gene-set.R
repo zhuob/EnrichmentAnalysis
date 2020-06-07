@@ -2,14 +2,15 @@
 #' read the gene sets of the MsigDB format.
 #'
 #' @title Convert gene sets to lists
-#' @param msigdb gene set ensemble downloaded from broad institute.
+#' @param msigdb gene set ensemble downloaded from broad institute see
+#'   \url{https://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html}.
 #' @return a list 
 #' \item{total}{ number of gene sets contained.}
 #' \item{size}{a numerical vector containing the size of each gene set.}
 #' \item{gene_set}{ a list. The first element is the set name. From the third
 #' element each containing members of the gene set.}
 #' @export
-#' @examples
+# #' @examples
 
 
 read_gene_set <- function(msigdb){
@@ -32,6 +33,7 @@ read_gene_set <- function(msigdb){
 
 #' read the gene sets of the MsigDB format.
 #'
+#' @keywords internal
 #' @title Read Cls files for treatment labels.
 #' @param msigdb gene set ensemble downloaded from broad institute.
 #' @return a list 
@@ -39,7 +41,7 @@ read_gene_set <- function(msigdb){
 #' \item{size} {a numerical vector containing the size of each gene set.}
 #' \item{gene_set} { a list. The first element is the set name. From the third
 #' element each containing members of the gene set.}
-#' @export
+# #' @export
 # #' @examples
 
 
@@ -85,14 +87,15 @@ GSEA.ReadClsFile <- function(file = "NULL") {
 #' read the expression data of Gct format.
 #'
 #' @title Convert gene sets to lists
+#' @keywords internal
 #' @param file  the expression data files. 
-# #' @return a list 
-# #' \item{total} { number of gene sets contained.}
-# #' \item{size} {a numerical vector containing the size of each gene set.}
-# #' \item{gene_set} { a list. The first element is the set name. From the third
-# element each containing members of the gene set.}
+#' @return a list
+#' \item{total} { number of gene sets contained.}
+#' \item{size} {a numerical vector containing the size of each gene set.}
+#' \item{gene_set} { a list. The first element is the set name. From the third
+#' element each containing members of the gene set.}
 #' @export
-# #' @examples
+#' @examples
 
 
 
