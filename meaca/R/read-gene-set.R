@@ -6,14 +6,16 @@
 #' @return a list 
 #' \item{total}{ number of gene sets contained.}
 #' \item{size}{a numerical vector containing the size of each gene set.}
-#' \item{gene_set}{ a list. The first element is the set name. From the third element each containing members of the gene set.}
+#' \item{gene_set}{ a list. The first element is the set name. From the third
+#' element each containing members of the gene set.}
 #' @export
 #' @examples
 
 
 read_gene_set <- function(msigdb){
   ## read the gene sets from MsigDB   
-  gene_set <- readLines(msigdb)                                        # the gene sets
+  # the gene sets
+  gene_set <- readLines(msigdb)                     
   temp <- gene_set
   gs.line <- list()
   
@@ -35,14 +37,16 @@ read_gene_set <- function(msigdb){
 #' @return a list 
 #' \item{total} { number of gene sets contained.}
 #' \item{size} {a numerical vector containing the size of each gene set.}
-#' \item{gene_set} { a list. The first element is the set name. From the third element each containing members of the gene set.}
+#' \item{gene_set} { a list. The first element is the set name. From the third
+#' element each containing members of the gene set.}
 #' @export
 # #' @examples
 
 
 GSEA.ReadClsFile <- function(file = "NULL") { 
   #
-  # Reads a class vector CLS file and defines phenotype and class labels vectors for the samples in a gene expression file (RES or GCT format)
+  # Reads a class vector CLS file and defines phenotype and class labels vectors
+  # for the samples in a gene expression file (RES or GCT format)
   #
   # The Broad Institute
   # SOFTWARE COPYRIGHT NOTICE AGREEMENT
@@ -85,7 +89,8 @@ GSEA.ReadClsFile <- function(file = "NULL") {
 # #' @return a list 
 # #' \item{total} { number of gene sets contained.}
 # #' \item{size} {a numerical vector containing the size of each gene set.}
-# #' \item{gene_set} { a list. The first element is the set name. From the third element each containing members of the gene set.}
+# #' \item{gene_set} { a list. The first element is the set name. From the third
+# element each containing members of the gene set.}
 #' @export
 # #' @examples
 

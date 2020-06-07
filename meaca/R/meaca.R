@@ -1,7 +1,3 @@
-
-
-
-
 #' meaca for single gene set test.
 #'
 #' @title meaca-single. 
@@ -58,11 +54,6 @@ meaca_single <- function(expression_data, trt, go_term, standardize=F){
 }
 
 
-
-
-
-
-
 #' meaca for testing multiple gene sets.
 #'
 #' @title meaca-multiple. 
@@ -70,19 +61,18 @@ meaca_single <- function(expression_data, trt, go_term, standardize=F){
 #' @param trt  treatment labels.
 #' @param geneset  gene sets to be tested, an object from \code{read_gene_set}.
 #' @param standardize  whether the data should be standaridzed.
-#' @param minSetSize  the minimum number of genes contained for a gene set to be considered.
-#' @param fdr_method  which method is ued to adjust the p values. see arguments in function \code{p.adjust}.
+#' @param minSetSize  the minimum number of genes contained for a gene set to be
+#'   considered.
+#' @param fdr_method  which method is ued to adjust the p values. see arguments
+#'   in function \code{p.adjust}.
 #' @return a data frame
 #' @export
 #' @examples
 
-
-
-
-
-meaca_multiple <- function(expression_data, trt, geneset, standardize = T, minSetSize = 5, fdr_method = "BH"){
-  ## conduct enrichment analysis for a battery of gene sets and return the raw p values 
-  ## as well as adjusted p values
+meaca_multiple <- function(expression_data, trt, geneset, standardize = T, 
+                           minSetSize = 5, fdr_method = "BH"){
+  ## conduct enrichment analysis for a battery of gene sets and return the raw p
+  ## values as well as adjusted p values
   ##  input: 
   ##      microarray: the raw expression matrix
   ##             trt: the treatment lables
@@ -138,7 +128,9 @@ meaca_multiple <- function(expression_data, trt, geneset, standardize = T, minSe
     
     ###  March 16:  one sided test modification
     t_temp <- mean(t_val[go_term == 1]) - mean(t_val[go_term ==0])
-    if(!is.finite(t_temp)) {    # it's possible that there's no single gene matched between the data and the test set
+    if(!is.finite(t_temp)) {    
+      # it's possible that there's no single gene matched between the data and
+      # the test set
       pval2[i] <- NA
       status[i] <- "Unknown"
     }  else {
@@ -170,9 +162,6 @@ meaca_multiple <- function(expression_data, trt, geneset, standardize = T, minSe
 }
 
 
-
-
-
 #' Standardize the expression data.
 #'
 #' @title standardize expression data, with method described in the paper. 
@@ -183,8 +172,9 @@ meaca_multiple <- function(expression_data, trt, geneset, standardize = T, minSe
 
 
 standardize_expression_data <- function(expression_data, trt){
-  ## standardize the expression data, to make it have variance 1 in each of treatmeent/control group
-  #  first remove the means within each group to get sd, and then original data by sd
+  ## standardize the expression data, to make it have variance 1 in each of
+  #treatmeent/control group first remove the means within each group to get sd,
+  #and then original data by sd
   
   group1 <- trt == 1
   group2 <- trt == 0
@@ -201,7 +191,8 @@ standardize_expression_data <- function(expression_data, trt){
   n1 <- length(group1)
   n2 <- length(group2)
   
-  poolsd <-  sqrt( ( s1^2*(n1-1) + s2^2*(n2-1) ) / (n1 + n2-2) )  # calculate the pooled standard deviation  
+  # calculate the pooled standard deviation  
+  poolsd <-  sqrt( ( s1^2*(n1-1) + s2^2*(n2-1) ) / (n1 + n2-2) )  
   poolsd[poolsd ==0] <- 1           ### if the sd is 0, replace with 1. 
   
   new_data <- data.frame(matrix(NA, nrow(expression_data), ncol(expression_data)))
@@ -213,9 +204,6 @@ standardize_expression_data <- function(expression_data, trt){
   
   return(new_data)
 }
-
-
-
 
 
 trt_mean <- function(data, trt){
@@ -256,8 +244,10 @@ trt_mean <- function(data, trt){
 estimate_sigma <- function(expression_data, trt){
   
   expression_data <- as.matrix(expression_data)
-  group_mean <- as.matrix(trt_mean(expression_data, trt))     # calculate correlation matrix
-  resid_mat <- expression_data - group_mean                     # the trt effects are removed from matrix
+  # calculate correlation matrix
+  group_mean <- as.matrix(trt_mean(expression_data, trt))     
+  # the trt effects are removed from matrix
+  resid_mat <- expression_data - group_mean                     
   # samp_rho <- cov(t(resid_mat))
   samp_rho <- cor(t(resid_mat))      # because of the way we do standardization           
   
@@ -275,10 +265,12 @@ estimate_sigma <- function(expression_data, trt){
   size <- length(trt)
   idex1 <- which(trt == factors[1])[1]
   idex2 <- which(trt == factors[2])[1]
-  t_val <- group_mean[, idex2] - group_mean[, idex1]            # control - treatment
+  # control - treatment
+  t_val <- group_mean[, idex2] - group_mean[, idex1]            
   
   sigma0 <- var(t_val) - sigma2
-  sigma0 <- max(0, sigma0)                                     # in case of negative sigma0
+  # in case of negative sigma0
+  sigma0 <- max(0, sigma0)                                     
   sigma <-  sigma0*diag(ndim) + sigma2*samp_rho
   
   
@@ -295,7 +287,8 @@ estimate_sigma <- function(expression_data, trt){
 #' @param trt  treatment labels
 #' @param geneset  an object from \code{read_gene_set()}
 #' @param standardize  whether the data should be standaridzed
-#' @param minSetSize the minimum number of genes contained for a gene set to be considered.
+#' @param minSetSize the minimum number of genes contained for a gene set to be
+#'   considered.
 #' @return a list 
 #' \item{set_name}{The name of the gene set}
 #' \item{testSetCor}{Average correlation for genes in the test set}
@@ -306,7 +299,8 @@ estimate_sigma <- function(expression_data, trt){
 
 
 btw_gene_corr <- function(expression_data, trt, geneset, standardize = T, minSetSize = 5){
-  ## calculate the mean correlation for testset genes, the background set genes and the inter-set correlations
+  ## calculate the mean correlation for testset genes, the background set genes
+  ## and the inter-set correlations
   
   # for GSE64810
   # 	microarray <- expression_data[, -(1:2)]
@@ -321,9 +315,11 @@ btw_gene_corr <- function(expression_data, trt, geneset, standardize = T, minSet
   
   #	## calcuate the sample correlations
   expression_data <- as.matrix(expression_data)
-  group_mean <- as.matrix(trt_mean(expression_data, trt))     # calculate correlation matrix
-  resid_mat <- expression_data - group_mean                     # the trt effects are removed from matrix
-
+  # calculate correlation matrix
+  group_mean <- as.matrix(trt_mean(expression_data, trt))     
+  # the trt effects are removed from matrix
+  resid_mat <- expression_data - group_mean                     
+  
 #  samp_rho <- cor(t(resid_mat))
 # modified on March 18, 2016
   samp_rho <- cov(t(resid_mat))
@@ -353,7 +349,8 @@ btw_gene_corr <- function(expression_data, trt, geneset, standardize = T, minSet
   n2 <- ndim - set_size
   backSet_cor <- ( sumAll - (interCor*n2*2 + sumTestCor) - n2 ) / (n2^2 - n2)
   
-  cor_matrix <- data.frame(set_name = set_name, testSetCor = testSet_cor, interCor= interCor, backSetCor = backSet_cor)
+  cor_matrix <- data.frame(set_name = set_name, testSetCor = testSet_cor, 
+                           interCor= interCor, backSetCor = backSet_cor)
   
   return(cor_matrix)
 }
