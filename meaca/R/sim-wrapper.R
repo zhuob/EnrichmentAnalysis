@@ -85,7 +85,7 @@ get_sim_case <- function(rho1, rho2, rho3){
 #' @param nsim number of simulation to run
 #' @param de_mu,de_sd if the gene is DE, delta ~ N(de_mu, de_sd)
 #' @param data_gen_method data generation method; if `data_gen_method = MASS`,
-#'   then `MASS::mvrnorm` is used, otherwise see function \link[mvtnorm]{rmvnorm}
+#'   then \link[MASS]{mvrnorm} is used, otherwise see function \link[mvtnorm]{rmvnorm}
 #' @param seed the seed used for simulation (for reproducibility purpose)
 #' @param dest where to store the results
 #' @param ncore number of CPUs to be used in the parallel simulation 
@@ -98,8 +98,8 @@ data_simu <- function(nsim = 1000,
                       package_used = c("MASS", "qusage"), 
                       verbose_show = FALSE, 
                       meaca_only = FALSE,
-                      file_to_source = "/home/stats/zhuob/Rcode/Enrichment/GSEA.1.0.R",
-                      dest = "/home/stats/zhuob/data/computing/", 
+                      file_to_source = NULL,
+                      dest = getwd(), 
                       n_gene = 500,
                       n_test = 100,
                       prop = c(0.1, 0.1),

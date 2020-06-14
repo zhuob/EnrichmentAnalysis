@@ -5,12 +5,10 @@
 \title{Compare meaca to existing methods}
 \usage{
 data_simu(nsim = 1000, ncore = 6, package_used = c("MASS", "qusage"),
-  verbose_show = FALSE, meaca_only = FALSE,
-  file_to_source = "/home/stats/zhuob/Rcode/Enrichment/GSEA.1.0.R",
-  dest = "/home/stats/zhuob/data/computing/", n_gene = 500, n_test = 100,
-  prop = c(0.1, 0.1), rho1 = 0.1, rho2 = 0.05, rho3 = -0.05,
-  case = "e", size = 50, de_mu = 2, de_sd = 1,
-  data_gen_method = "chol", seed = 123)
+  verbose_show = FALSE, meaca_only = FALSE, file_to_source = NULL,
+  dest = getwd(), n_gene = 500, n_test = 100, prop = c(0.1, 0.1),
+  rho1 = 0.1, rho2 = 0.05, rho3 = -0.05, size = 50, de_mu = 2,
+  de_sd = 1, data_gen_method = "chol", seed = 123)
 }
 \arguments{
 \item{nsim}{number of simulation to run}
@@ -46,7 +44,7 @@ outside go_term, corresponding to $p_t$ and $p_b$.}
 \item{de_mu, de_sd}{if the gene is DE, delta ~ N(de_mu, de_sd)}
 
 \item{data_gen_method}{data generation method; if `data_gen_method = MASS`,
-then `MASS::mvrnorm` is used, otherwise see function \link[mvtnorm]{rmvnorm}}
+then \link[MASS]{mvrnorm} is used, otherwise see function \link[mvtnorm]{rmvnorm}}
 
 \item{seed}{the seed used for simulation (for reproducibility purpose)}
 
