@@ -1,0 +1,34 @@
+To log on through filezilla
+	host: submit.hpc.cosine.oregonstate.edu
+	Username: zhuob
+	password:
+	port: 22
+
+To Log on 
+	ssh zhuob@submit.hpc.cosine.oregonstate.edu
+	Password: <science pass>
+
+AT NIGHT: 	The server is not turned off during the night, however ssh is blocked 
+		from off campus (guessing that is what happened). From off campus, you 
+		can ssh to shell.cosine.oregonstate.edu then to 
+		submit.hpc.cosine.oregonstate.edu.
+
+To get a list of available modules to load, execute:
+	•	module avail
+
+To load the Matlab 2013b module, execute
+	•	module load matlab-R2013b 
+
+To copy a file from local drive to server
+
+	•	 scp /Users/Bin/Disk1/protocol/Rsubread/GSE48235SraRunInfo.csv zhuob@submit.hpc.cosine.oregonstate.edu:/home/stats/zhuob/Rcode
+
+To copy a file from server to local drive
+
+	•	scp zhuob@submit.hpc.cosine.oregonstate.edu:/home/stats/zhuob/data/		computing/p.value.cor.rds /Users/Bin/Dropbox/Zhuo/
+
+To see the version of linux server
+	•	cat /etc/lsb-release
+
+To Run a R code
+	•	Rscript name.R
