@@ -1,0 +1,14 @@
+---
+title: "Meeting Notes"
+author: "BZ"
+date: "6/24/2020"
+output: html_document
+---
+
+
+# Weekly progress
+
+## Week 6/22/2020
+
+  + Check real data analysis result: how did I get the results 
+  + Check how many samples are simulated in the `GB_revision` folder
