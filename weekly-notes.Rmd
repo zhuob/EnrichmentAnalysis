@@ -8,7 +8,26 @@ output: html_document
 
 # Weekly progress
 
+
+## Week 6/29/2020
+   + Check if `meaca` changed the direction of DE: if gene2 is down regulated, and 
+   gene 1 is up regulated, then our method may neutralize the DE effect. One solution
+   is to make the expression level of gene 2 to be all negative. <check if this is 
+   implemented in `meaca`)
+   + Check if `CAMERA` used moderated-t test in Huntington's disease (if not, try
+   to apply normal t test in real data analysis)
+   + explore if standardization matters in real data analysis
+   + Check how gene set in KEGG is derived (if possible)
+   + Make the results reproducible
+
 ## Week 6/22/2020
 
   + Check real data analysis result: how did I get the results 
+    + result is from http://bioconductor.org/packages/release/data/experiment/manuals/KEGGandMetacoreDzPathwaysGEO/man/KEGGandMetacoreDzPathwaysGEO.pdf
+    + data provided by the authors of PADOG, who published a paper https://link.springer.com/article/10.1186/1471-2105-13-136 showing that downweighting 
+    overlapping genes boosts performance.
+    + `filteranot` function is used to remove duplicate probsets, basically first 
+    fit a `limma` model, then match the probes with gene names, and keep only the 
+    each probe having the smallest p-value if there are duplicates
   + Check how many samples are simulated in the `GB_revision` folder
+    + 25 each arm, 50 totol
