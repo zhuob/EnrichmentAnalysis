@@ -5,7 +5,7 @@
 \title{meaca-multiple.}
 \usage{
 meaca_multiple(expression_data, trt, geneset, standardize = T,
-  minSetSize = 5, fdr_method = "BH")
+  min_set_size = 5, fdr_method = "BH")
 }
 \arguments{
 \item{expression_data}{the expressoin matrix.}
@@ -16,7 +16,7 @@ meaca_multiple(expression_data, trt, geneset, standardize = T,
 
 \item{standardize}{whether the data should be standaridzed.}
 
-\item{minSetSize}{the minimum number of genes contained for a gene set to be
+\item{min_set_size}{the minimum number of genes contained for a gene set to be
 considered.}
 
 \item{fdr_method}{which method is ued to adjust the p values. see arguments

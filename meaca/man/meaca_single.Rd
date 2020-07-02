@@ -9,9 +9,9 @@ meaca_single(expression_data, trt, go_term, standardize = F)
 \arguments{
 \item{expression_data}{the expressoin matrix.}
 
-\item{trt}{treatment labels.}
+\item{trt}{treatment indicators, 1 for treatment, 0 for control group.}
 
-\item{go_term}{an indicator vector. 1 for genes in the test, 0 otherwise.}
+\item{go_term}{an indicator vector. 1 for genes in the test set, 0 otherwise.}
 
 \item{standardize}{whether the data should be standaridzed.}
 }
