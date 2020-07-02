@@ -32,3 +32,5 @@ To see the version of linux server
 
 To Run a R code
 	•	Rscript name.R
+	
+pd: R9BCqRoc
