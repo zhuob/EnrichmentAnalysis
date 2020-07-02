@@ -11,7 +11,7 @@ Sys.getenv("PATH")
 devtools::build(manual = TRUE)
 
 # devtools::install_local("../meaca_0.1.1.tar.gz", dependencies = NA, upgrade = "never")
-install.packages("../meaca_0.1.1.tar.gz", repos = NULL, type = "source")
+install.packages("../meaca_0.2.1.tar.gz", repos = NULL, type = "source")
  
 pack <- "meaca"
 path <- find.package(pack)
