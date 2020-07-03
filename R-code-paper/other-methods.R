@@ -74,7 +74,9 @@ Camera_multiple <- function(expression_data, trt, geneset, use.rank = F){
   c2.indices <- limma::ids2indices(gset1, all_genes)      
   
   design <- model.matrix(~trt)
-  Results <- limma::camera(expression_data, c2.indices,  design, 
+  Results <- limma::camera(expression_data, c2.indices,  design,
+                           # this will allow the algorithm to estimate inter.gene.cor from data
+                           allow.neg.cor = TRUE, inter.gene.cor = NA,
                            use.ranks = use.rank, sort = F)
   return(Results)
   
@@ -88,14 +90,14 @@ Camera_multiple <- function(expression_data, trt, geneset, use.rank = F){
 #' 
 #' @keywords internal
 #' @title  MRGSE multiple
-#' @param expression the expression data matrix
+#' @param expression_data the expression data matrix
 #' @param trt the treatment lables for each column of \code{expression_data}
 #' @param  geneset  a list containing all the gene sets to be tested for enrichment status
 #' @param use.rank  If \code{TRUE} then it corresponds to "MRGSE", otherwise "Camara"
 #' @return a matrix
 # #' @export
 
-MRGSE_multiple <- function(expression, trt, geneset, use.rank = TRUE){
+MRGSE_multiple <- function(expression_data, trt, geneset, use.rank = TRUE){
   
   
   # for GSE64810 data
@@ -103,7 +105,7 @@ MRGSE_multiple <- function(expression, trt, geneset, use.rank = TRUE){
   #        all_genes <-  expression[, 2]
   
   # for other typical data, where row names are genes
-  microarray <- expression
+  microarray <- expression_data
   all_genes <- rownames(microarray)
   
   gset1 <- list()
@@ -154,6 +156,7 @@ MRGSE_multiple <- function(expression, trt, geneset, use.rank = TRUE){
 
 plage <- function(expression_data, trt, go_term, nperm = 999, seed = 125){
   
+  set.seed(seed)
   rownames(expression_data) <- paste("Gene", 1:nrow(expression_data), sep = "")
   gs <- list( set1 =  paste("Gene", which(go_term==1), sep = ""))
   

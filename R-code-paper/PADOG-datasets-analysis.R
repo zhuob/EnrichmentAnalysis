@@ -52,7 +52,8 @@ prep_padog_data <- function(set){
                  disease = disease, 
                  n_normal = n_normal, 
                  n_disease = n_disease,
-                 target_geneset = targetGeneSets)
+                 target_geneset = targetGeneSets,
+                 n_gene = length(gene1))
   
 }
 
@@ -64,6 +65,7 @@ compare_padog_data <- function(dat, seed = 20200702){
   n_normal <- dat$n_normal
   n_disease <- dat$n_disease
   target_geneset <- dat$target_geneset
+  n_gene <- dat$n_gene
   
   # perform enrichment analysis
   p_vec <- compare_test(dat, seed = seed)
@@ -83,7 +85,8 @@ compare_padog_data <- function(dat, seed = 20200702){
                             disease = disease,
                             n_normal = n_normal, 
                             n_disease = n_disease,
-                            target_geneset = target_geneset)
+                            target_geneset = target_geneset,
+                            n_gene = n_gene)
   
   return(p_vec)  
 }
@@ -110,7 +113,7 @@ setlist2 <- c("GSE1145", "GSE11906", "GSE14924_CD4", "GSE14924_CD8",
 # Paird, 8, 17, 18
 setlist3 <- setlist2[-c(2, 6:8, 11, 13, 14, 16:18)]
 setlist <- c(setlist1, setlist3)
-# set <- "GSE4183"
+# set <- "GSE20153"
 
 source('R-code-paper/other-methods.R')
 source('R-code-paper/compare-methods.R')
@@ -125,7 +128,10 @@ for(i in 1:length(setlist)){
   cat(setlist[i])
   padog_dat <- prep_padog_data(setlist[i])
   r1 <- compare_padog_data(dat = padog_dat, seed = i + 1000)
-  r1 <- r1 %>% mutate(dataset = setlist[i]) %>% select(dataset, everything())
+  r1 <- r1 %>% mutate(dataset = setlist[i]) %>% 
+    select(dataset, meaca, meaca_n, MRGSE, SigPathway, CAMERA_ModT, CAMERA_Rank,
+           GSEA, QuSAGE, PLAGE, ORA, testSetCor, interCor, backSetCor, disease, 
+           n_normal, n_disease, target_geneset)
   analysis_padog_data <- dplyr::bind_rows(analysis_padog_data, r1)
 }
 
