@@ -38,100 +38,6 @@ sig_path <- function(index, statistics, nsim = 9999){
 
 
 
-
-
-#' Compare meaca to other existing methods. 
-#' 
-#' 
-#' @keywords internal
-#' @title Compare meaca to existing methods
-#' @param dat  the simulated data consisting of three lists:
-#'   \item{data}{the expression matrix}
-#'   \item{trt}{what treatment each column of \code{data} belongs to}
-#'   \item{go_term}{whether each row of \code{data} belongs to this go term}
-#' @return a matrix of p values 
-# #' @export
-# #' @examples
-
-compare_test <- function(dat){
-  ########  a function to incorporate all test procedures
-  
-  expression_data <- dat$data
-  trt <- dat$trt
-  go_term <- dat$go_term
-  
-  #  	pval1 <- MOM_test(microarray, trt, go_term, standardize=F)$p             
-  # our test, NO standardization for the simulation
-  
-  ## modified on March 16  
-  MEQ <- meaca_single(expression_data, trt, go_term, standardize = F)             
-  # our test, NO standardization for the simulation
-  #	print(MEQ)
-  pval1 <- MEQ$p1							# chi-square test
-  pval1_2 <- MEQ$p2							# normal reference distribution
-  
-  est_sigma <- estimate_sigma(expression_data, trt)
-  t_val <- est_sigma$t_val
-  pval2 <- summary(lm(t_val~ go_term))$coe[2, 4]            # linear regression
-  
-  
-  design <- model.matrix(~trt) 
-  fit <- limma::lmFit(expression_data, design)
-  #stat <- fit$coefficients[, 2]
-  
-  # Emperical Bayes t test	
-  fit <- limma::eBayes(fit)								                
-  #	use the moderated t statistics to do enrichment
-  stat <- fit$t[, 2]            							      
-  
-# modified on March 18, 2016
-  #  alter <- "mixed"                                  
-  # This is the default option, see below for explanation.
-  # this is comparable to what we are testing
-  alternative <- "either"
-  # which genes are in GOTERM
-  index1 <- which(go_term==1)                       
-  
-  # up: positive statistics 
-  # down: negative stats either: the set is either up or
-  # down-regulated as a whole mixed: tests whether the genes in the set tend to
-  # be DE without regard for direction. In this case, the test will be
-  # significant if the set contains mostly large statistics, negative or
-  # positive
-  
-   # MRGSE
-  tes1 <- limma::geneSetTest(index = index1, stat, alternative = alternative, ranks.only= T)    
-  # sigPathway methods
-  tes2 <- sig_path(index = index1, stat)
-  # camera proedure
-  tes3 <- limma::camera(expression_data, index1,  design)$PValue 
-  # camera rank 
-  tes4 <- limma::camera(expression_data, index1,  design, use.ranks= T)$PValue                      
-  
-  tes5 <- GSEA.SingleSet(dat$data, dat$trt, dat$go_term, nperm=1000)$p.vals		# GSEA
-  
-  
-  ## qusage <Yaari, 2013>
-  geneSets <- list()
-  geneSets[[paste("Set",1)]] <- which(go_term == 1)
-  labels <- rep(NA, length(trt))
-  labels[trt == 1] <- "B"; labels[trt==0] <- "A"
-  # calculate the probability for all genes
-  qsarray <- qusage::qusage(expression_data, labels, contrast = "B-A" , geneSets)  			
-  # competitive test
-  tes6 <- qusage::pdf.pVal(qsarray, alternative = "two.sided", selfContained = F) 		
-  
-  p_vec <- c(pval1, pval1_2, pval2, tes1, tes2, tes3, tes4, tes5, tes6)
-  names(p_vec) <- c("meaca", "meaca_n", "LM", "MRGSE", "SigPathway", 
-                    "CAMERA_ModT", "CAMERA_Rank", "GSEA", "QuSAGE")
-  return(p_vec)
-  
-  
-}
-
-
-
-
 #' multiple gene set enrichemnt analysis
 #' 
 #' 
@@ -231,4 +137,138 @@ MRGSE_multiple <- function(expression, trt, geneset, use.rank = TRUE){
   result <- data.frame(set.name, size = set.size, p.MRGSE)
   return(result)
 }
+
+
+
+
+#' The PLAGE method 
+#' 
+#' @param expression_data the expression matrix
+#' @param trt treatment label, 1 for treatment and 0 for control
+#' @param go_term gene go term indicator, 1 for genes in the test set, 0 otherwise
+#' @param nperm   Number of permutation to run (to get the p value by permuted results t statistics [see equation 4 of the paper]  )
+#' @param seed for reproducibility purpose
+#' @return pval 
+#' @export
+#'   
+
+plage <- function(expression_data, trt, go_term, nperm = 999, seed = 125){
+  
+  rownames(expression_data) <- paste("Gene", 1:nrow(expression_data), sep = "")
+  gs <- list( set1 =  paste("Gene", which(go_term==1), sep = ""))
+  
+  ## calculate the activity level for each sample
+  es_plage <- plage_score(expression_data, gs)
+  # get the t-statistic for each treatment
+  es_a <- es_plage[trt== 1]; 
+  es_b <- es_plage[trt==0] 
+  na <- length(es_a); nb <- length(es_b); n_total <- na + nb
+  t_obs <- abs(mean(es_a)- mean(es_b))/sqrt(var(es_a)/na + var(es_b)/nb)
+  
+  t_perm <- rep(NA, nperm)
+  # do the permutations
+  for (k in 1:nperm){
+    na_perm <- sample(1:n_total, na)
+    nb_perm <- setdiff(1:n_total, na_perm)
+    expression_data_perm <- expression_data[,c(na_perm, nb_perm)]
+    es_plage_perm <- plage_score(expression_data_perm, gs)
+    es_a_perm <- es_plage_perm[trt== 1]; 
+    es_b_perm <- es_plage_perm[trt==0] 
+    t_perm[k] <- abs(mean(es_a_perm)- mean(es_b_perm))/sqrt(var(es_a_perm)/na + var(es_b_perm)/nb)
+  }
+  
+  # the pvalue is (b + 1)/(nperm + 1)
+  b <- sum(t_perm >= t_obs)
+  pval <- (b + 1)/(nperm + 1)
+  return(pval)
+}
+
+
+###    this code is extracted from GSVA package 
+plage_score <- function(X, gs){
+  geneSets <- gs$set1
+  p <- nrow(X)
+  n <- ncol(X)
+  
+  Z <- t(apply(X, 1, function(x) (x-mean(x))/sd(x)))
+  
+  rightsingularsvdvectorgset <- function(gSetIdx, Z) {
+    s <- svd(Z[gSetIdx, ])
+    s$v[, 1]
+  }
+  
+  es<-  rightsingularsvdvectorgset(geneSets, Z)
+  names(es) <- colnames(X)
+  
+  return(es)
+}
+
+
+#' the over-representation method (see http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0079217 ). 
+#' 
+#' @param expression_data  the expressoin matrix.
+#' @param trt  treatment indicators, 1 for treatment, 0 for control group.
+#' @param go_term  an indicator vector. 1 for genes in the test set, 0 otherwise.
+#' @param method The method used to adjust for nominal p values if necessary.
+#'   \code{BH} by default
+#' @param thresh the threshold described in the paper, 200 by default.
+#' @return pval  the enrichment p value.
+#' 
+ora <- function(expression_data, trt, go_term, method = "BH", thresh = 0.01){
+  # the implementation of ORA method is described in this paper
+  # http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0079217
+  
+  design <- model.matrix(~trt) 
+  fit <- limma::lmFit(expression_data, design)
+  #stat <- fit$coefficients[, 2]
+  # Emperical Bayes t test	
+  fit <- limma::eBayes(fit)								                
+  #	use the moderated t statistics to do enrichment
+  stat <- fit$t[, 2]            							      
+  
+  fit_result <- limma::topTable(fit, number = length(fit$p.value), 
+                         sort.by = "none", adjust.method = method)
+  fold_change <- abs(fit_result$logFC)  ## the absolute fold change
+  pvals <- fit_result$P.Value
+  adjust_p <- fit_result$adj.P.Val
+  
+  thresh1 <- thresh
+  if (thresh < 1 ) {
+    thresh1 <- ceiling(thresh*length(adjust_p))
+  }
+  
+  # procedure 1
+  if (sum(adjust_p < 0.1)> thresh1) {
+    DE <- adjust_p < 0.1
+    cont <- ftable(data.frame(go_term, DE))
+  }
+  else {
+    if (sum(pvals < 0.05 & fold_change > 1.5) > thresh1){ ## procedure 2
+      DE <- pvals < 0.05 & fold_change > 1.5
+      cont <- ftable(data.frame(go_term, DE))
+    } else {    # procedure 3
+      cutoff <- quantile(pvals, 0.01)
+      DE <- pvals <= cutoff
+      cont <- ftable(data.frame(go_term, DE))
+    }
+  }
+  
+  k <- colSums(cont)[2]  # the number of DE genes
+  ros <- rowSums(cont)
+  m <- ros[2]  # the number of GO term genes
+  n <- ros[1]  # the number of background genes
+  q <- cont[2, 2] # the number of DE genes from the GO term 
+  
+  # the probability of getting more than q DE genes
+  # p_enrich <- phyper(q = q-1, m = m, n = n, k = k, lower.tail =  F) 
+  ## BZ made change on June 11, 2017
+  p_enrich <- phyper(q = q, m = m, n = n, k = k, lower.tail =  F)  # P(X > q)
+  
+  return(p_enrich)
+}
+
+
+
+
+
 
