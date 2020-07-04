@@ -30,7 +30,7 @@ compare_test <- function(dat, seed){
   #	print(MEQ)
   p_meaca <- MEQ$p1							# chi-square test
   pval1_2 <- MEQ$p2							# normal reference distribution
-  
+  enrich_status <- MEQ$status
   # calculate the three rho's
   cor <- meaca::btw_gene_corr(expression_data = expression_data, trt = trt, 
                               go_term = go_term, standardize = T)
@@ -66,9 +66,13 @@ compare_test <- function(dat, seed){
   # sigPathway methods
   p_sigpath <- sig_path(index = index1, stat, nsim = 999)                                                
   # camera proedure
-  p_camera <- limma::camera(expression_data, index1,  design)$PValue                                    
+  p_camera <- limma::camera(y = expression_data, index = index1,  
+                            design = design, 
+                            allow.neg.cor = TRUE, inter.gene.cor = NA)$PValue                                    
   # camera rank 
-  p_camera_R <- limma::camera(expression_data, index1,  design, use.ranks= T)$PValue                      
+  p_camera_R <- limma::camera(y = expression_data, index = index1,  
+                              design = design, use.ranks= T, 
+                              allow.neg.cor = TRUE, inter.gene.cor = NA)$PValue                      
   
   # GSEA
   p_gsea <- GSEA.SingleSet(data = expression_data, trt = trt, go_term = go_term, nperm = 1000)$p.vals		
@@ -96,6 +100,7 @@ compare_test <- function(dat, seed){
   names(p_vec)[1:8] <- c("meaca", "meaca_n", "MRGSE", "SigPathway", 
                           "CAMERA_ModT", "CAMERA_Rank", "GSEA", "QuSAGE")
   p_vec <- data.frame(p_vec)
+  p_vec$status <- enrich_status
   return(p_vec)
   
 }

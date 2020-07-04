@@ -31,7 +31,7 @@ prep_padog_data <- function(set){
   genes <- pks[[1]]$GENE
   gene1 <- genes[seq(1, length(genes), by = 2)]
   # print(dim(aT2))
-  aT2$go_term  <- ifelse(aT2$ENTREZID %in% gene1, 1, 0)
+  go_term  <- ifelse(aT2$ENTREZID %in% gene1, 1, 0)
   n_normal <- sum(ano$Group == "c")
   n_disease <- sum(ano$Group == "d")
   
@@ -48,12 +48,12 @@ prep_padog_data <- function(set){
   
   result <- list(data = dat_out, 
                  trt = trt, 
-                 go_term = data$go_term,
+                 go_term = go_term,
                  disease = disease, 
                  n_normal = n_normal, 
                  n_disease = n_disease,
                  target_geneset = targetGeneSets,
-                 n_gene = length(gene1))
+                 n_gene = sum(go_term))
   
 }
 
@@ -65,7 +65,7 @@ compare_padog_data <- function(dat, seed = 20200702){
   n_normal <- dat$n_normal
   n_disease <- dat$n_disease
   target_geneset <- dat$target_geneset
-  n_gene <- dat$n_gene
+  n_gene <- sum(dat$go_term)
   
   # perform enrichment analysis
   p_vec <- compare_test(dat, seed = seed)
@@ -86,7 +86,7 @@ compare_padog_data <- function(dat, seed = 20200702){
                             n_normal = n_normal, 
                             n_disease = n_disease,
                             target_geneset = target_geneset,
-                            n_gene = n_gene)
+                            gene_setsize = n_gene)
   
   return(p_vec)  
 }
@@ -131,7 +131,7 @@ for(i in 1:length(setlist)){
   r1 <- r1 %>% mutate(dataset = setlist[i]) %>% 
     select(dataset, meaca, meaca_n, MRGSE, SigPathway, CAMERA_ModT, CAMERA_Rank,
            GSEA, QuSAGE, PLAGE, ORA, testSetCor, interCor, backSetCor, disease, 
-           n_normal, n_disease, target_geneset)
+           n_normal, n_disease, target_geneset, gene_setsize, status)
   analysis_padog_data <- dplyr::bind_rows(analysis_padog_data, r1)
 }
 
@@ -140,17 +140,94 @@ write.csv(analysis_padog_data, "real-data/padog-data-analysis-2.csv", row.names 
 
 
 ###########################  BELOW NOT RUN #####################################
+
+## translate it into probe test
+prep_padog_data_all_genesets <- function(set, gslist){
+  
+  data(list = set)
+  x = get(set)
+  #Extract from the dataset the required info
+  exp = Biobase::experimentData(x);
+  dataset = exp@name
+  dat_m = Biobase::exprs(x)
+  disease <- Biobase::notes(exp)$disease
+  ano = Biobase::pData(x)
+  design = Biobase::notes(exp)$design
+  annotation = paste(x@annotation,".db",sep="")
+  # targetGeneSets <- Biobase::notes(exp)$targetGeneSets 
+  
+  #get rid of duplicates by choosing the probe(set) with lowest p-value; get ENTREZIDs for probes
+  aT2 <- PADOG::filteranot(esetm = dat_m, group = ano$Group, 
+                           paired = (design == "Paired"), block = ano$Block,annotation) 
+  
+  n_normal <- sum(ano$Group == "c")
+  n_disease <- sum(ano$Group == "d")
+  trt <- ifelse(ano$Group == "c", 0, 1)
+  
+  #filtered expression matrix
+  dat_m <- as.data.frame(dat_m)
+  dat_m$ID <- rownames(dat_m)
+  # merge the probeID 
+  data <- dplyr::right_join(dat_m %>% arrange(ID), 
+                            aT2 %>% arrange(ID), by = "ID")
+  dat_out <-  data[, 1:(length(ano$Group))]
+  rownames(dat_out) <- data$ID
+  
+  gs_names <- names(gslist)
+  go_terms <- data.frame(matrix(NA, nrow = nrow(data), ncol = length(gs_names)))
+  names(go_terms) <- gs_names
+  gene_seq <- 1:length(gs_names)
+  gene_seq <- gene_seq[-c(104, 105, 199, 200, 204, 205)]
+  for (i in gene_seq){
+    pks <- KEGGREST::keggGet(gs_names[i])
+    genes <- pks[[1]]$GENE
+    # print(i)
+    if(!is.null(genes)){
+      gene1 <- genes[seq(1, length(genes), by = 2)]
+      go_terms[, i]  <- ifelse(aT2$ENTREZID %in% gene1, 1, 0)
+    }
+  }
+  # print(dim(aT2))
+  # g1 <- lapply(gslist, function(x) length(x)) %>% unlist()
+  
+  ## keep only those sets that have at least 5 genes
+  go_term_set <- colSums(go_terms)
+  go_term <- go_terms[, !is.na(go_term_set) & go_term_set >= 5]
+  
+  
+  result <- list(data = dat_out, 
+                 trt = trt, 
+                 go_term = go_term,
+                 disease = disease, 
+                 n_normal = n_normal, 
+                 n_disease = n_disease)
+  
+}
+
 ### get all the pathways
-# library(KEGG.db)
-# pw2id <- as.list(KEGGPATHNAME2ID)
-# pw2id = as.list(KEGGPATHID2EXTID)
-# organism <- "hsa"
-# gslist = pw2id[grep(organism, names(pw2id))]
-# 
-# 
-# set <- "GSE4183"
-# r1 <- prep_data(set)
-# r2 <- prep_data2(set)
-# c1 <- btw_gene_corr1(r1$data, trt = r1$trt, go_term = r1$go_term)
-# c2 <- btw_gene_corr1(r2$data, trt = r2$trt, go_term = r2$go_term)
+library(KEGG.db)
+pw2id <- as.list(KEGGPATHNAME2ID)
+pw2id = as.list(KEGGPATHID2EXTID)
+organism <- "hsa"
+gslist = pw2id[grep(organism, names(pw2id))]
+
+set <- "GSE20153"
+r1 <- prep_padog_data_all_genesets(set = set, gslist = gslist)
+n_geneset <- r1$go_term
+
+gse20153_all_geneset <- NULL
+for(i in 1:ncol(n_geneset)){
+  geneset_name <- names(n_geneset)[i]
+  cat(geneset_name)
+  temp0 <- r1
+  temp0$go_term <- n_geneset[, i]
+  temp <- compare_test(dat = temp0, seed = i + 2000)
+  temp <- temp %>% mutate(target_geneset = geneset_name, 
+                      gene_setsize = sum(n_geneset[, i]), 
+                      n_normal = temp0$n_normal, 
+                      n_disease = temp0$n_disease) 
+  gse20153_all_geneset <- dplyr::bind_rows(gse20153_all_geneset, temp)
+}
+
+write.csv(gse20153_all_geneset, "real-data/gse20153_all_geneset.csv", row.names = F)
 
