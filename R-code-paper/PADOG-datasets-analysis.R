@@ -30,8 +30,6 @@ prep_padog_data <- function(set){
   pks <- KEGGREST::keggGet(paste("hsa", targetGeneSets, sep = ""))
   genes <- pks[[1]]$GENE
   gene1 <- genes[seq(1, length(genes), by = 2)]
-  # print(dim(aT2))
-  go_term  <- ifelse(aT2$ENTREZID %in% gene1, 1, 0)
   n_normal <- sum(ano$Group == "c")
   n_disease <- sum(ano$Group == "d")
   
@@ -42,6 +40,8 @@ prep_padog_data <- function(set){
   # merge the probeID 
   data <- dplyr::right_join(dat_m %>% arrange(ID), 
                      aT2 %>% arrange(ID), by = "ID")
+  # print(dim(aT2))
+  go_term  <- ifelse(data$ENTREZID %in% gene1, 1, 0)
   
   dat_out <-  data[, 1:(length(ano$Group))]
   rownames(dat_out) <- data$ID
@@ -184,7 +184,7 @@ prep_padog_data_all_genesets <- function(set, gslist){
     # print(i)
     if(!is.null(genes)){
       gene1 <- genes[seq(1, length(genes), by = 2)]
-      go_terms[, i]  <- ifelse(aT2$ENTREZID %in% gene1, 1, 0)
+      go_terms[, i]  <- ifelse(data$ENTREZID %in% gene1, 1, 0)
     }
   }
   # print(dim(aT2))
@@ -229,5 +229,5 @@ for(i in 1:ncol(n_geneset)){
   gse20153_all_geneset <- dplyr::bind_rows(gse20153_all_geneset, temp)
 }
 
-write.csv(gse20153_all_geneset, "real-data/gse20153_all_geneset.csv", row.names = F)
+write.csv(gse20153_all_geneset, "real-data/gse20153_all_geneset-3.csv", row.names = F)
 
