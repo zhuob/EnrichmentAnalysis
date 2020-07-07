@@ -8,6 +8,16 @@ output: html_document
 
 # Weekly progress
 
+## Week 7/6/2020
+
+   Run type 1 error simulation using real-data correlation structure
+    
+   + Assume we have 1000 genes, 50 in the gene set and the rest not
+   + Calculate gene-level test statistics for genes in the test set 
+   + Sample 950 gene-level test statistics from above results with replacement
+   + maintain the gene correlation as it is in the real data 
+   + run simulations to generate type 1 error
+   + Compare `meaca` with `MRGSE` and potentially `PLAGE`, `ORA` and `GSEA` etc.
 
 ## Week 6/29/2020
 
@@ -16,11 +26,15 @@ output: html_document
    gene 1 is up regulated, then our method may neutralize the DE effect. One solution
    is to make the expression level of gene 2 to be all negative. <check if this is 
    implemented in `meaca`)
+       - This is not done yet
    + Check if `CAMERA` used moderated-t test in Huntington's disease (if not, try
    to apply normal t test in real data analysis)
+      - `CAMERA` use moderated-t test by default, and no other test is provided 
+      by the original function
    + explore if standardization matters in real data analysis
    + Check how gene set in KEGG is derived (if possible)
    + Make the results reproducible
+      - Yes
 
 ### Questions for next week
 
