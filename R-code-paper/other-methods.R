@@ -173,8 +173,15 @@ plage <- function(expression_data, trt, go_term, nperm = 999, seed = 125){
   for (k in 1:nperm){
     na_perm <- sample(1:n_total, na)
     nb_perm <- setdiff(1:n_total, na_perm)
-    expression_data_perm <- expression_data[,c(na_perm, nb_perm)]
-    es_plage_perm <- plage_score(expression_data_perm, gs)
+    # expression_data_perm <- expression_data[,c(na_perm, nb_perm)]
+    # es_plage_perm <- plage_score(expression_data_perm, gs)
+    
+    # there is a much easier way to calculate the activity level of a pathway 
+    # Note that when permuting columns, the plage_score function will return 
+    # a vector of permuated es_plage score, so I'll take a short cut, which 
+    # greatly speed up the simulation
+    es_plage_perm <- es_plage[c(na_perm, nb_perm)]
+    
     es_a_perm <- es_plage_perm[trt== 1]; 
     es_b_perm <- es_plage_perm[trt==0] 
     t_perm[k] <- abs(mean(es_a_perm)- mean(es_b_perm))/sqrt(var(es_a_perm)/na + var(es_b_perm)/nb)
