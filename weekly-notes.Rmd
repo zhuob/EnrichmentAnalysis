@@ -8,6 +8,18 @@ output: html_document
 
 # Weekly progress
 
+## Week 7/13/2020
+
+   Run type 1 error simulation using real-data correlation structure
+   
+   + use a different sampling stretagy from last week
+   + sample test statistics for both test set genes and background genes
+      + sample all test statistics from only the test set 
+      + sample all test statistics from only the back ground set
+      + sample all test statistics from all the test statistics (permutation)
+   + sample corresponding between gene correlations
+
+
 ## Week 7/6/2020
 
    Run type 1 error simulation using real-data correlation structure
