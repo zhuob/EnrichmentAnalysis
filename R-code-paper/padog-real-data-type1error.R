@@ -31,6 +31,7 @@ alpha_meaca <- function(expression_data, trt, go_term, standardize = TRUE,
   set.seed(sim_seed)
   system.time(
   for(kk in 1:nrep){
+    cat("\r", kk)
     t_val <- t_val0
     # sample from test set 
     resample_test_genes <- base::sample(test_genes, size = n_test_set, replace = TRUE)
