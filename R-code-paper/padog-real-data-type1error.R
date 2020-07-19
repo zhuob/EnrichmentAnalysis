@@ -34,8 +34,8 @@ alpha_meaca <- function(expression_data, trt, go_term, standardize = TRUE,
     cat("\r", kk)
     t_val <- t_val0
     # sample from test set 
-    resample_test_genes <- base::sample(back_genes, size = n_test_set, replace = TRUE)
-    resample_back_genes <- base::sample(back_genes, size = n_back_set, replace = TRUE)
+    resample_test_genes <- base::sample(1:length(go_term), size = n_test_set, replace = TRUE)
+    resample_back_genes <- base::sample(1:length(go_term), size = n_back_set, replace = TRUE)
     t_val[test_genes] <- t_val0[resample_test_genes]
     t_val[back_genes] <- t_val0[resample_back_genes]
     
@@ -108,8 +108,8 @@ alpha_mrgse_sigpath <- function(expression_data, trt, go_term,
   set.seed(sim_seed)
   for(i in 1:nrep){
     stat_permute <- stat
-    resample_test_genes <- base::sample(back_genes, size = n_test_set, replace = TRUE)
-    resample_back_genes <- base::sample(back_genes, size = n_back_set, replace = TRUE)
+    resample_test_genes <- base::sample(1:length(go_term), size = n_test_set, replace = TRUE)
+    resample_back_genes <- base::sample(1:length(go_term), size = n_back_set, replace = TRUE)
     stat_permute[test_genes] <- stat[resample_test_genes]
     stat_permute[back_genes] <- stat[resample_back_genes]
     # MRGSE
@@ -155,8 +155,8 @@ alpha_ora <- function(expression_data, trt, go_term, method = "BH",
   for(kk in 1:nrep){
     fit_result <- fit_result0
     
-    resample_test_genes <- base::sample(back_genes, size = n_test_set, replace = TRUE)
-    resample_back_genes <- base::sample(back_genes, size = n_back_set, replace = TRUE)
+    resample_test_genes <- base::sample(1:length(go_term), size = n_test_set, replace = TRUE)
+    resample_back_genes <- base::sample(1:length(go_term), size = n_back_set, replace = TRUE)
     fit_result[test_genes, ] <- slice(fit_result0, resample_test_genes)
     fit_result[back_genes, ] <- slice(fit_result0, resample_back_genes)
     
@@ -245,5 +245,5 @@ system.time(result <- alpha_simu(expression_data = expression_data, trt = trt,
                                  method = "BH", thresh = 0.01))
 
 
-write_csv(result, "padog-real-data-type1error-simulation-v2.csv")
+write_csv(result, "padog-real-data-type1error-simulation-all-genes.csv")
 
