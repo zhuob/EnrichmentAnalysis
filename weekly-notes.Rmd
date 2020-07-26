@@ -8,6 +8,29 @@ output: html_document
 
 # Weekly progress
 
+## Week 7/20/2020
+
+   Run simulation this way
+   
+      + i: gene
+      + j: subject
+      + Y_ij = beta_0i + beta_1i * trt_j + e_ij
+      + beta_0_hat
+      + beta_1i_hat
+      + e_ij_hat
+
+   bootstrap (beta_0i_hat, beta_i1_hat) among test genes. Denote the bootstrapped beta’s by beta_0i_hat_(1)
+
+   for each given i (gene), bootstrap {e_ij_hat, j=1…m}:
+
+      + for test genes, bootstrap {e_ij_hat, j=1…m} from test set, 
+      + for background genes, bootstrap {e_ij_hat,j=1…m} from background set
+
+   Denote the bootstrapped e_ij’s by e_ij_hat_(1)
+
+   First bootstrap sample: Y_ij_(1) = beta_0i_(1) + beta_1i_hat * trt_i + e_ij_(1)
+
+
 ## Week 7/13/2020
 
    Run type 1 error simulation using real-data correlation structure

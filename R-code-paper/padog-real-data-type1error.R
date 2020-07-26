@@ -9,16 +9,12 @@
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ## 
 
-## about 2 + 3 minutes to run 100 reps
-alpha_meaca <- function(expression_data, trt, go_term, standardize = TRUE, 
-                        nrep = 1e3, sim_seed = 123){
-  if (standardize == T) {
-    expression_data <- meaca::standardize_expression_data(expression_data, trt)
-  }
-  est_sigma <- meaca:::estimate_sigma(expression_data, trt)
-  sigma <- est_sigma$sigma
-  t_val0 <- est_sigma$t_val
-  rm(est_sigma)
+create_bootstrap_data <- function(expression_data, go_term, trt, seed = 123, 
+                                  raw_data = FALSE){
+  
+  expression_data <- as.matrix(expression_data)
+  group_mean <- as.matrix(meaca:::trt_mean(expression_data, trt))
+  resid_mat <- expression_data - group_mean
   
   test_genes <- which(go_term == 1)
   back_genes <- which(go_term == 0)
@@ -26,62 +22,53 @@ alpha_meaca <- function(expression_data, trt, go_term, standardize = TRUE,
   n_back_set <- sum(go_term == 0)
   n_test_set <- sum(go_term == 1)
   
+  ## bootstrap beta0, beta1
+  
+  set.seed(seed)
+  resample_test_genes <- base::sample(1:length(go_term), size = n_test_set, replace = TRUE)
+  resample_back_genes <- base::sample(1:length(go_term), size = n_back_set, replace = TRUE)
+  group_mean_hat <- group_mean # initiate the matrix
+  if(!raw_data){
+    group_mean_hat[test_genes, ] <- group_mean[resample_test_genes, ]
+    group_mean_hat[back_genes, ] <- group_mean[resample_back_genes, ]
+  }
+
+  # bootstrap residual independently from beta0 and beta1
+  set.seed(seed + 1e5)
+  resample_test_genes2 <- base::sample(1:length(go_term), size = n_test_set, replace = TRUE)
+  resample_back_genes2 <- base::sample(1:length(go_term), size = n_back_set, replace = TRUE)
+  resid_mat_hat <- resid_mat
+  if(!raw_data){
+    resid_mat_hat[test_genes, ] <- resid_mat[resample_test_genes2, ]
+    resid_mat_hat[back_genes, ] <- resid_mat[resample_back_genes2, ]
+  }
+  expression_data_hat <- group_mean_hat + resid_mat_hat
+  
+  return(expression_data_hat)
+  
+}
+
+
+## about 2 + 3 minutes to run 100 reps
+alpha_meaca <- function(expression_data, trt, go_term, standardize = TRUE, 
+                        nrep = 1e3, sim_seed = 123){
+  if (standardize == T) {
+    expression_data <- meaca::standardize_expression_data(expression_data, trt)
+  }
+  
   # perform resample of gene level statistics 
   p_alpha <- NULL
   set.seed(sim_seed)
   system.time(
   for(kk in 1:nrep){
     cat("\r", kk)
-    t_val <- t_val0
-    # sample from test set 
-    resample_test_genes <- base::sample(1:length(go_term), size = n_test_set, replace = TRUE)
-    resample_back_genes <- base::sample(1:length(go_term), size = n_back_set, replace = TRUE)
-    t_val[test_genes] <- t_val0[resample_test_genes]
-    t_val[back_genes] <- t_val0[resample_back_genes]
-    
-    # sample the corresponding correlation structures
-    # the new sigma = [q1,   q2]
-    #                 [q2^T, q4]
-    # this form is tested by simple example, should be correct: try this one
-    # ab1 <- matrix(rnorm(24), 6, 4)
-    # ab2 <- cor(t(ab1))
-    # 
-    # kk1 <- c(1,2)
-    # kk2 <- c(4, 3, 6, 5)
-    # ab3 <- ab1[c(kk1, kk2), ]
-    # ab4 <- cor(t(ab3))
-    # q1 <- ab2[kk1, kk1]
-    # q2 <- ab2[kk1, kk2]
-    # q3 <- ab2[kk2, kk1]
-    # q4 <- ab2[kk2, kk2]
-    # ab5 <- rbind(cbind(q1, q2), cbind(q3, q4))
-    # all.equal(ab4, ab5)
-    q1 <- sigma[resample_test_genes, resample_test_genes]
-    q2 <- sigma[resample_test_genes, resample_back_genes]
-    q3 <- sigma[resample_back_genes, resample_test_genes]
-    # q4 <- sigma[resample_back_genes, resample_back_genes]
-    # sigma_new <- rbind(cbind(q1, q2), cbind(q3, q4))
-    
-    beta0 <- mean(t_val)
-    ones <- rep(1, length(t_val))
-    numer <- (crossprod(go_term, (t_val - beta0 * ones)))^2
-    go_bar <- rep(mean(go_term), length(go_term))
-    denom2 <- t(go_term - go_bar) %*% 
-              rbind(cbind(q1, q2), cbind(q3, sigma[resample_back_genes, resample_back_genes])) %*% 
-              (go_term - go_bar)
-    
-    test_stat <- drop(numer/denom2)
-    pval <- 1 - pchisq(test_stat, 1)
-    t_temp <- mean(t_val[go_term == 1]) - mean(t_val[go_term == 0])
-    if (t_temp > 0) {
-      status <- "up"
-    }
-    else {
-      status <- "down"
-    }
-    test_stat2 <- sqrt(test_stat)
-    pval2 <- 2 * min(1 - pnorm(test_stat2), test_stat2)
-    p_alpha <- c(p_alpha, pval)
+    expression_data_hat <- create_bootstrap_data(expression_data = expression_data, 
+                                                 go_term = go_term, trt = trt, 
+                                                 seed = kk, raw_data = FALSE)
+    temp <- meaca::meaca_single(expression_data = expression_data_hat, 
+                                trt = trt, go_term = go_term, 
+                                standardize = FALSE)
+    p_alpha <- c(p_alpha, temp$p1)
   }
   )
   return(p_alpha)
@@ -231,6 +218,87 @@ alpha_simu <- function(expression_data, trt, go_term, standardize = TRUE,
 
 
 
+compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4, 
+                             package_used = c("tidyverse"), verbose_show = FALSE){
+  
+  ########  a function to incorporate all test procedures
+  expression_data <- dat$data
+  trt <- dat$trt
+  go_term <- dat$go_term
+
+  cl <- parallel::makeCluster(ncore, type = "FORK")
+  pvals <- foreach(kk = 1:nsim, .combine = bind_rows, 
+                   .packages = package_used, 
+                   .verbose = verbose_show){
+    
+    expression_data_hat <- create_bootstrap_data(expression_data = expression_data, 
+                                                 go_term = go_term, trt = trt, 
+                                                 seed = kk, raw_data = FALSE)
+    
+    temp <- meaca::meaca_single(expression_data = expression_data_hat, 
+                                trt = trt, go_term = go_term, 
+                                standardize = FALSE)
+    p_meaca <- temp$p1
+    
+    design <- model.matrix(~trt) 
+    fit <- limma::lmFit(expression_data_hat, design)
+    # Emperical Bayes t test	
+    fit <- limma::eBayes(fit)								                
+    #	use the moderated t statistics to do enrichment
+    stat <- fit$t[, 2]            							      
+
+    alternative <- "either"                            
+    # which genes are in GOTERM
+    index1 <- which(go_term==1)                       
+    
+    # MRGSE
+    p_mrgse <- limma::geneSetTest(index = index1, stat, alternative = alternative, ranks.only= T)         
+    # sigPathway methods
+    p_sigpath <- sig_path(index = index1, stat, nsim = 999)                                                
+    # camera proedure
+    p_camera <- limma::camera(y = expression_data_hat, index = index1,  
+                              design = design, 
+                              allow.neg.cor = TRUE, inter.gene.cor = NA)$PValue                                    
+    # camera rank 
+    p_camera_R <- limma::camera(y = expression_data_hat, index = index1,  
+                                design = design, use.ranks= T, 
+                                allow.neg.cor = TRUE, inter.gene.cor = NA)$PValue                      
+  
+    # # GSEA
+    # p_gsea <- GSEA.SingleSet(data = expression_data, trt = trt, go_term = go_term, nperm = 1000)$p.vals		
+     
+    ## qusage <Yaari, 2013>
+    geneSets <- list()
+    geneSets[[paste("Set",1)]] <- which(go_term == 1)
+    labels <- rep(NA, length(trt))
+    labels[trt == 1] <- "B"; labels[trt==0] <- "A"
+    # calculate the probability for all genes
+    qsarray <- qusage::qusage(expression_data_hat, labels, contrast = "B-A" , geneSets)  			
+    # competitive test
+    p_qusage <- qusage::pdf.pVal(qsarray, alternative = "two.sided", selfContained = F) 		
+    
+    p_plage <- plage(expression_data = expression_data_hat, trt = trt, 
+                     go_term = go_term, seed = kk, nperm = 999)
+    # modified on May 14, 2017
+    # the over-representation method
+    p_ora <- ora(expression_data = expression_data_hat, trt = trt, 
+                 go_term = go_term, method = "BH", thresh = 0.01) 
+    
+    temp1 <- tibble::tibble(p_meaca = p_meaca, 
+                            p_mrgse = p_mrgse, 
+                            p_camera = p_camera, 
+                            p_camera_R = p_camera_R, 
+                            p_qusage = p_qusage, 
+                            p_plage = p_plage, 
+                            p_ora = p_ora)
+    
+      return(temp1)
+    }
+  parallel::stopCluster(cl)
+  
+  return(pvals)
+}
+
 #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #                                    RUN Simulation
@@ -238,6 +306,8 @@ alpha_simu <- function(expression_data, trt, go_term, standardize = TRUE,
 
 df1 <- prep_padog_data("GSE8762")
 expression_data <- df1$data; trt <- df1$trt; go_term <- df1$go_term
+
+result <- compare_test_new(dat = df1, seed = 2, nsim = 10)
 
 system.time(result <- alpha_simu(expression_data = expression_data, trt = trt, 
                                  go_term = go_term, standardize = TRUE, 
