@@ -48,6 +48,27 @@ create_bootstrap_data <- function(expression_data, go_term, trt, seed = 123,
   
 }
 
+create_bootstrap_data <- function(expression_data, go_term, trt, seed = 123, 
+                                  raw_data = FALSE){
+  
+  test_genes <- which(go_term == 1)
+  back_genes <- which(go_term == 0)
+  # t_test_set <- t_val0[test_genes]
+  n_back_set <- sum(go_term == 0)
+  n_test_set <- sum(go_term == 1)
+  
+  set.seed(seed)
+  resample_test_genes <- base::sample(1:length(go_term), size = n_test_set, replace = TRUE)
+  resample_back_genes <- base::sample(1:length(go_term), size = n_back_set, replace = TRUE)
+  expression_data_hat <- expression_data # initiate the matrix
+  if(!raw_data){
+    expression_data_hat[test_genes, ] <- expression_data[resample_test_genes, ]
+    expression_data_hat[back_genes, ] <- expression_data[resample_back_genes, ]
+  }
+  
+  return(expression_data_hat)
+} 
+
 
 ## about 2 + 3 minutes to run 100 reps
 alpha_meaca <- function(expression_data, trt, go_term, standardize = TRUE, 
@@ -287,6 +308,7 @@ compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4,
     
     temp1 <- tibble::tibble(p_meaca = p_meaca, 
                             p_mrgse = p_mrgse, 
+                            p_sigpath = p_sigpath,
                             p_camera = p_camera, 
                             p_camera_R = p_camera_R, 
                             p_qusage = p_qusage, 
