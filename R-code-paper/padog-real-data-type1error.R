@@ -226,10 +226,11 @@ compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4,
   trt <- dat$trt
   go_term <- dat$go_term
 
+  library(foreach)
   cl <- parallel::makeCluster(ncore, type = "FORK")
   pvals <- foreach(kk = 1:nsim, .combine = bind_rows, 
                    .packages = package_used, 
-                   .verbose = verbose_show){
+                   .verbose = verbose_show) %dopar% {
     
     expression_data_hat <- create_bootstrap_data(expression_data = expression_data, 
                                                  go_term = go_term, trt = trt, 
@@ -307,7 +308,7 @@ compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4,
 df1 <- prep_padog_data("GSE8762")
 expression_data <- df1$data; trt <- df1$trt; go_term <- df1$go_term
 
-result <- compare_test_new(dat = df1, seed = 2, nsim = 10)
+result <- compare_test_new(dat = df1, seed = 2, nsim = 1000, ncore = 4)
 
 system.time(result <- alpha_simu(expression_data = expression_data, trt = trt, 
                                  go_term = go_term, standardize = TRUE, 
@@ -315,5 +316,5 @@ system.time(result <- alpha_simu(expression_data = expression_data, trt = trt,
                                  method = "BH", thresh = 0.01))
 
 
-write_csv(result, "padog-real-data-type1error-simulation-all-genes.csv")
+write_csv(result, "padog-real-data-type1error-simulation-all-genes-v2.csv")
 
