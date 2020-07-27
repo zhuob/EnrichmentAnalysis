@@ -249,6 +249,7 @@ compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4,
 
   library(foreach)
   cl <- parallel::makeCluster(ncore, type = "FORK")
+  doParallel::registerDoParallel(cl)
   pvals <- foreach(kk = 1:nsim, .combine = bind_rows, 
                    .packages = package_used, 
                    .verbose = verbose_show) %dopar% {
@@ -286,8 +287,8 @@ compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4,
                                 design = design, use.ranks= T, 
                                 allow.neg.cor = TRUE, inter.gene.cor = NA)$PValue                      
   
-    # # GSEA
-    # p_gsea <- GSEA.SingleSet(data = expression_data, trt = trt, go_term = go_term, nperm = 1000)$p.vals		
+    # GSEA
+    p_gsea <- GSEA.SingleSet(data = expression_data, trt = trt, go_term = go_term, nperm = 1000)$p.vals		
      
     ## qusage <Yaari, 2013>
     geneSets <- list()
@@ -310,7 +311,8 @@ compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4,
                             p_mrgse = p_mrgse, 
                             p_sigpath = p_sigpath,
                             p_camera = p_camera, 
-                            p_camera_R = p_camera_R, 
+                            p_camera_R = p_camera_R,
+                            p_gsea  = p_gsea,
                             p_qusage = p_qusage, 
                             p_plage = p_plage, 
                             p_ora = p_ora)
@@ -330,7 +332,7 @@ compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4,
 df1 <- prep_padog_data("GSE8762")
 expression_data <- df1$data; trt <- df1$trt; go_term <- df1$go_term
 
-result <- compare_test_new(dat = df1, seed = 2, nsim = 1000, ncore = 4)
+result <- compare_test_new(dat = df1, seed = 2, nsim = 1000, ncore = 23)
 
 system.time(result <- alpha_simu(expression_data = expression_data, trt = trt, 
                                  go_term = go_term, standardize = TRUE, 

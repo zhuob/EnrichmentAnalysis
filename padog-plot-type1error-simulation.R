@@ -22,3 +22,5 @@ plot_type1error(dat_type = "all-genes-v2", var_col = 1:7)
 dat_name <- paste0("real-data/padog-package/padog-real-data-type1error-simulation-", 
                    "all-genes-v2",".csv")
 t1 <- read_csv(dat_name)
+
+plot_type1error(dat_type = "all-genes-v3-row-bootstrap", var_col = 1:9)
