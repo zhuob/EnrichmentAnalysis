@@ -8,6 +8,24 @@ output: html_document
 
 # Weekly progress
 
+
+## Week 7/27/2020
+
+   The following two stretagies are slightly different 
+   
+      + given an expression matrix, calculate correlation matrix, and test 
+      statistics. Resample row ID of test statistics, and based on these row IDs, 
+      get the corresponding rows and columns from the correlation matrix to form 
+      the new correlation matrix 
+      + Given an expression matrix, bootstrap the rows IDs. For fair comparison,
+      set seed so that the same row IDs will be sampled, and calculate test 
+      statistics as well as associated correlation matrix
+      
+   This way we can get exactly the same value for gene level test statistics, 
+   but not the correlation matrix: they are slightly different. The reason is that
+   when `estimate_sigma` is called, it does more than just calculating the 
+   correlation. See the function for details.
+
 ## Week 7/20/2020
 
    Run simulation this way

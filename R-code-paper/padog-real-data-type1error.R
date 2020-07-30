@@ -250,13 +250,18 @@ compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4,
   library(foreach)
   cl <- parallel::makeCluster(ncore, type = "FORK")
   doParallel::registerDoParallel(cl)
+  set.seed(seed)
+  subseed <- sample(1:1e6, nsim)
+  
   pvals <- foreach(kk = 1:nsim, .combine = bind_rows, 
                    .packages = package_used, 
                    .verbose = verbose_show) %dopar% {
     
     expression_data_hat <- create_bootstrap_data(expression_data = expression_data, 
                                                  go_term = go_term, trt = trt, 
-                                                 seed = kk, raw_data = FALSE)
+                                                 seed = subseed[kk], raw_data = FALSE)
+    
+    expression_data_hat <- meaca::standardize_expression_data(expression_data_hat, trt)
     
     temp <- meaca::meaca_single(expression_data = expression_data_hat, 
                                 trt = trt, go_term = go_term, 
@@ -332,7 +337,7 @@ compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4,
 df1 <- prep_padog_data("GSE8762")
 expression_data <- df1$data; trt <- df1$trt; go_term <- df1$go_term
 
-result <- compare_test_new(dat = df1, seed = 2, nsim = 1000, ncore = 23)
+result <- compare_test_new(dat = df1, seed = 1234, nsim = 1000, ncore = 4)
 
 system.time(result <- alpha_simu(expression_data = expression_data, trt = trt, 
                                  go_term = go_term, standardize = TRUE, 
@@ -340,5 +345,5 @@ system.time(result <- alpha_simu(expression_data = expression_data, trt = trt,
                                  method = "BH", thresh = 0.01))
 
 
-write_csv(result, "padog-real-data-type1error-simulation-all-genes-v2.csv")
+write_csv(result, "padog-real-data-type1error-simulation-all-genes-v3.csv")
 
