@@ -35,12 +35,10 @@ create_bootstrap_data <- function(expression_data, go_term, trt, seed = 123,
 
   # bootstrap residual independently from beta0 and beta1
   set.seed(seed + 1e5)
-  resample_test_genes2 <- base::sample(test_genes, size = n_test_set, replace = TRUE)
-  resample_back_genes2 <- base::sample(back_genes, size = n_back_set, replace = TRUE)
+  resample_id <- base::sample(1:length(trt), size = length(trt), replace = TRUE)
   resid_mat_hat <- resid_mat
   if(!raw_data){
-    resid_mat_hat[test_genes, ] <- resid_mat[resample_test_genes2, ]
-    resid_mat_hat[back_genes, ] <- resid_mat[resample_back_genes2, ]
+    resid_mat_hat <- resid_mat[, resample_id]
   }
   expression_data_hat <- group_mean_hat + resid_mat_hat
   
@@ -152,5 +150,5 @@ expression_data <- df1$data; trt <- df1$trt; go_term <- df1$go_term
 
 result <- compare_test_new(dat = df1, seed = 1234, nsim = 1000, ncore = 4)
 
-write_csv(result, "real-data/padog-package/padog-real-data-type1error-simulation-all-genes-data-corr-test-bootstrap-separately-v3.csv")
+write_csv(result, "real-data/padog-package/padog-real-data-type1error-simulation-all-genes-data-corr-test-bootstrap-separately-v4.csv")
 
