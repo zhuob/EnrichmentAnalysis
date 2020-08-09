@@ -95,10 +95,14 @@ compare_test <- function(dat, seed){
   #                     verbose=FALSE, parallel.sz=1)$es.obs
   # p_gsva <- t.test(es_gsva[trt==1], es_gsva[trt==0])$p.value
   
+  # over-representation method
+  p_ora <- ora(expression_data = dat$data, trt = dat$trt, go_term = dat$go_term, 
+               method = "BH", thresh = 0.01) 
+  
   p_vec <- c(p_meaca, pval1_2, p_mrgse, p_sigpath, p_camera, p_camera_R,
-             p_gsea, p_qusage, cor)
-  names(p_vec)[1:8] <- c("meaca", "meaca_n", "MRGSE", "SigPathway", 
-                          "CAMERA_ModT", "CAMERA_Rank", "GSEA", "QuSAGE")
+             p_gsea, p_qusage, p_ora, cor)
+  names(p_vec)[1:9] <- c("meaca", "meaca_n", "MRGSE", "SigPathway", 
+                          "CAMERA_ModT", "CAMERA_Rank", "GSEA", "QuSAGE", "p_ora")
   p_vec <- data.frame(p_vec)
   p_vec$status <- enrich_status
   return(p_vec)

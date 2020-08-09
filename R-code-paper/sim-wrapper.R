@@ -26,7 +26,7 @@ run_sim_meaca <- function(nsim, ncore = 6, package_used = c("MASS", "qusage"),
     }
 
     # data simulation
-    dat <- simulate_expression_data(seed = subseed[i], ...)
+    dat <- meaca::simulate_expression_data(seed = subseed[i], ...)
     
     # our test, NO standardization for the simulation
     if(meaca_only){
@@ -35,7 +35,7 @@ run_sim_meaca <- function(nsim, ncore = 6, package_used = c("MASS", "qusage"),
       pvals <- MEQ$p1							# chi-square test
       names(pvals) <- "meaca"
     } else{
-      pvals <- compare_test(dat)
+      pvals <- compare_test(dat, seed = subseed[i])
     }
     return(pvals)
   }
