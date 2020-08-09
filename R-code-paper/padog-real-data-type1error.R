@@ -9,6 +9,65 @@
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ## 
 
+## making use of the data set and KEGG package
+prep_padog_data <- function(set){
+  
+  data(list = set)
+  x = get(set)
+  #Extract from the dataset the required info
+  exp = Biobase::experimentData(x);
+  dataset = exp@name
+  dat_m = Biobase::exprs(x)
+  disease <- Biobase::notes(exp)$disease
+  ano = Biobase::pData(x)
+  design = Biobase::notes(exp)$design
+  annotation = paste(x@annotation,".db",sep="")
+  targetGeneSets <- Biobase::notes(exp)$targetGeneSets 
+  
+  #get rid of duplicates in the same way as is done for PADOG and assign probesets to ENTREZ IDS
+  # anpack <- "hgu133plus2ENTREZID"
+  # t1 <- keys(get(anpack))
+  # ## annotate ids to ENTREZID
+  # ENTREZID <- unlist(as.list(get(anpack)))
+  # entire_list <- data.frame(probeID = names(ENTREZID), ENTREZID)
+  # entire_list <- data.frame(lapply(entire_list, as.character), stringsAsFactors=FALSE)
+  # entire_list <- entire_list[!is.na(entire_list$ENTREZID), ]
+  # aT2 <- entire_list[!duplicated(entire_list$ENTREZID), ]
+  
+  #get rid of duplicates by choosing the probe(set) with lowest p-value; get ENTREZIDs for probes
+  aT2 <- PADOG::filteranot(esetm = dat_m, group = ano$Group, 
+                           paired = (design == "Paired"), block = ano$Block,annotation) 
+  
+  pks <- KEGGREST::keggGet(paste("hsa", targetGeneSets, sep = ""))
+  genes <- pks[[1]]$GENE
+  gene1 <- genes[seq(1, length(genes), by = 2)]
+  n_normal <- sum(ano$Group == "c")
+  n_disease <- sum(ano$Group == "d")
+  
+  trt <- ifelse(ano$Group == "c", 0, 1)
+  #filtered expression matrix
+  dat_m <- as.data.frame(dat_m)
+  dat_m$ID <- rownames(dat_m)
+  # merge the probeID 
+  data <- dplyr::right_join(dat_m %>% arrange(ID), 
+                            aT2 %>% arrange(ID), by = "ID")
+  # print(dim(aT2))
+  go_term  <- ifelse(data$ENTREZID %in% gene1, 1, 0)
+  
+  dat_out <-  data[, 1:(length(ano$Group))]
+  rownames(dat_out) <- data$ID
+  
+  result <- list(data = dat_out, 
+                 trt = trt, 
+                 go_term = go_term,
+                 disease = disease, 
+                 n_normal = n_normal, 
+                 n_disease = n_disease,
+                 target_geneset = targetGeneSets,
+                 n_gene = sum(go_term))
+  
+}
+
 create_bootstrap_data <- function(expression_data, go_term, trt, seed = 123, 
                                   raw_data = FALSE){
   
@@ -140,15 +199,34 @@ compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4,
   return(pvals)
 }
 
+plot_type1error <- function(dat_type = "test", var_col = 1:4){
+  dat_name <- paste0("real-data/padog-package/padog-real-data-type1error-simulation-", 
+                     dat_type,".csv")
+  t1 <- read_csv(dat_name)
+  print(dat_name)
+  sample_test_genes <- pivot_longer(t1, cols = var_col, names_to = "method")
+  
+  ggplot(data = sample_test_genes, aes(sample = value)) + 
+    stat_qq(distribution = qunif) + 
+    geom_abline(intercept = 0, slope = 1) + 
+    facet_wrap(~method)
+  
+}
+
+
 #
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #                                    RUN Simulation
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+library(tidyverse)
+library(KEGGdzPathwaysGEO)
+library(KEGGandMetacoreDzPathwaysGEO)
 df1 <- prep_padog_data("GSE8762")
-expression_data <- df1$data; trt <- df1$trt; go_term <- df1$go_term
-
 result <- compare_test_new(dat = df1, seed = 1234, nsim = 1000, ncore = 4)
 
 write_csv(result, "real-data/padog-package/padog-real-data-type1error-simulation-all-genes-data-corr-test-bootstrap-separately-v4.csv")
+
+pdf("real-data/padog-package/padog-type1error.pdf", width = 10, height = 10)
+print(plot_type1error(dat_type = "all-genes-data-corr-test-bootstrap-separately", var_col = 1:9))
+dev.off()
 
