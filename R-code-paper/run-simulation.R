@@ -21,7 +21,7 @@ case_c <- c(0.1,    0,     0)
 case_d <- c(0.1, 0.05,     0)
 case_e <- c(0.1, 0.05, -0.05)
 
-run_case <- case_e
+run_case <- case_c
 
 # additional simulations: small sample size 
 t1 <- data_simu(nsim = 10000,
