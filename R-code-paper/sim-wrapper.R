@@ -111,6 +111,9 @@ data_simu <- function(nsim = 1000,
                       de_sd = 1,
                       data_gen_method = "chol",
                       seed = 123){
+    if(!dir.exists(dest)){
+      dir.create(dest, recursive = TRUE)
+    }
   
     sim_case <- get_sim_case(rho1 = rho1, rho2 = rho2, rho3 = rho3)  
   

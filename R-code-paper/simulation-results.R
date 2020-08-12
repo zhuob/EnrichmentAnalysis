@@ -36,11 +36,10 @@ qqTypeIerror <- function(data, textsize = rep(20, 4), showcol = c(1, 4:9), color
            colour=guide_legend(keywidth = 8, keyheight = 2))
    A + scale_color_manual(values = color2) + 
      scale_linetype_manual(values=c("twodash", "dotted", "dotdash", "dashed", 
-                                    "F1", "4C88C488", "12345678"))
+                                    "F1", "4C88C488", "12345678", "longdash"))
   
 
 }
-
 
 #' Combines two qq plot in one figure and produce the legend in a separate figure.
 #'

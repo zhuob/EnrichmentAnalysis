@@ -4,11 +4,13 @@ library(dplyr)
 library(ggplot2)
 library(cowplot)
 
-path <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/Simulation2017/Normal2"
+# path <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/Simulation2017/Normal2"
+path <- "simulation-results/gene-500/n10vs10/"
 
-
-fig1 <- plot_fig1(path=path)
-ggsave(paste(path,"/fig1", ".eps", sep =""), fig1, width = 18, height = 20)
+color2 = c("#000000", "#E69F00", "#56B4E9", "#009E73", 
+           "#F0E442", "#0072B2", "#D55E00", "#CC33CC")
+fig1 <- plot_fig1(path=path, showcol = c(1, 3:9), color2 = color2)
+ggsave(paste(path,"/fig1", ".pdf", sep =""), fig1, width = 18, height = 20)
 
 fig2 <- plot_fig2(path, showcol = 1)
 ggsave(paste(path,"/fig2", ".eps", sep =""), fig2, width = 18, height = 20)
