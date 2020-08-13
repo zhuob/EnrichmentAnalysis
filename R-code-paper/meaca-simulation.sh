@@ -31,7 +31,7 @@
 source /etc/profile.d/modules.sh
 
 # USE STATISTICS DEPARTMENT CLUSTER
-#$ -q di.q@di001 
+#$ -q di.q@di002 
 # #$ -q all.q@cosine005
 # #$ -q shared.q@di002
 
