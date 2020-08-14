@@ -69,11 +69,16 @@ prep_padog_data <- function(set){
 }
 
 create_bootstrap_data <- function(expression_data, go_term, trt, seed = 123, 
-                                  raw_data = FALSE){
+                                  raw_data = FALSE, no_de = FALSE){
   
   expression_data <- as.matrix(expression_data)
   group_mean <- as.matrix(meaca:::trt_mean(expression_data, trt))
   resid_mat <- expression_data - group_mean
+  
+  if(no_de){
+    n0 <- dim(expression_data)
+    group_mean <- matrix(0, nrow = n0[1], ncol = n0[2])
+  }
   
   test_genes <- which(go_term == 1)
   back_genes <- which(go_term == 0)
@@ -107,7 +112,7 @@ create_bootstrap_data <- function(expression_data, go_term, trt, seed = 123,
 
 
 
-compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4, 
+compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4, no_de = FALSE, 
                              package_used = c("tidyverse"), verbose_show = FALSE){
   
   ########  a function to incorporate all test procedures
@@ -129,7 +134,8 @@ compare_test_new <- function(dat, seed, nsim = 1e3, ncore = 4,
     
     expression_data_hat <- create_bootstrap_data(expression_data = expression_data, 
                                                  go_term = go_term, trt = trt, 
-                                                 seed = subseed[kk], raw_data = FALSE)
+                                                 seed = subseed[kk], raw_data = FALSE, 
+                                                 no_de = no_de)
     
     expression_data_hat <- meaca::standardize_expression_data(expression_data_hat, trt)
     
@@ -218,15 +224,23 @@ plot_type1error <- function(dat_type = "test", var_col = 1:4){
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #                                    RUN Simulation
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+parent_folder <- "/home/stats/zhuob/EnrichmentAnalysis/"
+parent_folder <- ""
+
 library(tidyverse)
 library(KEGGdzPathwaysGEO)
 library(KEGGandMetacoreDzPathwaysGEO)
+
+r_file <- c("R-code-paper/other-methods.R", "R-code-paper/GSEA.1.0.R")
+r_file <- paste0(parent_folder, r_file)
+for(k in 1:length(r_file)){source(r_file)}
+
 df1 <- prep_padog_data("GSE8762")
-result <- compare_test_new(dat = df1, seed = 1234, nsim = 1000, ncore = 4)
+result <- compare_test_new(dat = df1, seed = 1234, nsim = 1000, ncore = 1, no_de = TRUE)
+save_data <- paste0(parent_folder, "real-data/padog-package/padog-real-data-type1error-simulation-all-genes-data-corr-test-bootstrap-separately-de0.csv")
+write_csv(result, save_data)
 
-write_csv(result, "real-data/padog-package/padog-real-data-type1error-simulation-all-genes-data-corr-test-bootstrap-separately-v4.csv")
-
-pdf("real-data/padog-package/padog-type1error.pdf", width = 10, height = 10)
-print(plot_type1error(dat_type = "all-genes-data-corr-test-bootstrap-separately", var_col = 1:9))
+pdf(paste0(parent_folder, "real-data/padog-package/padog-type1error.pdf"), width = 10, height = 10)
+print(plot_type1error(dat_type = "all-genes-data-corr-test-bootstrap-separately-de0", var_col = 1:9))
 dev.off()
 
