@@ -236,11 +236,11 @@ r_file <- paste0(parent_folder, r_file)
 for(k in 1:length(r_file)){source(r_file[k])}
 
 df1 <- prep_padog_data("GSE8762")
-result <- compare_test_new(dat = df1, seed = 1234, nsim = 1000, ncore = 20, no_de = TRUE)
+result <- compare_test_new(dat = df1, seed = 1234, nsim = 1000, ncore = 1, no_de = TRUE)
 save_data <- paste0(parent_folder, "real-data/padog-package/padog-real-data-type1error-simulation-all-genes-data-corr-test-bootstrap-separately-de0.csv")
 write_csv(result, save_data)
 
-pdf(paste0(parent_folder, "real-data/padog-package/padog-type1error.pdf"), width = 10, height = 10)
+pdf(paste0(parent_folder, "real-data/padog-package/padog-type1error-de0.pdf"), width = 10, height = 10)
 print(plot_type1error(dat_type = "all-genes-data-corr-test-bootstrap-separately-de0", var_col = 1:9))
 dev.off()
 
