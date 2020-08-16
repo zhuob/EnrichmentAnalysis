@@ -8,6 +8,20 @@ output: html_document
 
 # Weekly progress
 
+## Week 8/12/2020
+
+   Finally, we used bootstrap of row-wise gene test statistics, but also bootstrap
+   columns to add variation to column-wise between gene correlations. 
+   
+   Things to do next week:
+      
+      + re-oragnize the plot in the main manuscript, so that readers can tell the
+      performance of type 1 error control for each method. Other methods will be 
+      moved to supp. material
+      + Examine the ORA method
+      + run simulation under real correlation, for DE = 0% at both test set and 
+      background set 
+      + run simulations for large sample size under correlation structure (a) - (e)
 
 ## Week 7/27/2020
 

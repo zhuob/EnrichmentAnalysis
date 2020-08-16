@@ -233,7 +233,7 @@ library(KEGGandMetacoreDzPathwaysGEO)
 
 r_file <- c("R-code-paper/other-methods.R", "R-code-paper/GSEA.1.0.R")
 r_file <- paste0(parent_folder, r_file)
-for(k in 1:length(r_file)){source(r_file)}
+for(k in 1:length(r_file)){source(r_file[k])}
 
 df1 <- prep_padog_data("GSE8762")
 result <- compare_test_new(dat = df1, seed = 1234, nsim = 1000, ncore = 1, no_de = TRUE)

@@ -5,7 +5,7 @@ library(ggplot2)
 library(cowplot)
 
 # path <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/Simulation2017/Normal2"
-path <- "simulation-results/gene-500/n10vs10/"
+path <- "simulation-results/gene-500/n25vs25/DEmean1sd1"
 
 color2 = c("#000000", "#E69F00", "#56B4E9", "#009E73", 
            "#F0E442", "#0072B2", "#D55E00", "#CC33CC")
