@@ -31,7 +31,7 @@
 source /etc/profile.d/modules.sh
 
 # USE STATISTICS DEPARTMENT CLUSTER
-#$ -q di.q@di002 
+#$ -q di.q@di003 
 # #$ -q all.q@cosine005
 # #$ -q shared.q@di002
 
@@ -42,4 +42,5 @@ module load gcc/7.3.0
 
 # command to run.  ONLY CHANGE THE NAME OF YOUR APPLICATION  
 # Rscript real_data_correlation_simulation.R
-Rscript run-simulation.R
+# Rscript run-simulation.R
+Rscript padog-real-data-type1error.R
