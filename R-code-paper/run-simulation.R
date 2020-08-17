@@ -3,8 +3,8 @@ library(tidyverse)
 # ----- only change the following part to run simulation
 parent_folder <- "/home/stats/zhuob/EnrichmentAnalysis/"
 # parent_folder <- ""
-n_gene  <- 500
-n_test  <- 100
+n_gene  <- 20000
+n_test  <- 200
 prop    <- c(0.1, 0.1)
 size    <- 50
 de_mean <- 1
@@ -12,6 +12,7 @@ de_sd   <- 1
 
 ncore   <- 45
 nsim    <- 1e4
+high_dim <- ifelse(n_gene >= 1000, TRUE, FALSE)
 #------ end of change ----------------------------------- 
 
 
@@ -25,7 +26,9 @@ source(source_r_file)
 
 use_r_file <- c("R-code-paper/compare-methods.R",
                 "R-code-paper/other-methods.R", 
-                "R-code-paper/GSEA.1.0.R")
+                "R-code-paper/GSEA.1.0.R", 
+                "R-code-paper/simulation-high-dim.R")
+
 use_r_file <- paste0(parent_folder, use_r_file)
 
 case_a <- c(0,      0,     0)
@@ -61,5 +64,6 @@ for(i in 1:5){
                   de_mu = de_mean,
                   de_sd = de_sd,
                   data_gen_method = "chol",
-                  seed = 123)
+                  seed = 123, 
+                  high_dim = high_dim)
 }

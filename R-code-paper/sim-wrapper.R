@@ -1,7 +1,7 @@
 run_sim_meaca <- function(nsim, ncore = 6, package_used = c("MASS", "qusage"), 
                           verbose_show = FALSE, meaca_only = FALSE,
                           file_to_source = "/home/stats/zhuob/Rcode/Enrichment/GSEA.1.0.R",
-                          seed = 123, ...){
+                          seed = 123, high_dim = FALSE, ...){
   
   # generate seed for reproducing results
   set.seed(seed)
@@ -26,7 +26,12 @@ run_sim_meaca <- function(nsim, ncore = 6, package_used = c("MASS", "qusage"),
     }
 
     # data simulation
-    dat <- meaca::simulate_expression_data(seed = subseed[i], ...)
+    if(high_dim){
+      dat <- simulate_expression_data_high_dim(seed = subseed[i], ...)
+    } else{
+      dat <- meaca::simulate_expression_data(seed = subseed[i], ...)
+      
+    }
     
     # our test, NO standardization for the simulation
     if(meaca_only){
@@ -110,7 +115,8 @@ data_simu <- function(nsim = 1000,
                       de_mu = 2,
                       de_sd = 1,
                       data_gen_method = "chol",
-                      seed = 123){
+                      seed = 123, 
+                      high_dim = FALSE){
     if(!dir.exists(dest)){
       dir.create(dest, recursive = TRUE)
     }
@@ -133,7 +139,7 @@ data_simu <- function(nsim = 1000,
                          n_gene = n_gene, n_test = n_test, prop = prop, 
                          rho1 = rho1, rho2 = rho2, rho3 = rho3, 
                          size = size, de_mu = de_mu, de_sd = de_sd, 
-                         data_gen_method = data_gen_method)
+                         data_gen_method = data_gen_method, high_dim = high_dim)
     
     write.table(fti, destination, row.names = F)
   
