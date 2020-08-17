@@ -3,16 +3,17 @@ library(tidyverse)
 # ----- only change the following part to run simulation
 parent_folder <- "/home/stats/zhuob/EnrichmentAnalysis/"
 # parent_folder <- ""
-n_gene  <- 20000
-n_test  <- 200
-prop    <- c(0.1, 0.1)
+n_gene  <- 500
+n_test  <- 100
+prop    <- c(0.0, 0.0)
 size    <- 50
-de_mean <- 1
+de_mean <- 2
 de_sd   <- 1
 
 ncore   <- 45
 nsim    <- 1e4
-high_dim <- ifelse(n_gene >= 1000, TRUE, FALSE)
+high_dim <- TRUE
+# high_dim <- ifelse(n_gene >= 1000, TRUE, FALSE)
 #------ end of change ----------------------------------- 
 
 

@@ -1,7 +1,7 @@
 # this method is specific to high dimensional data simulation under correlation 
 # structures (a) - (e)
 simulate_expression_data_high_dim <- function(size, n_gene, n_test, prop, de_mu, de_sd,
-                                              rho1, rho2, rho3, seed = 123){
+                                              rho1, rho2, rho3, seed = 123, data_gen_method = NULL){
   set.seed(seed)
   # simulate go term, and delta vector
   obj <- meaca:::prepare_simulation(rho1 = rho1, rho2 = rho2, rho3 = rho3, n_gene = n_gene, 
@@ -11,6 +11,8 @@ simulate_expression_data_high_dim <- function(size, n_gene, n_test, prop, de_mu,
   go_term <- obj$go_term
   delta <- obj$delta
   
+  # the following row is not used, but for consistency of function input purpose
+  dat_gen_method <- data_gen_method 
   # which correlation structure it is simulating
   # sim_case <- get_sim_case(rho1 = rho1, rho2 = rho2, rho3 = rho3)  
   # initialize the expression matrix
