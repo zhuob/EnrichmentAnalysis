@@ -31,8 +31,8 @@
 source /etc/profile.d/modules.sh
 
 # USE STATISTICS DEPARTMENT CLUSTER
-# #$ -q di.q@di003 
-#$ -q all.q@cosine005
+#$ -q di.q@di001 
+# #$ -q all.q@cosine010
 # #$ -q shared.q@di002
 
 #Change which version of R you want to load on the Compute Nodes
