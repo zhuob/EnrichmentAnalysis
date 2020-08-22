@@ -1,16 +1,28 @@
-library(meaca)
-library(reshape2)
-library(dplyr)
-library(ggplot2)
-library(cowplot)
-
+rm(list = ls())
 # path <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/Simulation2017/Normal2"
-path <- "simulation-results/gene-500/n25vs25/DEmean1sd1"
+path <- "simulation-results/gene-20000/n25vs25/DEmean2sd1"
+source("R-code-paper/plot-functions.R")
 
+color1= "#0099FF"
 color2 = c("#000000", "#E69F00", "#56B4E9", "#009E73", 
            "#F0E442", "#0072B2", "#D55E00", "#CC33CC")
-fig1 <- plot_fig1(path=path, showcol = c(1, 3:9), color2 = color2)
-ggsave(paste(path,"/fig1", ".pdf", sep =""), fig1, width = 18, height = 20)
+line_values = c("twodash", "dotted", "dotdash", "dashed", 
+               "F1", "4C88C488", "12345678", "longdash")
+textsize <- c(15, 15,  10, 10)
+showcol <- c(1, 3:9)
+
+fig1 <- plot_fig1(path = path, textsize = textsize, showcol = showcol, 
+                  color1 = color1, color2 = color2,  
+                  case = letters[1:3],
+                  line_vaues = line_vaues)
+cowplot::ggsave(paste(path,"/corr-a-c", ".pdf", sep =""), fig1, width = 18, height = 20)
+
+fig1 <- plot_fig1(path = path, textsize = textsize, showcol = showcol, 
+                  color1 = color1, color2 = color2,  
+                  case = c("d", "e", "f"), 
+                  line_vaues = line_vaues)
+cowplot::ggsave(paste(path,"/corr-d-e", ".pdf", sep =""), fig1, width = 18, height = 20)
+
 
 fig2 <- plot_fig2(path, showcol = 1)
 ggsave(paste(path,"/fig2", ".eps", sep =""), fig2, width = 18, height = 20)

@@ -1,4 +1,3 @@
-
 library(ggplot2)
 library(reshape2)
 library(xtable)
@@ -8,14 +7,14 @@ library(grid)
 library(cowplot)
 
 
-
-
 qqTypeIerror <- function(data, textsize = rep(20, 4), showcol = c(1, 4:9), color1 = "#0099FF",
-                         color2 = c("#000000", "#E69F00", "#56B4E9", "#009E73", 
-                                         "#F0E442", "#0072B2", "#D55E00")){
+                         color2 = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00"), 
+                         line_values = c("twodash", "dotted", "dotdash", "dashed", "F1", "4C88C488", "12345678", "longdash")
+                         ){
   
   data <- data[, showcol]
-  names(data)[names(data)=="meaca"] <- "MEACA"
+  names(data)[names(data) == "meaca"] <- "MEACA"
+  names(data)[names(data) == "p_ora"] <- "ORA"
   dat_new <- melt(data, value.name = "Pval", variable.name = "Method")
 
   A <- ggplot(dat_new) +
@@ -35,8 +34,7 @@ qqTypeIerror <- function(data, textsize = rep(20, 4), showcol = c(1, 4:9), color
            linetype=guide_legend(keywidth = 8, keyheight = 2),
            colour=guide_legend(keywidth = 8, keyheight = 2))
    A + scale_color_manual(values = color2) + 
-     scale_linetype_manual(values=c("twodash", "dotted", "dotdash", "dashed", 
-                                    "F1", "4C88C488", "12345678", "longdash"))
+     scale_linetype_manual(values = line_values)
   
 
 }
@@ -56,26 +54,40 @@ qqTypeIerror <- function(data, textsize = rep(20, 4), showcol = c(1, 4:9), color
 
 
 ArrangeTypeIerror <- function(path, case, textsize = c(20,20, 8,20), showcol = c(1, 4:9), 
-                              legend= F, 
-                              color1= "#0099FF",
-                              color2 = c("#000000", "#E69F00", "#56B4E9", "#009E73", 
-                                         "#F0E442", "#0072B2", "#D55E00")){
+                              legend= F, color1= "#0099FF",
+                              color2 = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00"), 
+                              line_values = c("twodash", "dotted", "dotdash", "dashed", "F1", "4C88C488", "12345678", "longdash"), 
+                              padog_sim = FALSE){
 # dat1:  p value matrix for type I error, without DE
 # dat2: p value matrix for type I error, with DE
 # legend is used for the last case, for all figures.    
-  # read the data  
-  dat1 <- read.table(paste(path, "/TypeIerror_", case[1], "_0PCT.txt", sep = ""), header = T) 
-  dat2 <- read.table(paste(path, "/TypeIerror_", case[1], "_10PCT.txt", sep = ""), header = T) 
-
-  A1 <- qqTypeIerror(dat1, textsize = textsize, showcol = showcol,  color1 = color1, color2=color2)
-  A2 <- qqTypeIerror(dat2, textsize = textsize, showcol = showcol, color1=color1, color2=color2)
+  # read the data 
+  if(!padog_sim){
+    dat1 <- read.table(paste(path, "/TypeIerror_", case[1], "_0PCT.txt", sep = ""), header = T) 
+    dat2 <- read.table(paste(path, "/TypeIerror_", case[1], "_10PCT.txt", sep = ""), header = T)
+  } 
+  else if(padog_sim){
+    dat1 <- readr::read_csv(file = paste0(path, "/padog-real-data-type1error-simulation-all-genes-data-corr-test-bootstrap-separately-de0.csv"))
+    dat1 <- dat1 %>% select(MEACA = p_meaca, MRGSE = p_mrgse, SigPathway = p_sigpath, 
+                            CAMERA_ModT = p_camera, CAMERA_Rank = p_camera_R, GSEA = p_gsea, 
+                            QuSAGE = p_qusage, ORA = p_ora)
+    dat2 <- readr::read_csv(file = paste0(path, "/padog-real-data-type1error-simulation-all-genes-data-corr-test-bootstrap-separately.csv"))
+    dat2 <- dat2 %>% select(MEACA = p_meaca, MRGSE = p_mrgse, SigPathway = p_sigpath, 
+                            CAMERA_ModT = p_camera, CAMERA_Rank = p_camera_R, GSEA = p_gsea, 
+                            QuSAGE = p_qusage, ORA = p_ora)
+  }
+  
+  A1 <- qqTypeIerror(dat1, textsize = textsize, showcol = showcol,  color1 = color1, 
+                     color2=color2, line_values = line_values)
+  A2 <- qqTypeIerror(dat2, textsize = textsize, showcol = showcol, color1=color1, 
+                     color2=color2, line_values = line_values)
   
   if(legend){    # plot the legend in a separate figure
-    p_fig <- get_legend(A1)
+    p_fig <- cowplot::get_legend(A1)
     }
   
     else{  ## arrange the plots 
-    p_fig <- plot_grid(A1 + theme(legend.position = "none"), 
+    p_fig <- cowplot::plot_grid(A1 + theme(legend.position = "none"), 
                        A2 + theme(legend.position = "none"), ncol = 2, nrow = 1)
     }
   return(p_fig)
@@ -97,24 +109,46 @@ ArrangeTypeIerror <- function(path, case, textsize = c(20,20, 8,20), showcol = c
 #' 
 #' 
 
-plot_fig1 <- function(path, textsize = c(15, 15,  10, 10), case= letters[1:5], showcol = c(1, 4:9),
-                              color1= "#0099FF",
-                              color2 = c("#000000", "#E69F00", "#56B4E9", "#009E73", 
-                                         "#F0E442", "#0072B2", "#D55E00")){
+plot_fig1 <- function(path, textsize = c(15, 15,  10, 10), case = letters[1:5], 
+                      showcol = c(1, 4:9), color1= "#0099FF",
+                      color2 = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00"), 
+                      line_vaues = c("twodash", "dotted", "dotdash", "dashed", "F1", "4C88C488", "12345678", "longdash")
+                      ){
   
-
-  fig_a <- ArrangeTypeIerror(path, case = case[1], textsize = textsize, showcol = showcol, color1 = color1, color2=color2, legend = F)  
-  fig_b <- ArrangeTypeIerror(path, case = case[2], textsize = textsize, showcol = showcol, color1 = color1, color2=color2, legend = F)  
-  fig_c <- ArrangeTypeIerror(path, case = case[3], textsize = textsize, showcol = showcol, color1 = color1, color2=color2, legend = F)  
-  fig_d <- ArrangeTypeIerror(path, case = case[4], textsize = textsize, showcol = showcol, color1 = color1, color2=color2, legend = F)  
-  fig_e <- ArrangeTypeIerror(path, case = case[5], textsize = textsize, showcol = showcol, color1 = color1, color2=color2, legend = F)  
-  legend_a <- ArrangeTypeIerror(path, case = case[1], textsize = textsize, showcol = showcol, color1 = color1, color2=color2, legend = T)  
+  fig_list <- list()
+  for(i in 1:length(case)){
+    
+    if(case[i] != "f"){
+      fig_a <- ArrangeTypeIerror(path, case = case[i], textsize = textsize, 
+                                 showcol = showcol, color1 = color1, color2=color2,
+                                 legend = F, line_values = line_values, padog_sim = FALSE)  
+    } else if(case[i] == "f"){
+      fig_a <- ArrangeTypeIerror(path = "real-data/padog-package/", 
+                                 case = case[i], textsize = textsize, 
+                                 showcol = 1:8, color1 = color1, color2=color2,
+                                 legend = F, line_values = line_values, padog_sim = TRUE)  
+      
+    }
+    fig_list[[i]] <- fig_a
+  }
   
-  fig <- plot_grid(fig_a, fig_b, fig_c, fig_d, fig_e, legend_a, ncol = 1, nrow =5)
+  legend_a <- ArrangeTypeIerror(path, case = case[1], textsize = textsize, 
+                                showcol = showcol, color1 = color1, color2=color2,
+                                line_values = line_values, legend = T)  
   
-  fig2 <- ggdraw() + draw_plot(fig, x = 0, y = 0, width= 1, height = 0.9) + 
-          draw_plot(legend_a, x = 0, y =0.9, width = 0.7, height = 0.1 )
+  if(length(case) == 3){
+    fig <- cowplot::plot_grid(fig_list[[1]], fig_list[[2]], fig_list[[3]], 
+                              ncol = 1, nrow =length(case))
+  } else if(length(case) == 5){
+    fig <- cowplot::plot_grid(fig_list[[1]], fig_list[[2]], fig_list[[3]],, fig_list[[4]], 
+                              fig_list[[5]], ncol = 1, nrow =length(case))
+  }
   
+  fig2 <- cowplot::ggdraw() + 
+    cowplot::draw_plot(fig, x = 0, y = 0, width= 1, height = 0.9) + 
+    cowplot::draw_plot(legend_a, x = 0, y =0.9, width = 0.7, height = 0.1)
+  
+  return(fig2)
 }
 
 
