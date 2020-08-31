@@ -7,16 +7,45 @@ library(grid)
 library(cowplot)
 
 
-qqTypeIerror <- function(data, textsize = rep(20, 4), showcol = c(1, 4:9), color1 = "#0099FF",
-                         color2 = c("#000000", "#E69F00", "#56B4E9", "#009E73","#F0E442", "#0072B2", "#D55E00"), 
-                         line_values = c("twodash", "dotted", "dotdash", "dashed", "F1", "4C88C488", "12345678", "longdash")
-                         ){
-  
-  data <- data[, showcol]
-  names(data)[names(data) == "meaca"] <- "MEACA"
-  names(data)[names(data) == "p_ora"] <- "ORA"
-  dat_new <- melt(data, value.name = "Pval", variable.name = "Method")
+get_color_linetype <- function(selected_method){
 
+    color2 <- case_when(selected_method == "MEACA" ~ "#000000", 
+                        selected_method == "meaca_n" ~ "#00CC99",
+                        selected_method == "MRGSE" ~ "#E69F00", 
+                        selected_method == "SigPathway" ~ "#56B4E9", 
+                        selected_method == "CAMERA_ModT" ~ "#009E73", 
+                        selected_method == "CAMERA_Rank" ~ "#F0E442", 
+                        selected_method == "GSEA" ~ "#0072B2", 
+                        selected_method == "QuSAGE" ~ "#D55E00", 
+                        selected_method == "ORA" ~ "#CC33CC")
+    
+    line_values <- case_when(
+                        selected_method == "MEACA" ~ "twodash", 
+                        selected_method == "meaca_n" ~ "blank",
+                        selected_method == "MRGSE" ~ "dotted", 
+                        selected_method == "SigPathway" ~ "dotdash", 
+                        selected_method == "CAMERA_ModT" ~ "dashed", 
+                        selected_method == "CAMERA_Rank" ~ "F1", 
+                        selected_method == "GSEA" ~ "4C88C488", 
+                        selected_method == "QuSAGE" ~ "12345678", 
+                        selected_method == "ORA" ~ "longdash") 
+    
+    return(tibble::tibble(color2 = color2, line_values = line_values))
+  
+}
+
+
+qqTypeIerror <- function(data, textsize = rep(20, 4), color1 = "#0099FF",
+                         selected_method){
+  
+  dat_new <- tibble::tibble(data) %>% 
+    tidyr::pivot_longer(cols = 1:8, names_to = "Method", values_to = "Pval")
+  
+  dat_new <- dat_new %>% mutate(Method = factor(Method, levels = unique(dat_new$Method))) %>% 
+             filter(Method %in% selected_method)
+    
+  params <- get_color_linetype(selected_method = selected_method)
+  
   A <- ggplot(dat_new) +
     stat_qq(aes(sample = Pval, colour = Method, linetype = Method), distribution=qunif, size = 1,
              geom = "line") + 
@@ -33,38 +62,29 @@ qqTypeIerror <- function(data, textsize = rep(20, 4), showcol = c(1, 4:9), color
     guides(fill = guide_legend(keywidth = 0.8, keyheight = 2),
            linetype=guide_legend(keywidth = 8, keyheight = 2),
            colour=guide_legend(keywidth = 8, keyheight = 2))
-   A + scale_color_manual(values = color2) + 
-     scale_linetype_manual(values = line_values)
+   A + scale_color_manual(values = params$color2) + 
+     scale_linetype_manual(values = params$line_values)
   
-
 }
 
 #' Combines two qq plot in one figure and produce the legend in a separate figure.
 #'
-#' @title Uniform QQ-plot. 
-#' @param dat1  simulated p-value matrix when DE % = 0.
-#' @param dat2  simulated p-value matrix for DE % = 10%.
-#' @param case which correlation structure to plot. 
-#' @param legend if \code{TRUE}, plot the legend; otherwise just plot the qq-plot
-#' @param textsize, a vector of four, controlling the text size of legened, title, axis, axis.title, respectively 
-#' @return a figure
-#' @export
 #' 
 #' 
-
-
-ArrangeTypeIerror <- function(path, case, textsize = c(20,20, 8,20), showcol = c(1, 4:9), 
-                              legend= F, color1= "#0099FF",
-                              color2 = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00"), 
-                              line_values = c("twodash", "dotted", "dotdash", "dashed", "F1", "4C88C488", "12345678", "longdash"), 
+ArrangeTypeIerror <- function(path, case, textsize = c(20,20, 8,20), 
+                              legend= F, color1= "#0099FF", selected_method, 
                               padog_sim = FALSE){
 # dat1:  p value matrix for type I error, without DE
 # dat2: p value matrix for type I error, with DE
 # legend is used for the last case, for all figures.    
   # read the data 
   if(!padog_sim){
-    dat1 <- read.table(paste(path, "/TypeIerror_", case[1], "_0PCT.txt", sep = ""), header = T) 
-    dat2 <- read.table(paste(path, "/TypeIerror_", case[1], "_10PCT.txt", sep = ""), header = T)
+    dat1 <- read.table(paste(path, "/TypeIerror_", case[1], "_0PCT.txt", sep = ""), header = T) %>% 
+            select(MEACA = meaca, MRGSE, SigPathway, CAMERA_ModT, CAMERA_Rank, GSEA, QuSAGE, ORA = p_ora)
+    
+    dat2 <- read.table(paste(path, "/TypeIerror_", case[1], "_10PCT.txt", sep = ""), header = T) %>% 
+      select(MEACA = meaca, MRGSE, SigPathway, CAMERA_ModT, CAMERA_Rank, GSEA, QuSAGE, ORA = p_ora)
+    
   } 
   else if(padog_sim){
     dat1 <- readr::read_csv(file = paste0(path, "/padog-real-data-type1error-simulation-all-genes-data-corr-test-bootstrap-separately-de0.csv"))
@@ -77,10 +97,10 @@ ArrangeTypeIerror <- function(path, case, textsize = c(20,20, 8,20), showcol = c
                             QuSAGE = p_qusage, ORA = p_ora)
   }
   
-  A1 <- qqTypeIerror(dat1, textsize = textsize, showcol = showcol,  color1 = color1, 
-                     color2=color2, line_values = line_values)
-  A2 <- qqTypeIerror(dat2, textsize = textsize, showcol = showcol, color1=color1, 
-                     color2=color2, line_values = line_values)
+  A1 <- qqTypeIerror(dat1, textsize = textsize, color1 = color1, 
+                     selected_method = selected_method)
+  A2 <- qqTypeIerror(dat2, textsize = textsize, color1=color1, 
+                     selected_method = selected_method)
   
   if(legend){    # plot the legend in a separate figure
     p_fig <- cowplot::get_legend(A1)
@@ -96,51 +116,42 @@ ArrangeTypeIerror <- function(path, case, textsize = c(20,20, 8,20), showcol = c
 
 
 #' uniform qq-plot for type I error simulation.
-#'
-#' @title Uniform QQ-plot. 
-#' @param path  where the simulated p-value matrix locates.
-#' @param textsize, a vector of four, controlling the text size of legened, title, axis, axis.title, respectively 
-#' @param case   which correlation structures will show
-#' @param showcol the methods chosen to compare
-#' @param color1 Color for the reference line
-#' @param color2 Colors for different methods. It must have the same length as the that of \code{showcol}
-#' @return a figure
-#' @export
-#' 
 #' 
 
 plot_fig1 <- function(path, textsize = c(15, 15,  10, 10), case = letters[1:5], 
-                      showcol = c(1, 4:9), color1= "#0099FF",
-                      color2 = c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00"), 
-                      line_vaues = c("twodash", "dotted", "dotdash", "dashed", "F1", "4C88C488", "12345678", "longdash")
-                      ){
+                      color1= "#0099FF", selected_method){
   
   fig_list <- list()
   for(i in 1:length(case)){
     
     if(case[i] != "f"){
       fig_a <- ArrangeTypeIerror(path, case = case[i], textsize = textsize, 
-                                 showcol = showcol, color1 = color1, color2=color2,
-                                 legend = F, line_values = line_values, padog_sim = FALSE)  
+                                 color1 = color1, selected_method = selected_method,
+                                 legend = F, padog_sim = FALSE)  
     } else if(case[i] == "f"){
+      
+      m1 <- c("MEACA", "MRGSE", "SigPathway", 
+        "CAMERA-ModT", "CAMERA-Rank", "GSEA", "QuSAGE", "ORA")
+      
       fig_a <- ArrangeTypeIerror(path = "real-data/padog-package/", 
                                  case = case[i], textsize = textsize, 
-                                 showcol = 1:8, color1 = color1, color2=color2,
-                                 legend = F, line_values = line_values, padog_sim = TRUE)  
+                                 showcol = 1:8, color1 = color1, 
+                                 selected_method = m1, 
+                                 legend = F, padog_sim = TRUE)  
       
     }
     fig_list[[i]] <- fig_a
   }
   
   legend_a <- ArrangeTypeIerror(path, case = case[1], textsize = textsize, 
-                                showcol = showcol, color1 = color1, color2=color2,
-                                line_values = line_values, legend = T)  
+                                selected_method = selected_method, 
+                                color1 = color1, legend = T)  
   
   if(length(case) == 3){
     fig <- cowplot::plot_grid(fig_list[[1]], fig_list[[2]], fig_list[[3]], 
                               ncol = 1, nrow =length(case))
   } else if(length(case) == 5){
-    fig <- cowplot::plot_grid(fig_list[[1]], fig_list[[2]], fig_list[[3]],, fig_list[[4]], 
+    fig <- cowplot::plot_grid(fig_list[[1]], fig_list[[2]], fig_list[[3]], fig_list[[4]], 
                               fig_list[[5]], ncol = 1, nrow =length(case))
   }
   
