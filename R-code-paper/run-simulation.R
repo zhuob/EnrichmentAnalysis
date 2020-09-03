@@ -3,14 +3,14 @@ library(tidyverse)
 # ----- only change the following part to run simulation
 parent_folder <- "/home/stats/zhuob/EnrichmentAnalysis/"
 # parent_folder <- ""
-n_gene  <- 20000
-n_test  <- 200
-prop    <- c(0.0, 0.0)
+n_gene  <- 500
+n_test  <- 100
+prop    <- c(0.10, 0.25)
 size    <- 50
 de_mean <- 2
 de_sd   <- 1
 
-ncore   <- 25
+ncore   <- 40
 nsim    <- 1e4
 high_dim <- TRUE
 # high_dim <- ifelse(n_gene >= 1000, TRUE, FALSE)
@@ -39,7 +39,7 @@ case_d <- c(0.1, 0.05,     0)
 case_e <- c(0.1, 0.05, -0.05)
 
 
-for(i in 4:4){
+for(i in 1:5){
   
   if(i == 1){run_case <- case_a}
   else if(i == 2) {run_case <- case_b}
