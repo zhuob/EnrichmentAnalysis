@@ -5,7 +5,7 @@ parent_folder <- "/home/stats/zhuob/EnrichmentAnalysis/"
 # parent_folder <- ""
 n_gene  <- 500
 n_test  <- 100
-prop    <- c(0.10, 0.25)
+prop    <- c(0.20, 0.0)
 size    <- 50
 de_mean <- 2
 de_sd   <- 1
