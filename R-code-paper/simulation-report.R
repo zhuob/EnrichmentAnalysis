@@ -38,8 +38,9 @@ table1 <- createEmpiricalPowerTable(path, showcol = c(1, 4:9), setup = "A1", cas
 table2 <- createEmpiricalPowerTable(path, showcol = c(1, 4:9), setup = "A2", case = "a")
 
 
-path <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/Power20161223"
-path <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/oldFiles/Share/Simulation/Simulation20160318/Normal1"
+#path <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/Simulation2017/Normal2/"
+# below is path to the results from the paper
+# path <- "/Users/Bin/Google Drive/Study/Thesis/Correlation/EnrichmentAnalysis/Results/old/Power20161223/"
 showcol <- c(1, 4, 5, 6, 8, 9)
 ta <- createEmpiricalPowerTable(path, setup = "A2", case = "a", showcol = showcol)
 tb <- createEmpiricalPowerTable(path, setup = "A2", case = "b", showcol = showcol)
