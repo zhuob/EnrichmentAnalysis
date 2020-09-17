@@ -60,8 +60,8 @@ qqTypeIerror <- function(data, textsize = rep(20, 4), color1 = "#0099FF",
           axis.text=element_text(size=textsize[3], face = "bold"), 
           axis.title=element_text(size=textsize[4],face="bold")) +
     guides(fill = guide_legend(keywidth = 0.8, keyheight = 2),
-           linetype=guide_legend(keywidth = 8, keyheight = 2),
-           colour=guide_legend(keywidth = 8, keyheight = 2))
+           linetype=guide_legend(keywidth = 6, keyheight = 2),
+           colour=guide_legend(keywidth = 6, keyheight = 2))
    A + scale_color_manual(values = params$color2) + 
      scale_linetype_manual(values = params$line_values)
   
@@ -130,13 +130,13 @@ plot_fig1 <- function(path, textsize = c(15, 15,  10, 10), case = letters[1:5],
                                  legend = F, padog_sim = FALSE)  
     } else if(case[i] == "f"){
       
-      m1 <- c("MEACA", "MRGSE", "SigPathway", 
-        "CAMERA-ModT", "CAMERA-Rank", "GSEA", "QuSAGE", "ORA")
-      
+      # m1 <- c("MEACA", "MRGSE", "SigPathway", 
+      #   "CAMERA_ModT", "CAMERA_Rank", "GSEA", "QuSAGE", "ORA")
+       
       fig_a <- ArrangeTypeIerror(path = "real-data/padog-package/", 
                                  case = case[i], textsize = textsize, 
-                                 showcol = 1:8, color1 = color1, 
-                                 selected_method = m1, 
+                                 color1 = color1, 
+                                 selected_method = methods_explored, 
                                  legend = F, padog_sim = TRUE)  
       
     }
@@ -149,10 +149,12 @@ plot_fig1 <- function(path, textsize = c(15, 15,  10, 10), case = letters[1:5],
   
   if(length(case) == 3){
     fig <- cowplot::plot_grid(fig_list[[1]], fig_list[[2]], fig_list[[3]], 
-                              ncol = 1, nrow =length(case))
+                              ncol = 1, nrow =length(case), 
+                              labels = paste("(", case, ")", sep = ""))
   } else if(length(case) == 5){
     fig <- cowplot::plot_grid(fig_list[[1]], fig_list[[2]], fig_list[[3]], fig_list[[4]], 
-                              fig_list[[5]], ncol = 1, nrow =length(case))
+                              fig_list[[5]], ncol = 1, nrow =length(case), 
+                              labels = paste("(", case, ")", sep = ""))
   }
   
   fig2 <- cowplot::ggdraw() + 

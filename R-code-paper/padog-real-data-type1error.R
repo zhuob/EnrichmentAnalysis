@@ -210,7 +210,19 @@ plot_type1error <- function(dat_type = "test", var_col = 1:4){
                      dat_type,".csv")
   t1 <- read_csv(dat_name)
   print(dat_name)
-  sample_test_genes <- pivot_longer(t1, cols = var_col, names_to = "method")
+  t1 <- t1 %>% select(-p_plage)
+  m1 <- c("MEACA", "MRGSE", "SigPathway",
+    "CAMERA_ModT", "CAMERA_Rank", "GSEA", "QuSAGE", "ORA")
+  sample_test_genes <- pivot_longer(t1, cols = var_col, names_to = "method") %>% 
+    mutate(method = case_when(method == "p_meaca" ~ m1[1], 
+                              method == "p_mrgse" ~ m1[2], 
+                              method == "p_sigpath" ~ m1[3], 
+                              method == "p_camera" ~ m1[4], 
+                              method == "p_camera_R" ~ m1[5], 
+                              method == "p_gsea" ~ m1[6], 
+                              method == "p_qusage" ~ m1[7], 
+                              method == "p_ora" ~ m1[8])) %>% 
+    mutate(method = factor(method, levels = m1))
   
   ggplot(data = sample_test_genes, aes(sample = value)) + 
     stat_qq(distribution = qunif) + 
@@ -241,6 +253,5 @@ save_data <- paste0(parent_folder, "real-data/padog-package/padog-real-data-type
 write_csv(result, save_data)
 
 pdf(paste0(parent_folder, "real-data/padog-package/padog-type1error-de0.pdf"), width = 10, height = 10)
-print(plot_type1error(dat_type = "all-genes-data-corr-test-bootstrap-separately-de0", var_col = 1:9))
+print(plot_type1error(dat_type = "all-genes-data-corr-test-bootstrap-separately-de0", var_col = 1:8))
 dev.off()
-
