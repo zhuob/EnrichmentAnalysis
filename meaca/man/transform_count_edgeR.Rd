@@ -36,5 +36,5 @@ camera(y2, iset1, design)
 
 }
 \seealso{
-[edgeR::camera.DGEList()]
+\code{\link[edgeR]{camera.DGEList}}
 }

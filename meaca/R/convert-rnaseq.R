@@ -6,7 +6,7 @@
 #'
 #' @return a matrix of transformed data 
 #' @export
-#' @seealso [edgeR::camera.DGEList()]
+#' @seealso \code{\link[edgeR]{camera.DGEList}}
 #' @examples
 #' mu <- matrix(10, 100, 4)
 #' group <- factor(c(0,0,1,1))
