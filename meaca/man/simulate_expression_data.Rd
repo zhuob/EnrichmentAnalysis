@@ -4,8 +4,19 @@
 \alias{simulate_expression_data}
 \title{Simulate expression data.}
 \usage{
-simulate_expression_data(size, n_gene, n_test, prop, de_mu, de_sd, rho1, rho2,
-  rho3, data_gen_method = "chol", seed = 123)
+simulate_expression_data(
+  size,
+  n_gene,
+  n_test,
+  prop,
+  de_mu,
+  de_sd,
+  rho1,
+  rho2,
+  rho3,
+  data_gen_method = "chol",
+  seed = 123
+)
 }
 \arguments{
 \item{size}{number of samples to be simulated}
@@ -48,4 +59,3 @@ t1 <- simulate_expression_data(size = 50, n_gene = 500, n_test = 100,
                                rho1 = 0.1, rho2 = 0.05, rho3 = -0.05, 
                                data_gen_method = "chol", seed = 123)
 }
-

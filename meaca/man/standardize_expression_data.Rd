@@ -17,4 +17,3 @@ a matrix of the same dimension as input data.
 \description{
 Standardize the expression data.
 }
-

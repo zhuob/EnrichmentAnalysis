@@ -4,8 +4,13 @@
 \alias{btw_gene_corr_multiple}
 \title{Estimate sample correlation.}
 \usage{
-btw_gene_corr_multiple(expression_data, trt, geneset, standardize = T,
-  min_set_size = 5)
+btw_gene_corr_multiple(
+  expression_data,
+  trt,
+  geneset,
+  standardize = T,
+  min_set_size = 5
+)
 }
 \arguments{
 \item{expression_data}{the expressoin matrix.}
@@ -30,4 +35,3 @@ a list
 Average correlations for genes
 }
 \keyword{internal}
-

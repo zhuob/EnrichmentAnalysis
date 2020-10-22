@@ -4,8 +4,14 @@
 \alias{meaca_multiple}
 \title{meaca-multiple.}
 \usage{
-meaca_multiple(expression_data, trt, geneset, standardize = T,
-  min_set_size = 5, fdr_method = "BH")
+meaca_multiple(
+  expression_data,
+  trt,
+  geneset,
+  standardize = T,
+  min_set_size = 5,
+  fdr_method = "BH"
+)
 }
 \arguments{
 \item{expression_data}{the expressoin matrix.}
@@ -28,4 +34,3 @@ a data frame
 \description{
 meaca for testing multiple gene sets.
 }
-

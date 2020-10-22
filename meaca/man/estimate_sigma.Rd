@@ -19,4 +19,3 @@ a list
 \description{
 Estimate sample covariance and calculate the gene-level statistics
 }
-

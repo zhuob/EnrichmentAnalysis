@@ -25,4 +25,3 @@ a $1 \times 3$ data frame containing values for $\rho_1$, $\rho_3$
 \description{
 Calculate sample (Pearson) correlations among gene clusters
 }
-

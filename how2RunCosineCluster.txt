@@ -32,5 +32,14 @@ To see the version of linux server
 
 To Run a R code
 	•	Rscript name.R
-	
+
+## new update 2020/07/06
+to logon: ssh zhuob@shell.cosine.oregonstate.edu
 pd: R9BCqRoc
+	
+	
+In addition, OSU now requires Zoom meetings to have passcodes. Here's the updated Zoom info:
+Join Zoom Meeting
+https://oregonstate.zoom.us/j/99033987438?pwd=SXdUNGdybDIwRGdaZXErYkFUK1pCUT09
+
+Password: 306856

@@ -32,4 +32,3 @@ t1 <- simulate_expression_data(size = 50, n_gene = 500, n_test = 100,
                                data_gen_method = "chol", seed = 123)
 meaca_single(t1$data, trt = t1$trt, go_term = t1$go_term)
 }
-

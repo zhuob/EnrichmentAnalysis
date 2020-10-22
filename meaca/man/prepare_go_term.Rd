@@ -26,4 +26,3 @@ test set, and 0 othwerwise.}
 Simulate test set gene labels
 }
 \keyword{internal}
-

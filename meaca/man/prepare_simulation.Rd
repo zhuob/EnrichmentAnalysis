@@ -26,4 +26,3 @@ test set, and 0 othwerwise}
 Prepare simulation parameters.
 }
 \keyword{internal}
-
