@@ -12,7 +12,7 @@ prepare_go_term(n_gene, n_test, prop, de_mu, de_sd, seed = 123)
 \item{n_test}{number of genes in the test set.}
 
 \item{prop}{a vector of length 2, proportion of DE genes within go term and
-outside go_term, corresponding to $p_t$ and $p_b$.}
+outside go term, corresponding to \eqn{p_t} and \eqn{p_b} in the paper.}
 
 \item{de_mu, de_sd}{if the gene is DE, delta ~ N(de_mu, de_sd)}
 }

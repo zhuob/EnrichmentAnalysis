@@ -25,7 +25,14 @@ It is absolutely critical that the columns of the count matrix and
   order. For more details, see \url{https://bioconductor.org/packages/release/bioc/vignettes/DESeq2/inst/doc/DESeq2.html}
 }
 \examples{
+library(DESeq2)
+set.seed(123)
 y <- matrix(rbinom(6000, 20, 0.4), nrow = 1000)
-group <- c(0, 0, 0, 1, 1, 1)
-yr <- transform_count_vst(y = y, group = group)
+trt <- c(0, 0, 0, 1, 1, 1)
+yr <- transform_count_vst(y = y, group = trt)
+go_term <- rep(c(1, 0), c(100, 900)) # first 100 genes in the test set
+meaca_single(expression_data = yr, trt = trt, go_term = go_term, standardize = TRUE)
+}
+\seealso{
+\code{\link[DESeq2]{varianceStabilizingTransformation}}
 }

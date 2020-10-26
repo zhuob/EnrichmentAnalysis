@@ -1,24 +1,24 @@
 #' meaca for single gene set test.
 #'
-#' @title meaca-single. 
+#' @title meaca-single.
 #' @param expression_data  the expressoin matrix.
 #' @param trt  treatment indicators, 1 for treatment, 0 for control group.
-#' @param go_term  an indicator vector. 1 for genes in the test set, 0 otherwise.
-#' @param standardize  whether the data should be standaridzed.
-#' @return a list 
-#' \item{stat}{the test statistic}
-#' \item{p1}{chi-square test p value}
-#' \item{status}{"up" or "down", the direction of differential expression}
-#' \item{p2}{two-sided test p-value using normal distribution}
+#' @param go_term  an indicator vector. 1 for genes in the test set, 0
+#'   otherwise.
+#' @param standardize  whether the data should be standaridzed. It is
+#'   recommended to set \code{TRUE} for MEACA
+#' @return a list \item{stat}{the test statistic} \item{p1}{chi-square test p
+#'   value} \item{status}{"up" or "down", the direction of differential
+#'   expression} \item{p2}{two-sided test p-value using normal distribution}
 #' @export
 #' @examples
-#' t1 <- simulate_expression_data(size = 50, n_gene = 500, n_test = 100, 
-#'                                prop = c(0.1, 0.1), de_mu = 2, de_sd = 1, 
-#'                                rho1 = 0.1, rho2 = 0.05, rho3 = -0.05, 
+#' t1 <- simulate_expression_data(size = 50, n_gene = 500, n_test = 100,
+#'                                prop = c(0.1, 0.1), de_mu = 2, de_sd = 1,
+#'                                rho1 = 0.1, rho2 = 0.05, rho3 = -0.05,
 #'                                data_gen_method = "chol", seed = 123)
 #' meaca_single(t1$data, trt = t1$trt, go_term = t1$go_term)
 
-meaca_single <- function(expression_data, trt, go_term, standardize=F){
+meaca_single <- function(expression_data, trt, go_term, standardize = TRUE){
   ##  we need to standardize it here.
   
   if (standardize == T){             # do the standardization 
@@ -61,17 +61,47 @@ meaca_single <- function(expression_data, trt, go_term, standardize=F){
 #' @title meaca-multiple. 
 #' @param expression_data  the expressoin matrix.
 #' @param trt  treatment labels.
-#' @param geneset  gene sets to be tested, an object from \code{read_gene_set}.
+#' @param geneset  gene sets to be tested, format similar to \code{msigdb} gene
+#'   set ensemble downloaded from broad institute see
+#'   \url{https://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html}.
 #' @param standardize  whether the data should be standaridzed.
 #' @param min_set_size  the minimum number of genes contained for a gene set to be
 #'   considered.
 #' @param fdr_method  which method is ued to adjust the p values. see arguments
-#'   in function \code{p.adjust}.
-#' @return a data frame
+#'   in function \code{\link[stats]{p.adjust}}.
+#' @return A data frame containing 10 columns
+#' \item{set_name}{name of the gene set being tested}
+#' \item{set_size}{the size of the test set}
+#' \item{status}{whether the test set is up- or down-regulated}
+#' \item{p1}{the raw p value from MEACA by chi-square test}
+#' \item{p1_fdr}{p1 value adjusted by multiple comparison procedure}
+#' \item{p2}{two-sided test p-value using normal distribution}
+#' \item{p2_fdr}{p2 value adjusted by multiple comparison procedure}
+#' \item{testSetCor}{Average correlation for genes in the test set}
+#' \item{interCor}{Average correlation between genes in the test set and those not in the test set}
+#' \item{backSetCor}{Average correlations for genes not in the test set.}
+#' 
+#' @seealso \code{\link{meaca_single}}
 #' @export
-# #' @examples
+#' @examples
+#' t1 <- simulate_expression_data(size = 50, n_gene = 500, n_test = 100,
+#'                                prop = c(0.1, 0.1), de_mu = 2, de_sd = 1,
+#'                                rho1 = 0.1, rho2 = 0.05, rho3 = -0.05,
+#'                                data_gen_method = "chol", seed = 123)
+#' geneset <- list()
+#' geneset$total <- 5
+#' geneset$size <- c(20, 4, 75, 40, 100)
+#' set.seed(456)
+#' for(k in 1:geneset$total){
+#'   gene_ids <- sort(sample(1:nrow(t1$data), geneset$size[k], replace = FALSE)) 
+#'   # the first two elements should be the test set name and it's functional description
+#'   geneset$gene_set[[k]] <- c(paste(c("Set", "Pathway Function"), k), 
+#'                              row.names(t1$data)[gene_ids])
+#' }
+#' 
+#' meaca_multiple(expression_data = t1$data, trt = t1$trt, geneset = geneset)
 
-meaca_multiple <- function(expression_data, trt, geneset, standardize = T, 
+meaca_multiple <- function(expression_data, trt, geneset, standardize = TRUE, 
                            min_set_size = 5, fdr_method = "BH"){
   ## conduct enrichment analysis for a battery of gene sets and return the raw p
   ## values as well as adjusted p values

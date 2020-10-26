@@ -5,7 +5,7 @@
 #' @param n_gene total number of genes to be simulated
 #' @param n_test number of genes in the test set.
 #' @param prop   a vector of length 2, proportion of DE genes within go term and
-#'   outside go_term, corresponding to $p_t$ and $p_b$.
+#'   outside go term, corresponding to \eqn{p_t} and \eqn{p_b} in the paper.
 #' @param de_mu,de_sd if the gene is DE, delta ~ N(de_mu, de_sd)
 #' @return a tibble with two columns
 #' \item{go_term}{ DE indicator for each simulated gene. 1 is for genes in the
@@ -114,7 +114,7 @@ simu_normal <- function(n, mu, sigma, method = "chol"){
 #' @param n_gene total number of genes to be simulated
 #' @param n_test number of genes in the test set.
 #' @param prop   a vector of length 2, proportion of DE genes within go term and
-#'   outside go_term, corresponding to $p_t$ and $p_b$.
+#'   outside go_term, corresponding to \eqn{p_t} and \eqn{p_b}.
 #' @param rho1  a scalar, correlation between two test genes (i.e., \eqn{\rho_1} in the paper)
 #' @param rho2  a scalar, correlation between two background genes (i.e., \eqn{\rho_2} in the paper)
 #' @param rho3  correlation between a test gene and a background gene (i.e., \eqn{\rho_3} in the paper)
@@ -125,7 +125,7 @@ simu_normal <- function(n, mu, sigma, method = "chol"){
 #' @param seed the seed used for simulation (for reproducibility purpose)
 #'
 #' @return a list 
-#' \item{data}{a expression matrix of \eqn{m\times n} where m is the number of
+#' \item{data}{a expression matrix of m by n, where m is the number of
 #' genes and n is the number of samples. }
 #' \item{trt}{sample labels of length \code{n}, 1 for treatment and 0 for control.}
 #' \item{go_term}{gene labels of length \code{m}, 1 for go_term genes and 0 otherwise.}

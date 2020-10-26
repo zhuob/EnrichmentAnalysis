@@ -33,7 +33,8 @@ camera.DGEList(y, iset1, design)
 # the Pvalue should be the same 
 y2 <- transform_count_edgeR(y = y0, group = group)
 camera(y2, iset1, design)
-
+meaca_single(expression_data = y2, trt = group, go_term = rep(c(1, 0), c(10, 90)), 
+standardize = TRUE)
 }
 \seealso{
 \code{\link[edgeR]{camera.DGEList}}

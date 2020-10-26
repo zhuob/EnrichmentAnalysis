@@ -8,7 +8,7 @@ meaca_multiple(
   expression_data,
   trt,
   geneset,
-  standardize = T,
+  standardize = TRUE,
   min_set_size = 5,
   fdr_method = "BH"
 )
@@ -18,7 +18,9 @@ meaca_multiple(
 
 \item{trt}{treatment labels.}
 
-\item{geneset}{gene sets to be tested, an object from \code{read_gene_set}.}
+\item{geneset}{gene sets to be tested, format similar to \code{msigdb} gene
+set ensemble downloaded from broad institute see
+\url{https://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html}.}
 
 \item{standardize}{whether the data should be standaridzed.}
 
@@ -26,11 +28,42 @@ meaca_multiple(
 considered.}
 
 \item{fdr_method}{which method is ued to adjust the p values. see arguments
-in function \code{p.adjust}.}
+in function \code{\link[stats]{p.adjust}}.}
 }
 \value{
-a data frame
+A data frame containing 10 columns
+\item{set_name}{name of the gene set being tested}
+\item{set_size}{the size of the test set}
+\item{status}{whether the test set is up- or down-regulated}
+\item{p1}{the raw p value from MEACA by chi-square test}
+\item{p1_fdr}{p1 value adjusted by multiple comparison procedure}
+\item{p2}{two-sided test p-value using normal distribution}
+\item{p2_fdr}{p2 value adjusted by multiple comparison procedure}
+\item{testSetCor}{Average correlation for genes in the test set}
+\item{interCor}{Average correlation between genes in the test set and those not in the test set}
+\item{backSetCor}{Average correlations for genes not in the test set.}
 }
 \description{
 meaca for testing multiple gene sets.
+}
+\examples{
+t1 <- simulate_expression_data(size = 50, n_gene = 500, n_test = 100,
+                               prop = c(0.1, 0.1), de_mu = 2, de_sd = 1,
+                               rho1 = 0.1, rho2 = 0.05, rho3 = -0.05,
+                               data_gen_method = "chol", seed = 123)
+geneset <- list()
+geneset$total <- 5
+geneset$size <- c(20, 4, 75, 40, 100)
+set.seed(456)
+for(k in 1:geneset$total){
+  gene_ids <- sort(sample(1:nrow(t1$data), geneset$size[k], replace = FALSE)) 
+  # the first two elements should be the test set name and it's functional description
+  geneset$gene_set[[k]] <- c(paste(c("Set", "Pathway Function"), k), 
+                             row.names(t1$data)[gene_ids])
+}
+
+meaca_multiple(expression_data = t1$data, trt = t1$trt, geneset = geneset)
+}
+\seealso{
+\code{\link{meaca_single}}
 }

@@ -26,7 +26,7 @@ simulate_expression_data(
 \item{n_test}{number of genes in the test set.}
 
 \item{prop}{a vector of length 2, proportion of DE genes within go term and
-outside go_term, corresponding to $p_t$ and $p_b$.}
+outside go_term, corresponding to \eqn{p_t} and \eqn{p_b}.}
 
 \item{de_mu, de_sd}{if the gene is DE, delta ~ N(de_mu, de_sd)}
 
@@ -43,7 +43,7 @@ then \link[MASS]{mvrnorm} is used, otherwise see function \link[mvtnorm]{rmvnorm
 }
 \value{
 a list 
-\item{data}{a expression matrix of \eqn{m\times n} where m is the number of
+\item{data}{a expression matrix of m by n, where m is the number of
 genes and n is the number of samples. }
 \item{trt}{sample labels of length \code{n}, 1 for treatment and 0 for control.}
 \item{go_term}{gene labels of length \code{m}, 1 for go_term genes and 0 otherwise.}

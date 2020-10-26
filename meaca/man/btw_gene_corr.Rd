@@ -4,7 +4,7 @@
 \alias{btw_gene_corr}
 \title{Calculate sample (Pearson) correlations among gene clusters}
 \usage{
-btw_gene_corr(expression_data, trt, go_term, standardize = T)
+btw_gene_corr(expression_data, trt, go_term, standardize = TRUE)
 }
 \arguments{
 \item{expression_data}{the expressoin matrix.}
@@ -13,11 +13,12 @@ btw_gene_corr(expression_data, trt, go_term, standardize = T)
 
 \item{go_term}{an indicator vector. 1 for genes in the test set, 0 otherwise}
 
-\item{standardize}{whether the data should be standaridzed}
+\item{standardize}{whether the data should be standaridzed. It is
+recommended to set \code{TRUE} for MEACA}
 }
 \value{
-a $1 \times 3$ data frame containing values for $\rho_1$, $\rho_3$
-  and $\rho_2$ respectively.
+A 1 by 3 data frame containing values for \eqn{\rho_1},
+  \eqn{\rho_3} and \eqn{\rho_2} respectively.
 \item{testSetCor}{Average correlation for genes in the test set}
 \item{interCor}{Average correlation between genes in the test set and those not in the test set}
 \item{backSetCor}{Average correlations for genes not in the test set.}

@@ -3,10 +3,11 @@
 #' @param expression_data the expressoin matrix.
 #' @param trt treatment indicators, 1 for treatment, 0 for control group
 #' @param go_term an indicator vector. 1 for genes in the test set, 0 otherwise
-#' @param standardize whether the data should be standaridzed
+#' @param standardize whether the data should be standaridzed. It is
+#'   recommended to set \code{TRUE} for MEACA
 #'
-#' @return a $1 \times 3$ data frame containing values for $\rho_1$, $\rho_3$
-#'   and $\rho_2$ respectively.
+#' @return A 1 by 3 data frame containing values for \eqn{\rho_1},
+#'   \eqn{\rho_3} and \eqn{\rho_2} respectively.
 #' \item{testSetCor}{Average correlation for genes in the test set}
 #' \item{interCor}{Average correlation between genes in the test set and those not in the test set}
 #' \item{backSetCor}{Average correlations for genes not in the test set.}
@@ -14,7 +15,7 @@
 #' @export
 #'
 # #' @examples
-btw_gene_corr <- function(expression_data, trt, go_term, standardize = T){
+btw_gene_corr <- function(expression_data, trt, go_term, standardize = TRUE){
   
   if (standardize == T){             # do the standardization
     expression_data <- standardize_expression_data(expression_data, trt)
